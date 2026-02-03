@@ -1,0 +1,486 @@
+/* secure.css - Minimalist Design */
+
+/* BASE */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #111;
+  background-color: #ffffff;
+  /* Clean white background */
+}
+
+/* TOP BAR - Restored Blue */
+.top-bar {
+  height: 60px;
+  width: 100%;
+  background: linear-gradient(135deg, #1f3a8a, #2d4da8);
+  border-bottom: none;
+  box-shadow: 0 4px 12px rgba(31, 58, 138, 0.15);
+}
+
+/* CONTROLS ROW - Minimalist */
+.controls-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 20px 48px;
+  background: white;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.left {
+  justify-self: start;
+}
+
+.right {
+  justify-self: end;
+}
+
+/* PAYSLIP BUTTON - Minimal */
+.payslip-btn {
+  background: #000;
+  color: white;
+  border: 1px solid #000;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.payslip-btn:hover:not([disabled]) {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.payslip-btn[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: #ddd;
+  background: #ddd;
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+/* CENTER GROUP */
+.center {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* DROPDOWN GROUPS */
+.dropdown-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* GOV DROPDOWN - Minimal */
+.gov-dropdown {
+  padding: 8px 12px;
+  font-size: 14px;
+  min-width: 120px;
+  cursor: pointer;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
+  background: white;
+  color: #111;
+  transition: border 0.2s ease;
+}
+
+.gov-dropdown:focus {
+  outline: none;
+  border-color: #000;
+}
+
+/* MAIN CONTAINER - No background color */
+.container {
+  padding: 0 48px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* CARD REMOVAL - Crucial Step */
+.card {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 40px 0;
+}
+
+/* HEADERS - Clean Typography */
+.card-header {
+  margin-bottom: 40px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.card-title {
+  font-size: 32px;
+  font-weight: 300;
+  /* Lighter weight for elegance */
+  letter-spacing: -0.5px;
+  color: #000;
+  margin: 0 0 10px 0;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: #888;
+  font-weight: 400;
+}
+
+/* EMPLOYEE HEADER - Simplified */
+.employee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 60px;
+  padding: 0;
+  background: transparent;
+}
+
+.employee-name {
+  font-size: 24px;
+  font-weight: 500;
+  color: #000;
+  margin: 0 0 4px 0;
+}
+
+.employee-id {
+  font-size: 14px;
+  color: #888;
+  font-family: monospace;
+}
+
+/* STATUS - Minimal Tag */
+.status {
+  background: #f4f4f4;
+  color: #333;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status.status-active {
+  color: #059669;
+  /* Green text */
+  background: #ecfdf5;
+  /* Light green bg */
+  border: 1px solid #d1fae5;
+}
+
+.status.status-inactive,
+.status.status-leave {
+  color: #d97706;
+  /* Orange text */
+  background: #fffbeb;
+  /* Light orange bg */
+  border: 1px solid #fde68a;
+}
+
+/* DETAILS GRID - Airy */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 60px;
+  margin-bottom: 80px;
+}
+
+.detail-item.full-width {
+  grid-column: span 2;
+}
+
+.detail-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* INPUTS AS TEXT - The "No Box" Look */
+.detail-field input {
+  width: 100%;
+  padding: 10px 0;
+  /* Remove side padding */
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #eaeaea;
+  /* Subtle underline only */
+  border-radius: 0;
+  font-size: 16px;
+  color: #111;
+  transition: border 0.2s ease;
+}
+
+.detail-field input[readonly] {
+  background: transparent;
+  color: #111;
+  cursor: default;
+}
+
+.detail-field input:focus {
+  outline: none;
+  border-bottom-color: #000;
+}
+
+/* PAYSLIP SECTION - Clean Table Look */
+.payslip-section {
+  margin-top: 60px;
+  padding-top: 60px;
+  border-top: 1px solid #eaeaea;
+}
+
+.payslip-title {
+  font-size: 20px;
+  font-weight: 400;
+  color: #000;
+  margin-bottom: 40px;
+  text-align: left;
+  /* Verify alignment */
+}
+
+.salary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin-bottom: 40px;
+}
+
+.salary-column h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.salary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f4f4f4;
+}
+
+.salary-label {
+  font-size: 15px;
+  color: #444;
+}
+
+.salary-amount {
+  font-size: 15px;
+  font-weight: 500;
+  color: #111;
+  font-family: monospace;
+}
+
+.salary-amount.deduction {
+  color: #111;
+  /* Keep it neutral for minimalism, or subtle red */
+}
+
+/* TOTALS */
+.salary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  margin-top: 20px;
+  border-top: 2px solid #000;
+}
+
+.total-label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.total-amount {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+/* NET SALARY - Minimal */
+.net-salary {
+  display: flex;
+  justify-content: flex-end;
+  /* Align right */
+  align-items: baseline;
+  padding: 40px 0;
+  gap: 20px;
+  background: transparent;
+  color: #000;
+}
+
+.net-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.net-amount {
+  font-size: 42px;
+  /* Large typographic impact */
+  font-weight: 300;
+  letter-spacing: -1px;
+}
+
+/* PAYSLIP FOOTER - Simple Stack */
+.payslip-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* MESSAGES */
+.message {
+  text-align: center;
+  padding: 80px;
+  color: #888;
+  font-weight: 300;
+}
+
+/* MODAL STYLES */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-container {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #111;
+}
+
+.modal-text {
+  font-size: 15px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-btn.cancel {
+  background: transparent;
+  border: 1px solid #eaeaea;
+  color: #666;
+}
+
+.modal-btn.cancel:hover {
+  background: #f9fafb;
+  border-color: #ddd;
+}
+
+.modal-btn.confirm {
+  background: #000;
+  border: 1px solid #000;
+  color: #fff;
+}
+
+.modal-btn.confirm:hover {
+  background: #333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

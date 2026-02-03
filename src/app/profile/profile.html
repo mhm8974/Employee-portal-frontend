@@ -1,0 +1,54 @@
+
+<div class="auth-container">
+
+  <!-- LEFT PANEL -->
+  <div class="auth-left">
+    <div class="welcome-text">
+      <h1>Welcome to Pranali!</h1>
+      <p>Integrated Financial Management System<br> Government of Sikkim</p>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-right">
+    <div class="login-form">
+
+      <p class="greeting">
+        <span>Pranali</span>
+      </p>
+
+      <p class="login-title">Login</p>
+
+      <!-- CPF / GPF / EMPLOYEE ID -->
+      <label>CPF / GPF / Employee ID</label>
+      <input
+        type="text"
+        placeholder="Enter CPF / GPF / 14-digit ID"
+        [(ngModel)]="employeeId"
+      />
+
+      <!-- CAPTCHA IMAGE PLACEHOLDER -->
+      <div class="captcha-box">
+        <span class="text-captcha">{{ captcha }}</span>
+        <button type="button" (click)="generateCaptcha()">↻</button>
+      </div>
+
+      <!-- CAPTCHA INPUT -->
+      <label>Captcha</label>
+      <input
+        type="text"
+        placeholder="Enter captcha"
+        [(ngModel)]="captchaInput"
+      />
+
+    <button
+      class="submit-btn"
+      [@shake]="shakeTrigger"
+      (click)="login()">
+      Verify
+    </button>
+
+    </div>
+  </div>
+
+</div>

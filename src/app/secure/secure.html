@@ -1,0 +1,213 @@
+<!-- secure.html - With Blue Bar -->
+
+<!-- BLUE BAR (EMPTY) -->
+<div class="top-bar"></div>
+
+<!-- CONTROLS BELOW BAR -->
+<div class="controls-row">
+  <!-- LEFT - Download Payslip -->
+  <div class="left">
+    <button class="payslip-btn" (click)="downloadPayslip()" [disabled]="isPayslipLoading || !paySlipData">
+      {{ isPayslipLoading ? 'Downloading...' : 'Download Pay Slip' }}
+    </button>
+  </div>
+
+  <!-- CENTER - Grouped Selectors -->
+  <div class="center">
+    <div class="dropdown-group">
+      <label for="yearSelect">Year</label>
+      <select id="yearSelect" [(ngModel)]="selectedYear" (ngModelChange)="onSelectionChange()" class="gov-dropdown">
+        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+      </select>
+    </div>
+    <div class="dropdown-group">
+      <label for="monthSelect">Month</label>
+      <select id="monthSelect" [(ngModel)]="selectedMonth" (ngModelChange)="onSelectionChange()" class="gov-dropdown">
+        <option *ngFor="let m of months">{{ m }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- RIGHT - Logout -->
+  <div class="right">
+    <button class="logout-btn" (click)="logout()">
+      Logout
+    </button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="message">
+    <div class="spinner"></div>
+    <p>Loading employee data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="message error">
+    <p>{{ errorMessage }}</p>
+    <button class="retry-btn" (click)="loadEmployeeData()">Retry</button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="employeeData && !isLoading && !errorMessage">
+    <div class="card">
+      <!-- CARD HEADER -->
+      <div class="card-header">
+        <h2 class="card-title">Employee Information</h2>
+        <div class="card-subtitle">Pay Period: {{ payPeriod }}</div>
+      </div>
+
+      <!-- EMPLOYEE HEADER -->
+      <div class="employee-header">
+        <div>
+          <h1 class="employee-name">{{ employeeFullName }}</h1>
+          <p class="employee-id">Employee ID: {{ employeeId }}</p>
+        </div>
+        <div>
+          <span class="status" [ngClass]="statusClass">{{ statusText }}</span>
+        </div>
+      </div>
+
+      <!-- DETAILS GRID -->
+      <div class="details-grid">
+        <div class="detail-item">
+          <label class="detail-label">First Name</label>
+          <div class="detail-field">
+            <input type="text" [value]="getFirstName()" readonly />
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <label class="detail-label">Last Name</label>
+          <div class="detail-field">
+            <input type="text" [value]="getLastName()" readonly />
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <label class="detail-label">Department</label>
+          <div class="detail-field">
+            <input type="text" [value]="department" readonly />
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <label class="detail-label">Position</label>
+          <div class="detail-field">
+            <input type="text" [value]="position" readonly />
+          </div>
+        </div>
+
+        <div class="detail-item full-width">
+          <label class="detail-label">Date of Birth</label>
+          <div class="detail-field">
+            <input type="date" [value]="birthDate" readonly />
+          </div>
+          <div class="text-sm text-gray" *ngIf="employeeData.date_of_birth">
+            {{ formatDate(employeeData.date_of_birth) }}
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYSLIP SECTION -->
+      <div *ngIf="paySlipData && !isPayslipLoading" class="payslip-section">
+        <h3 class="payslip-title">Salary Details for {{ selectedMonth }} {{ selectedYear }}</h3>
+
+        <div class="salary-grid">
+          <!-- Earnings -->
+          <div class="salary-column">
+            <h4>Earnings</h4>
+            <div class="salary-item">
+              <span class="salary-label">Basic Salary:</span>
+              <span class="salary-amount">{{ formatCurrency(paySlipData.basic_salary) }}</span>
+            </div>
+            <div class="salary-item" *ngIf="paySlipData.house_rent_allowance">
+              <span class="salary-label">House Rent Allowance:</span>
+              <span class="salary-amount">{{ formatCurrency(paySlipData.house_rent_allowance) }}</span>
+            </div>
+            <div class="salary-item" *ngIf="paySlipData.travel_allowance">
+              <span class="salary-label">Travel Allowance:</span>
+              <span class="salary-amount">{{ formatCurrency(paySlipData.travel_allowance) }}</span>
+            </div>
+            <div class="salary-item" *ngIf="paySlipData.medical_allowance">
+              <span class="salary-label">Medical Allowance:</span>
+              <span class="salary-amount">{{ formatCurrency(paySlipData.medical_allowance) }}</span>
+            </div>
+            <div class="salary-item" *ngIf="paySlipData.special_allowance">
+              <span class="salary-label">Special Allowance:</span>
+              <span class="salary-amount">{{ formatCurrency(paySlipData.special_allowance) }}</span>
+            </div>
+            <div class="salary-total">
+              <span class="total-label">Gross Salary:</span>
+              <span class="total-amount">{{ formatCurrency(paySlipData.gross_salary) }}</span>
+            </div>
+          </div>
+
+          <!-- Deductions -->
+          <div class="salary-column">
+            <h4>Deductions</h4>
+            <div class="salary-item">
+              <span class="salary-label">Provident Fund:</span>
+              <span class="salary-amount deduction">{{ formatCurrency(paySlipData.provident_fund) }}</span>
+            </div>
+            <div class="salary-item" *ngIf="paySlipData.professional_tax">
+              <span class="salary-label">Professional Tax:</span>
+              <span class="salary-amount deduction">{{ formatCurrency(paySlipData.professional_tax) }}</span>
+            </div>
+            <div class="salary-item" *ngIf="paySlipData.income_tax">
+              <span class="salary-label">Income Tax:</span>
+              <span class="salary-amount deduction">{{ formatCurrency(paySlipData.income_tax) }}</span>
+            </div>
+            <div class="salary-item" *ngIf="paySlipData.other_deductions">
+              <span class="salary-label">Other Deductions:</span>
+              <span class="salary-amount deduction">{{ formatCurrency(paySlipData.other_deductions) }}</span>
+            </div>
+            <div class="salary-total">
+              <span class="total-label">Total Deductions:</span>
+              <span class="total-amount deduction">{{ formatCurrency(paySlipData.total_deductions) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Net Salary -->
+        <div class="net-salary">
+          <span class="net-label">Net Salary Payable:</span>
+          <span class="net-amount">{{ formatCurrency(paySlipData.net_salary) }}</span>
+        </div>
+
+        <div class="payslip-footer">
+          <div class="status-info">Status: <strong>{{ paySlipData.status }}</strong></div>
+          <div class="payment-info" *ngIf="paySlipData.payment_date">
+            Payment Date: {{ formatDate(paySlipData.payment_date) }}
+          </div>
+        </div>
+      </div>
+
+      <!-- No Payslip Message -->
+      <div *ngIf="!paySlipData && !isPayslipLoading" class="message">
+        <p>No payslip data available for {{ selectedMonth }} {{ selectedYear }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Employee Data Message -->
+  <div *ngIf="!isLoading && !errorMessage && !employeeData" class="message">
+    <p>No employee data available</p>
+  </div>
+</div>
+
+<!-- LOGOUT CONFIRMATION MODAL -->
+<div class="modal-overlay" *ngIf="showLogoutConfirm" (click)="cancelLogout()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <h3 class="modal-title">Logout</h3>
+      <p class="modal-text">Do you want to logout from pranali?</p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" (click)="cancelLogout()">Cancel</button>
+        <button class="modal-btn confirm" (click)="confirmLogout()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>

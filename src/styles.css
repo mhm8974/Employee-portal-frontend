@@ -1,0 +1,9 @@
+/* You can add global styles to this file, and also import other style files */
+/* GLOBAL RESET */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-family: "Times New Roman", serif;
+}
+

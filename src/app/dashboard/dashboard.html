@@ -1,0 +1,44 @@
+<!-- OTP GENERATED BANNER -->
+<div class="otp-top-banner" *ngIf="generatedOtp">
+  OTP Generated: <strong>{{ generatedOtp }}</strong>
+</div>
+
+<div class="otp-page">
+  <div class="otp-card">
+
+    <div class="otp-header">
+      <h2>Enter Verification Code</h2>
+      <p class="subtext">
+        We've sent a 6-digit code to your registered mobile number. Please enter it below to continue.
+      </p>
+    </div>
+
+    <!-- OTP INPUTS -->
+    <div class="otp-inputs">
+      <input *ngFor="let box of otpBoxes; let i = index; trackBy: trackByIndex" maxlength="1" [id]="'otp-' + i"
+        [disabled]="isDisabled(i)" (keydown)="handleInput($event, i)" [attr.autofocus]="i === 0 ? '' : null"
+        [class.filled]="box !== ''" type="text" inputmode="numeric" />
+    </div>
+
+    <!-- TIMER / RESEND -->
+    <div class="timer">
+      <span *ngIf="remainingTime > 0">
+        Expires in <strong>{{ remainingTime }}s</strong>
+      </span>
+
+      <span *ngIf="remainingTime === 0" class="resend" (click)="resendOtp()">
+        Didn't receive code? Resend
+      </span>
+    </div>
+
+    <!-- ERROR -->
+    <p class="error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <button class="verify-btn" [@shake]="shakeTrigger" (click)="verifyOtp()">
+      Verify
+    </button>
+
+  </div>
+</div>

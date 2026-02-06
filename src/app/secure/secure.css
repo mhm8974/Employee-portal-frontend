@@ -5,19 +5,346 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #111;
-  background-color: #ffffff;
-  /* Clean white background */
+  color: #1e293b;
+  background-color: #fcfcfc;
+  /* Professional Workspace Grey */
+  overflow-x: hidden;
 }
 
-/* TOP BAR - Restored Blue */
+/* SIDEBAR & BACKDROP */
+.sidebar-backdrop {
+  position: fixed;
+  top: 60px;
+  /* Below Top Bar */
+  left: 0;
+  width: 100%;
+  height: calc(100% - 60px);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+}
+
+.sidebar {
+  position: fixed;
+  top: 60px;
+  /* Below Top Bar */
+  left: -320px;
+  width: 280px;
+  height: calc(100% - 60px);
+  background: #f1f5f9;
+  /* Slightly deeper grey for better contrast */
+  z-index: 1001;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0 20px;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  border-right: 1px solid #f1f5f9;
+}
+
+.sidebar.open {
+  transform: translateX(320px);
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* PUSH LAYOUT TRANSITIONS */
+.controls-row,
+.container {
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.open~.controls-row,
+.sidebar.open~.container {
+  margin-left: 280px;
+  /* Shifts content to the right */
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  padding: 10px 24px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  cursor: default;
+  user-select: none;
+}
+
+.close-mobile-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #94a3b8;
+  cursor: pointer;
+  display: none;
+  /* Only show on mobile if needed */
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+  flex-grow: 1;
+  padding: 10px 12px;
+  overflow-y: auto;
+  /* Handle long link lists */
+  scrollbar-width: thin;
+  /* Clean look for Firefox */
+}
+
+/* Custom scrollbar for Webkit */
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.sidebar-nav:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.05);
+  /* Hidden until hover */
+}
+
+.nav-section-label,
+.card-title,
+.card-subtitle,
+.detail-label,
+.dropdown-group label,
+.payslip-title,
+.salary-column h4,
+.salary-label,
+.total-label,
+.net-label,
+.status-info,
+.payment-info,
+.modal-title,
+.modal-btn {
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.nav-section {
+  margin-bottom: 32px;
+}
+
+.nav-section-label {
+  padding: 0 32px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: default;
+  user-select: none;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 32px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.1s ease;
+  /* Snappier transition like Windows */
+  margin: 0;
+  border-left: 2px solid transparent;
+  /* Architectural Indicator */
+  cursor: default;
+  /* Arrow cursor for system feel */
+  user-select: none;
+  /* Prevents the text-selection 'I' cursor */
+}
+
+.nav-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+  /* Windows-style subtle grey hover */
+  color: #1e293b;
+  padding-left: 36px;
+  /* Subtle 4px horizontal slide */
+}
+
+.nav-item.active {
+  background: rgba(0, 0, 0, 0.06);
+  color: #0f172a;
+  font-weight: 600;
+  border-left-color: #0f172a;
+  /* Sharp Typographic Highlight */
+}
+
+/* No icons or highlights needed */
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 32px 32px 64px;
+  /* Significant bottom padding for Amit Sharma visibility */
+  margin-top: auto;
+  border-top: 2px solid #e2e8f0;
+  /* Thicker and more visible separator */
+  background: transparent;
+  /* Seamless with sidebar background */
+}
+
+.minimal-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: #0f172a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.user-id {
+  font-size: 11px;
+  color: #94a3b8;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+}
+
+.app-version {
+  position: absolute;
+  bottom: 12px;
+  right: 20px;
+  font-size: 10px;
+  color: #cbd5e1;
+  font-family: monospace;
+}
+
+.minimal-logout-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ef4444;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.minimal-logout-btn:hover {
+  opacity: 1;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #475569;
+}
+
+.user-details {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.user-email {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.logout-text-btn {
+  background: #f1f5f9;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+}
+
+.logout-text-btn:hover {
+  background: #fee2e2;
+}
+
+.nav-item.logout-link {
+  color: #ef4444;
+  /* Clean Red */
+  border-left: none;
+}
+
+.nav-item.logout-link:hover {
+  background: #fef2f2;
+}
+
+/* TOP BAR - Restored Blue & Fixed */
 .top-bar {
   height: 60px;
   width: 100%;
   background: linear-gradient(135deg, #1f3a8a, #2d4da8);
   border-bottom: none;
-  box-shadow: 0 4px 12px rgba(31, 58, 138, 0.15);
+  z-index: 1002;
+  position: fixed;
+  /* Fixed to viewport */
+  top: 0;
+  left: 0;
 }
 
 /* CONTROLS ROW - Minimalist */
@@ -29,7 +356,8 @@ body {
   background: white;
   gap: 40px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 60px auto 0;
+  /* Margin for fixed header */
 }
 
 .left {
@@ -40,30 +368,46 @@ body {
   justify-self: end;
 }
 
-/* PAYSLIP BUTTON - Minimal */
-.payslip-btn {
-  background: #000;
-  color: white;
-  border: 1px solid #000;
-  padding: 10px 24px;
-  border-radius: 6px;
+/* MENU BUTTON (Hamburger) */
+.menu-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  /* Remove focus shade/ring */
   cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  z-index: 100;
+  transition: opacity 0.2s ease;
+}
+
+.menu-btn span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: #000;
+  border-radius: 2px;
   transition: all 0.2s ease;
 }
 
-.payslip-btn:hover:not([disabled]) {
-  background: #333;
-  color: #fff;
-  border-color: #333;
+.menu-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
 }
 
-.payslip-btn[disabled] {
-  opacity: 0.3;
-  cursor: not-allowed;
-  border-color: #ddd;
-  background: #ddd;
+.menu-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  /* Subtle grey hover */
 }
 
 /* LOGOUT BUTTON */
@@ -134,10 +478,12 @@ body {
 
 /* CARD REMOVAL - Crucial Step */
 .card {
-  background: transparent;
-  box-shadow: none;
-  border: none;
-  padding: 40px 0;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 24px;
 }
 
 /* HEADERS - Clean Typography */

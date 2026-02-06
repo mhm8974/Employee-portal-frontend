@@ -53,10 +53,12 @@ export class SecureComponent implements OnInit {
   isPayslipLoading = false;
   errorMessage = '';
   showLogoutConfirm = false;
+  isSidebarOpen = false;
+  activeMenuItem = 'Employee Profile'; // Default active item
 
   /* MOCK DATA CONFIG */
-  useMockData = false; // Set to true to bypass backend
-  private apiUrl = 'http://10.162.199.116:8000';
+  useMockData = true; // Set to true to bypass backend
+  private apiUrl = 'http://192.168.0.122:8000';
 
 
   constructor(
@@ -270,6 +272,32 @@ export class SecureComponent implements OnInit {
       });
   }
 
+  downloadPaySlip(): void {
+    const employeeId = localStorage.getItem('employeeId') || '20240101000001';
+    console.log(`[Backend Integration Hook] Downloading payslip for:`, {
+      employeeId,
+      year: this.selectedYear,
+      month: this.selectedMonth
+    });
+
+    // BACKEND DEV: Replace with your final API call
+    // Example: this.http.get(`${this.apiUrl}/api/payslips/download`, { params, responseType: 'blob' })...
+  }
+
+  getInitials(): string {
+    if (!this.employeeFullName) return '??';
+    const names = this.employeeFullName.split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    }
+    return names[0][0].toUpperCase();
+  }
+
+  setActiveMenuItem(item: string): void {
+    this.activeMenuItem = item;
+    // We keep toggleSidebar() separate to allow for mobile closing
+  }
+
   logout(): void {
     this.showLogoutConfirm = true;
   }
@@ -282,6 +310,10 @@ export class SecureComponent implements OnInit {
 
   cancelLogout(): void {
     this.showLogoutConfirm = false;
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 
   formatCurrency(amount: number): string {

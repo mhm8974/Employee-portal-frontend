@@ -1,14 +1,91 @@
-<!-- secure.html - With Blue Bar -->
+<!-- SIDEBAR -->
+<div class="sidebar" [class.open]="isSidebarOpen">
+  <div class="sidebar-header">
+    <div class="brand">
+      <span class="brand-text">Pranali</span>
+    </div>
+    <button class="close-mobile-btn" (click)="toggleSidebar()">&times;</button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Main Menu</div>
+      <a (click)="setActiveMenuItem('Employee Profile')" class="nav-item"
+        [class.active]="activeMenuItem === 'Employee Profile'">
+        <span class="nav-label">Employee Profile</span>
+      </a>
+      <a (click)="setActiveMenuItem('Attendance & Timelogs')" class="nav-item"
+        [class.active]="activeMenuItem === 'Attendance & Timelogs'">
+        <span class="nav-label">Attendance & Timelogs</span>
+      </a>
+      <a (click)="setActiveMenuItem('Leaves & Time Off')" class="nav-item"
+        [class.active]="activeMenuItem === 'Leaves & Time Off'">
+        <span class="nav-label">Leaves & Time Off</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Resources</div>
+      <a (click)="setActiveMenuItem('Organization Chart')" class="nav-item"
+        [class.active]="activeMenuItem === 'Organization Chart'">
+        <span class="nav-label">Organization Chart</span>
+      </a>
+      <a (click)="setActiveMenuItem('Company Policy')" class="nav-item"
+        [class.active]="activeMenuItem === 'Company Policy'">
+        <span class="nav-label">Company Policy</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Personal</div>
+      <a (click)="setActiveMenuItem('Tax Declarations')" class="nav-item"
+        [class.active]="activeMenuItem === 'Tax Declarations'">
+        <span class="nav-label">Tax Declarations</span>
+      </a>
+      <a (click)="setActiveMenuItem('Assets & Devices')" class="nav-item"
+        [class.active]="activeMenuItem === 'Assets & Devices'">
+        <span class="nav-label">Assets & Devices</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">System</div>
+      <a (click)="setActiveMenuItem('Settings')" class="nav-item" [class.active]="activeMenuItem === 'Settings'">
+        <span class="nav-label">Settings</span>
+      </a>
+      <a (click)="setActiveMenuItem('Help Center')" class="nav-item" [class.active]="activeMenuItem === 'Help Center'">
+        <span class="nav-label">Help Center</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Profile Footer (Minimal) -->
+  <div class="sidebar-footer" *ngIf="employeeData">
+    <div class="minimal-profile">
+      <div class="profile-meta">
+        <div class="user-avatar">{{ getInitials() }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ employeeFullName }}</div>
+          <div class="user-id">{{ employeeId }}</div>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+    <div class="app-version">v1.2.0</div>
+  </div>
+</div>
 
 <!-- BLUE BAR (EMPTY) -->
 <div class="top-bar"></div>
 
 <!-- CONTROLS BELOW BAR -->
 <div class="controls-row">
-  <!-- LEFT - Download Payslip -->
+  <!-- LEFT - Menu Button -->
   <div class="left">
-    <button class="payslip-btn" (click)="downloadPayslip()" [disabled]="isPayslipLoading || !paySlipData">
-      {{ isPayslipLoading ? 'Downloading...' : 'Download Pay Slip' }}
+    <button class="menu-btn" (click)="toggleSidebar()" aria-label="Open Menu">
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
   </div>
 
@@ -30,8 +107,8 @@
 
   <!-- RIGHT - Logout -->
   <div class="right">
-    <button class="logout-btn" (click)="logout()">
-      Logout
+    <button class="logout-btn" (click)="downloadPaySlip()">
+      Download Pay Slip
     </button>
   </div>
 </div>

@@ -1,0 +1,183 @@
+<!-- CONTROLS BELOW BAR -->
+<div class="controls-row">
+    <!-- LEFT - Spacer -->
+    <div class="left"></div>
+
+    <!-- CENTER - Grouped Selectors -->
+    <div class="center">
+        <div class="dropdown-group">
+            <label for="yearSelect">Year</label>
+            <select id="yearSelect" [(ngModel)]="selectedYear" (ngModelChange)="onSelectionChange()"
+                class="gov-dropdown">
+                <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+            </select>
+        </div>
+        <div class="dropdown-group">
+            <label for="monthSelect">Month</label>
+            <select id="monthSelect" [(ngModel)]="selectedMonth" (ngModelChange)="onSelectionChange()"
+                class="gov-dropdown">
+                <option *ngFor="let m of months">{{ m }}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- RIGHT - Download -->
+    <div class="right">
+        <button class="download-btn" (click)="openPrintDialog()">
+            Download Pay Slip
+        </button>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="profile-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="message">
+        <div class="spinner"></div>
+        <p>Loading employee data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="message error">
+        <p>{{ errorMessage }}</p>
+        <button class="retry-btn" (click)="loadEmployeeData()">Retry</button>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="employeeData && !isLoading && !errorMessage">
+        <div class="card">
+
+            <!-- PAYSLIP SECTION (SIKKIM GOVT STYLE) -->
+            <div *ngIf="paySlipData && !isPayslipLoading" class="payslip-document" id="payslip">
+
+                <!-- DOCUMENT HEADER -->
+                <div class="doc-header">
+                    <div class="gov-title">
+                        <img src="assets/images/sikkim_logo.png" alt="Sikkim Logo" class="gov-logo">
+                        <h3>GOVERNMENT OF SIKKIM</h3>
+                        <h4>PAY SLIP FOR THE MONTH OF {{ selectedMonth }} {{ selectedYear }}</h4>
+                    </div>
+                </div>
+
+                <!-- EMPLOYEE INFO GRID -->
+                <div class="info-grid">
+                    <div class="info-col">
+                        <div class="info-line"><strong>Name:</strong> {{ employeeFullName }}</div>
+                        <div class="info-line"><strong>Section:</strong> {{ employeeData.section || 'N/A' }}</div>
+                        <div class="info-line"><strong>Date Of Birth:</strong> {{ formatDate(employeeData.date_of_birth)
+                            }}</div>
+                    </div>
+                    <div class="info-col">
+                        <div class="info-line"><strong>Designation:</strong> {{ employeeData.designation || position }}
+                        </div>
+                        <div class="info-line"><strong>Appointment Order Date:</strong> {{
+                            formatDate(employeeData.appointment_date) }}</div>
+                        <div class="info-line"><strong>Date Of Retirement:</strong> {{
+                            formatDate(employeeData.retirement_date) }}</div>
+                        <div class="info-line"><strong>CPF No:</strong> {{ employeeData.cpf_no || 'N/A' }}</div>
+                    </div>
+                </div>
+
+                <!-- TABLES CONTAINER -->
+                <div class="tables-container">
+                    <!-- EARNINGS TABLE -->
+                    <table class="payslip-table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">EARNINGS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Basic Pay</td>
+                                <td>{{ formatCurrency(paySlipData.basic_salary) }}</td>
+                            </tr>
+                            <tr *ngIf="paySlipData.da">
+                                <td>DA</td>
+                                <td>{{ formatCurrency(paySlipData.da) }}</td>
+                            </tr>
+                            <tr *ngIf="paySlipData.hraws">
+                                <td>HRAWS</td>
+                                <td>{{ formatCurrency(paySlipData.hraws) }}</td>
+                            </tr>
+                            <tr *ngIf="paySlipData.npa !== undefined">
+                                <td>NPA</td>
+                                <td>{{ formatCurrency(paySlipData.npa) }}</td>
+                            </tr>
+                            <tr *ngIf="paySlipData.sbca">
+                                <td>SBCA</td>
+                                <td>{{ formatCurrency(paySlipData.sbca) }}</td>
+                            </tr>
+                            <tr *ngIf="paySlipData.ta">
+                                <td>TA</td>
+                                <td>{{ formatCurrency(paySlipData.ta) }}</td>
+                            </tr>
+                            <!-- Empty rows to match height if needed -->
+                        </tbody>
+                    </table>
+
+                    <!-- DEDUCTIONS TABLE -->
+                    <table class="payslip-table">
+                        <thead>
+                            <tr>
+                                <th colspan="2">DEDUCTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="paySlipData.cpf_state">
+                                <td>CPF State</td>
+                                <td>{{ formatCurrency(paySlipData.cpf_state) }}</td>
+                            </tr>
+                            <tr *ngIf="paySlipData.gis_state">
+                                <td>GIS State</td>
+                                <td>{{ formatCurrency(paySlipData.gis_state) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Professional Tax</td>
+                                <td>{{ formatCurrency(paySlipData.professional_tax) }}</td>
+                            </tr>
+                            <tr *ngIf="paySlipData.stamp_duty">
+                                <td>Stamp Duty</td>
+                                <td>{{ formatCurrency(paySlipData.stamp_duty) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TOTALS SECTION -->
+                <div class="totals-section">
+                    <div class="total-row">
+                        <span class="total-label">Gross Pay</span>
+                        <span class="total-value">{{ formatCurrency(paySlipData.gross_salary) }}</span>
+                    </div>
+                    <div class="total-row border-top">
+                        <span class="total-label">Total Deduction</span>
+                        <span class="total-value">{{ formatCurrency(paySlipData.total_deductions) }}</span>
+                    </div>
+                    <div class="total-row border-top highlighted">
+                        <span class="total-label">Net Pay</span>
+                        <span class="total-value">{{ formatCurrency(paySlipData.net_salary) }}</span>
+                    </div>
+                </div>
+
+                <!-- SIGNATURE FOOTER -->
+                <div class="doc-footer">
+                    <div class="signature-area">
+                        <p>Seal and Signature of D&DO</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- No Payslip Message -->
+            <div *ngIf="!paySlipData && !isPayslipLoading" class="message">
+                <p>No payslip data available for {{ selectedMonth }} {{ selectedYear }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Employee Data Message -->
+    <div *ngIf="!isLoading && !errorMessage && !employeeData" class="message">
+        <p>No employee data available</p>
+    </div>
+</div>

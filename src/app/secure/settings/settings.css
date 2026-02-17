@@ -1,0 +1,280 @@
+/* settings.css — Minimalist Settings Page */
+
+.settings-container {
+    padding: 20px 48px 60px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.settings-header {
+    margin-bottom: 40px;
+}
+
+.settings-title {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    color: #000;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.settings-subtitle {
+    font-size: 14px;
+    color: #888;
+    margin: 0;
+}
+
+/* Sections */
+.settings-section {
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 24px 30px;
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Setting Items */
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f8fafc;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.setting-description {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+/* Toggle Switch */
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e2e8f0;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider::before {
+    position: absolute;
+    content: '';
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.toggle input:checked+.toggle-slider {
+    background-color: #0f172a;
+}
+
+.toggle input:checked+.toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* Action Button */
+.setting-action-btn {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.setting-action-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Password Form */
+.password-form {
+    padding: 20px 0 8px;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 8px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #eaeaea;
+    border-radius: 0;
+    font-size: 15px;
+    color: #111;
+    transition: border 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-bottom-color: #000;
+}
+
+.form-group input::placeholder {
+    color: #cbd5e1;
+}
+
+.save-btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.save-btn:hover {
+    background: #333;
+}
+
+/* Password Messages */
+.password-message {
+    padding: 8px 0;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.password-message.error {
+    color: #ef4444;
+}
+
+.password-message.success {
+    color: #059669;
+}
+
+/* Scoped variables for this component */
+.settings-container {
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-main: #212529;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --input-bg: #ffffff;
+
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    padding: 2rem;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+    /* Smooth color fading */
+}
+
+/* Dark Theme Overrides */
+.settings-container.dark-theme {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-main: #f8f9fa;
+    --text-muted: #a0a0a0;
+    --border-color: #333333;
+    --input-bg: #2d2d2d;
+}
+
+/* Apply variables to existing classes */
+.settings-section {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.setting-label {
+    color: var(--text-main);
+}
+
+.setting-description {
+    color: var(--text-muted);
+}
+
+.password-form {
+    background-color: var(--bg-color);
+    /* Slightly different from card-bg */
+    border: 1px solid var(--border-color);
+}
+
+input {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}

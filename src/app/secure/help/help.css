@@ -1,0 +1,257 @@
+.help-container {
+    background-color: #fcfcfc;
+    min-height: 100vh;
+    cursor: default;
+}
+
+/* HERO SECTION */
+.help-hero {
+    background-color: #05246d;
+    max-width: 900px;
+    margin: 30px auto;
+    border-radius: 10px;
+    padding: 60px 48px;
+    color: white;
+    text-align: center;
+}
+
+.help-hero h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.help-hero p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 40px;
+}
+
+.search-wrapper {
+    position: relative;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    opacity: 0.5;
+}
+
+.help-search {
+    width: 100%;
+    padding: 14px 20px 14px 45px;
+    border: none;
+    font-size: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    outline: none;
+    color: #333;
+}
+
+/* CONTENT AREA */
+.help-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 24px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 32px;
+    text-align: left;
+}
+
+/* CATEGORIES GRID */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 80px;
+}
+
+.category-card {
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border-color: #1e3a8a;
+}
+
+.cat-icon {
+    font-size: 32px;
+    margin-bottom: 20px;
+    background: #f8fafc;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.cat-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.cat-desc {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    flex-grow: 1;
+}
+
+.cat-link {
+    color: #1e3a8a;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+/* FAQ SECTION */
+.faq-list {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+    margin-bottom: 80px;
+}
+
+.faq-item {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-header {
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: white;
+    transition: background 0.2s;
+}
+
+.faq-header:hover {
+    background: #f8fafc;
+}
+
+.faq-question {
+    font-size: 16px;
+    font-weight: 500;
+    color: #334155;
+}
+
+.faq-toggle {
+    font-size: 20px;
+    color: #94a3b8;
+}
+
+.faq-answer {
+    padding: 0 32px 24px 32px;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    animation: fadeIn 0.3s ease;
+}
+
+/* CONTACT SECTION */
+.contact-card {
+    background: #f8fafc;
+    padding: 40px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+}
+
+.contact-info h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.contact-info p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.contact-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.contact-btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.contact-btn.primary {
+    background: #0f172a;
+    color: white;
+    border: none;
+}
+
+.contact-btn.primary:hover {
+    background: #1e293b;
+}
+
+.contact-btn.secondary {
+    background: white;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+}
+
+.contact-btn.secondary:hover {
+    background: #f1f5f9;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+    }
+}

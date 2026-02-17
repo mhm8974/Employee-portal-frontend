@@ -1,0 +1,58 @@
+<div class="help-container">
+    <!-- SEARCH HERO -->
+    <section class="help-hero">
+        <div class="hero-content">
+            <h1>How can we help you today?</h1>
+            <p>Search for help topics, FAQs, or browse by category.</p>
+            <div class="search-wrapper">
+                <input type="text" [(ngModel)]="searchQuery" placeholder="Search for articles, guides..."
+                    class="help-search">
+            </div>
+        </div>
+    </section>
+
+    <div class="help-content">
+        <!-- CATEGORIES GRID -->
+        <section class="categories-section">
+            <h2 class="section-title">Knowledge Base</h2>
+            <div class="categories-grid">
+                <div class="category-card" *ngFor="let cat of filteredCategories">
+                    <div class="cat-icon" *ngIf="cat.icon">{{ cat.icon }}</div>
+                    <h3 class="cat-title">{{ cat.title }}</h3>
+                    <p class="cat-desc">{{ cat.description }}</p>
+                    <a href="javascript:void(0)" class="cat-link">View Articles →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section class="faq-section">
+            <h2 class="section-title">Common Questions</h2>
+            <div class="faq-list">
+                <div class="faq-item" *ngFor="let faq of faqs" [class.active]="faq.isOpen">
+                    <div class="faq-header" (click)="toggleFaq(faq)">
+                        <span class="faq-question">{{ faq.question }}</span>
+                        <span class="faq-toggle">{{ faq.isOpen ? '−' : '+' }}</span>
+                    </div>
+                    <div class="faq-answer" *ngIf="faq.isOpen">
+                        <p>{{ faq.answer }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEED MORE HELP -->
+        <section class="contact-section">
+            <div class="contact-card">
+                <div class="contact-info">
+                    <h3>Still need help?</h3>
+                    <p>Talk to our support team for personalized assistance.</p>
+                </div>
+                <div class="contact-actions">
+                    <button class="contact-btn primary">Raise a Ticket</button>
+                    <button class="contact-btn secondary">Email Support</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

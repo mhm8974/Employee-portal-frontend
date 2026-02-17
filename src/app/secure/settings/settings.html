@@ -1,0 +1,136 @@
+<div class="settings-container">
+    <div class="settings-header">
+        <h2 class="settings-title">Settings</h2>
+        <p class="settings-subtitle">Manage your account preferences</p>
+    </div>
+
+    <!-- Account & Security -->
+    <div class="settings-section">
+        <h3 class="section-title">Account & Security</h3>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Change Password</div>
+                <div class="setting-description">Update your login credentials</div>
+            </div>
+            <button class="setting-action-btn" (click)="togglePasswordForm()">
+                {{ showPasswordForm ? 'Cancel' : 'Change' }}
+            </button>
+        </div>
+
+        <!-- Password Form -->
+        <div class="password-form" *ngIf="showPasswordForm">
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" [(ngModel)]="currentPassword" placeholder="Enter current password" />
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" [(ngModel)]="newPassword" placeholder="Enter new password" />
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm new password" />
+            </div>
+            <div class="password-message" *ngIf="passwordMessage" [class.error]="passwordError"
+                [class.success]="!passwordError">
+                {{ passwordMessage }}
+            </div>
+            <button class="save-btn" (click)="changePassword()">Update Password</button>
+        </div>
+    </div>
+
+    <!-- Notification Preferences -->
+    <div class="settings-section">
+        <h3 class="section-title">Notification Preferences</h3>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Payslip Alerts</div>
+                <div class="setting-description">Get notified when a new payslip is generated</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" [(ngModel)]="payslipAlerts" (ngModelChange)="saveNotificationPreferences()" />
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Leave Status</div>
+                <div class="setting-description">Notifications when leave is approved or rejected</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" [(ngModel)]="leaveStatusAlerts"
+                    (ngModelChange)="saveNotificationPreferences()" />
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">System Announcements</div>
+                <div class="setting-description">Company-wide news and updates</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" [(ngModel)]="systemAnnouncements"
+                    (ngModelChange)="saveNotificationPreferences()" />
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Display & Interface -->
+    <div class="settings-section">
+        <h3 class="section-title">Display & Interface</h3>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Dark Mode</div>
+                <div class="setting-description">Switch to a darker color theme</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" [(ngModel)]="darkMode" (ngModelChange)="saveDisplayPreferences()" />
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Compact View</div>
+                <div class="setting-description">Reduce spacing for denser data display</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" [(ngModel)]="compactView" (ngModelChange)="saveDisplayPreferences()" />
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Privacy Settings -->
+    <div class="settings-section">
+        <h3 class="section-title">Privacy</h3>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Show Phone in Directory</div>
+                <div class="setting-description">Allow colleagues to see your phone number</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" [(ngModel)]="showPhoneInDirectory" (ngModelChange)="savePrivacySettings()" />
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Show Email in Directory</div>
+                <div class="setting-description">Allow colleagues to see your email address</div>
+            </div>
+            <label class="toggle">
+                <input type="checkbox" [(ngModel)]="showEmailInDirectory" (ngModelChange)="savePrivacySettings()" />
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,3 @@
-
 <div class="auth-container">
 
   <!-- LEFT PANEL -->
@@ -21,32 +20,34 @@
 
       <!-- CPF / GPF / EMPLOYEE ID -->
       <label>CPF / GPF / Employee ID</label>
-      <input
-        type="text"
-        placeholder="Enter CPF / GPF / 14-digit ID"
-        [(ngModel)]="employeeId"
-      />
+      <input type="text" placeholder="Enter CPF / GPF / 14-digit ID" [(ngModel)]="employeeId" (blur)="validateId()" />
+      <p class="error-text" *ngIf="showIdError">Employee ID is required</p>
 
-      <!-- CAPTCHA IMAGE PLACEHOLDER -->
-      <div class="captcha-box">
-        <span class="text-captcha">{{ captcha }}</span>
-        <button type="button" (click)="generateCaptcha()">↻</button>
+      <!-- PASSWORD -->
+      <label>Password</label>
+      <input type="password" placeholder="Enter your password" [(ngModel)]="password" (input)="passwordError = false" />
+      <p class="error-text" *ngIf="passwordError">Incorrect password</p>
+
+      <!-- CAPTCHA IMAGE FROM BACKEND -->
+      <div class="captcha-row">
+        <div class="captcha-img-container">
+          <img *ngIf="captchaImage" [src]="captchaImage" alt="CAPTCHA" class="backend-captcha">
+          <div *ngIf="!captchaImage" class="captcha-loader">Loading...</div>
+        </div>
+        <button type="button" class="refresh-btn" (click)="loadCaptcha()" title="Refresh Captcha">↻</button>
       </div>
 
       <!-- CAPTCHA INPUT -->
       <label>Captcha</label>
-      <input
-        type="text"
-        placeholder="Enter captcha"
-        [(ngModel)]="captchaInput"
-      />
+      <input type="text" placeholder="Enter captcha" [(ngModel)]="captchaInput" (input)="captchaError = false" />
+      <p class="error-text" *ngIf="captchaError">Invalid CAPTCHA</p>
 
-    <button
-      class="submit-btn"
-      [@shake]="shakeTrigger"
-      (click)="login()">
-      Verify
-    </button>
+      <p class="global-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button class="submit-btn" [class.loading]="isLoading" [disabled]="isLoading" [@shake]="shakeTrigger"
+        (click)="login()">
+        {{ isLoading ? 'Verifying...' : 'Verify' }}
+      </button>
 
     </div>
   </div>

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, timeout, retry } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 export interface LoginRequest {
   employee_id: string;
   password: string;
-  captcha: string;
+  captcha_id: string;
+  captcha_text: string;
 }
 
 export interface LoginResponse {
@@ -79,22 +80,38 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.0.122:8000/api';
+  private apiUrl = 'http://192.168.0.137:8000/api';
+  public useMockData = false; // Set to false when backend is available
 
   constructor(private http: HttpClient) { }
 
+  getCaptcha(): Observable<{ captcha_id: string, image: string }> {
+    console.log('[AuthService] Fetching CAPTCHA from:', `${this.apiUrl}/captcha`);
+    return this.http.get<{ captcha_id: string, image: string }>(`${this.apiUrl}/captcha`).pipe(
+      timeout(10000), // Wait for 10s
+      retry(2),       // Retry 2 times if it fails
+      catchError(error => {
+        console.error('[AuthService] CAPTCHA fetch failed:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   login(loginData: LoginRequest): Observable<LoginResponse> {
-    debugger;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
+
+    console.log('[AuthService] Sending login request to:', `${this.apiUrl}/auth/login`, loginData);
 
     return this.http.post<LoginResponse>(
       `${this.apiUrl}/auth/login`,
       loginData,
       { headers }
     ).pipe(
+      timeout(15000), // Wait for max 15 seconds
       tap(response => {
+        console.log('[AuthService] Login response received:', response);
         if (response.token) {
           this.setToken(response.token);
         }
@@ -105,7 +122,10 @@ export class AuthService {
           this.storeUserData(response.employee_data);
         }
       }),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('[AuthService] Login request failed:', error);
+        return this.handleError(error);
+      })
     );
   }
 

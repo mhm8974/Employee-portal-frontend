@@ -16,11 +16,11 @@ export interface EmployeeData extends UserProfile {
 }
 
 export interface PaySlipData {
-    id: number;
+    id?: number;
     employee_id: string;
     year: number;
     month: string;
-    pay_period: string;
+    pay_period?: string;
     // Earnings
     basic_salary: number;
     da?: number;
@@ -38,7 +38,7 @@ export interface PaySlipData {
     total_deductions: number;
     net_salary: number;
     payment_date?: string;
-    status: string;
+    status?: string;
 }
 
 @Component({

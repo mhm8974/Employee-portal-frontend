@@ -2,8 +2,10 @@
 <div class="sidebar" [class.open]="isSidebarOpen">
   <div class="sidebar-header">
     <div class="brand">
-      <span class="brand-text">Pranali</span>
+      <img src="assets/images/pranali_logo_2.png" alt="Pranali Logo" class="sidebar-logo">
     </div>
+
+
     <button class="close-mobile-btn" (click)="toggleSidebar()">&times;</button>
   </div>
 
@@ -14,7 +16,7 @@
         <span class="nav-label">Employee Profile</span>
       </a>
       <a routerLink="attendance" routerLinkActive="active" class="nav-item">
-        <span class="nav-label">Attendance & Timelogs</span>
+        <span class="nav-label">Attendance Register</span>
       </a>
       <a routerLink="leaves" routerLinkActive="active" class="nav-item">
         <span class="nav-label">Leaves & Time Off</span>

@@ -171,7 +171,10 @@ export class Profile implements OnInit {
 
         if (isSuccess) {
           const idToStore = respData.employee_id || response.employee_id || this.employeeId;
-          localStorage.setItem('employeeId', idToStore);
+          localStorage.setItem('employee_id', String(idToStore));
+
+          // Debug fallback for storage
+          localStorage.setItem('employeeId', String(idToStore));
 
           const target = (response.requires_otp === false || respData.requires_otp === false) ? '/secure' : '/dashboard';
           console.log(`[Profile] Success detected. Navigating to ${target}...`);

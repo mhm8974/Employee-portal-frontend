@@ -18,16 +18,17 @@ body {
   left: -320px;
   width: 280px;
   height: calc(100% - 60px);
-  background: #f1f5f9;
+  background: #f8fafc;
+  /* Lighter grey base */
   z-index: 1001;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  padding: 40px 0 20px;
+  padding: 10px 0 20px;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  border-right: 1px solid #f1f5f9;
+  border-right: 1px solid #e2e8f0;
 }
 
 .sidebar.open {
@@ -50,25 +51,33 @@ body {
 
 /* Sidebar Header */
 .sidebar-header {
-  padding: 10px 24px 20px;
+  padding: 5px 24px 15px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  background: #f1f5f9;
+  /* Slightly darker grey for header */
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  width: 100%;
 }
 
-.brand-text {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1e293b;
-  cursor: default;
-  user-select: none;
+
+
+.sidebar-logo {
+  width: 240px;
+  /* Increased from 200px */
+  height: auto;
+  display: block;
 }
+
+
+
 
 .close-mobile-btn {
   background: none;
@@ -154,8 +163,9 @@ body {
 .sidebar-footer {
   padding: 32px 32px 64px;
   margin-top: auto;
-  border-top: 2px solid #e2e8f0;
-  background: transparent;
+  border-top: 1px solid #e2e8f0;
+  background: #f1f5f9;
+  /* Matches header for consistency */
 }
 
 .minimal-profile {

@@ -4,54 +4,6 @@
     cursor: default;
 }
 
-/* HERO SECTION */
-.help-hero {
-    background-color: #05246d;
-    max-width: 900px;
-    margin: 30px auto;
-    border-radius: 10px;
-    padding: 60px 48px;
-    color: white;
-    text-align: center;
-}
-
-.help-hero h1 {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    letter-spacing: -0.5px;
-}
-
-.help-hero p {
-    font-size: 18px;
-    opacity: 0.9;
-    margin-bottom: 40px;
-}
-
-.search-wrapper {
-    position: relative;
-    max-width: 450px;
-    margin: 0 auto;
-}
-
-.search-icon {
-    position: absolute;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px;
-    opacity: 0.5;
-}
-
-.help-search {
-    width: 100%;
-    padding: 14px 20px 14px 45px;
-    border: none;
-    font-size: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    outline: none;
-    color: #333;
-}
 
 /* CONTENT AREA */
 .help-content {

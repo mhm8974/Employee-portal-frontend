@@ -54,13 +54,13 @@ export interface VerifyOTPResponse {
 }
 
 export interface UserProfile {
-  id: number;
+  id?: number;
   employee_id: string;
   first_name: string;
   last_name: string;
   full_name?: string;
-  department: string;
-  position: string;
+  department?: string;
+  position?: string;
   email?: string;
   mobile?: string;
   date_of_birth?: string;
@@ -81,7 +81,7 @@ export interface UserProfile {
 })
 export class AuthService {
   private apiUrl = 'http://192.168.0.137:8000/api';
-  public useMockData = false; // Set to false when backend is available
+  public useMockData = true; // Set to false when backend is available
 
   constructor(private http: HttpClient) { }
 
@@ -112,14 +112,24 @@ export class AuthService {
       timeout(15000), // Wait for max 15 seconds
       tap(response => {
         console.log('[AuthService] Login response received:', response);
-        if (response.token) {
-          this.setToken(response.token);
+
+        // Robust extraction of token and employee_id from potential nested data
+        const respData = (response as any).data || response;
+        const token = response.token || respData.token;
+        const employeeId = response.employee_id || respData.employee_id || (respData.user ? respData.user.employee_id : null);
+
+        if (token) {
+          console.log('[AuthService] Saving token...');
+          this.setToken(token);
         }
-        if (response.employee_id) {
-          localStorage.setItem('employee_id', response.employee_id);
+
+        if (employeeId) {
+          console.log('[AuthService] Saving employee_id:', employeeId);
+          localStorage.setItem('employee_id', String(employeeId));
         }
-        if (response.employee_data) {
-          this.storeUserData(response.employee_data);
+
+        if (response.employee_data || respData.employee_data) {
+          this.storeUserData(response.employee_data || respData.employee_data);
         }
       }),
       catchError(error => {
@@ -130,9 +140,40 @@ export class AuthService {
   }
 
   verifyOtp(otpData: VerifyOTPRequest): Observable<VerifyOTPResponse> {
+    if (this.useMockData) {
+      console.log('[AuthService] Mock Mode: Verifying OTP...', otpData);
+      return new Observable(observer => {
+        setTimeout(() => {
+          observer.next({
+            success: true,
+            message: 'OTP Verified successfully',
+            token: 'mock-token-12345',
+            employee_data: {
+              id: 1,
+              employee_id: otpData.employee_id,
+              first_name: 'Mock',
+              last_name: 'User',
+              department: 'IT',
+              position: 'Developer',
+              email: 'mock@example.com',
+              mobile: '9876543210',
+              date_of_birth: '1990-01-01'
+            }
+          });
+          observer.complete();
+        }, 800);
+      });
+    }
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.getToken()}`
+    });
+
+    console.log('[AuthService] Sending OTP Verification:', {
+      url: `${this.apiUrl}/auth/verify-otp`,
+      payload: otpData,
+      hasToken: !!this.getToken()
     });
 
     return this.http.post<VerifyOTPResponse>(
@@ -141,6 +182,7 @@ export class AuthService {
       { headers }
     ).pipe(
       tap(response => {
+        console.log('[AuthService] OTP Verification Response:', response);
         if (response.token) {
           this.setToken(response.token);
         }
@@ -148,7 +190,10 @@ export class AuthService {
           this.storeUserData(response.employee_data);
         }
       }),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('[AuthService] OTP Verification Failed:', error);
+        return this.handleError(error);
+      })
     );
   }
 

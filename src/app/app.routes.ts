@@ -5,7 +5,14 @@ import { SecureComponent } from './secure/secure';
 import { ProfileViewComponent } from './secure/profile-view/profile-view';
 import { SettingsComponent } from './secure/settings/settings';
 import { PlaceholderComponent } from './secure/placeholder/placeholder';
+import { AttendanceComponent } from './secure/attendance/attendance';
+import { LeavesComponent } from './secure/leaves/leaves';
+import { TaxComponent } from './secure/tax/tax';
+import { AssetsComponent } from './secure/assets/assets';
 import { HelpComponent } from './secure/help/help';
+
+import { OrgChartComponent } from './secure/org-chart/org-chart';
+import { CompanyPolicyComponent } from './secure/company-policy/company-policy';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'profile', pathMatch: 'full' },
@@ -18,12 +25,12 @@ export const routes: Routes = [
             { path: '', redirectTo: 'profile', pathMatch: 'full' },
             { path: 'profile', component: ProfileViewComponent },
             { path: 'settings', component: SettingsComponent },
-            { path: 'attendance', component: PlaceholderComponent, data: { title: 'Attendance & Timelogs' } },
-            { path: 'leaves', component: PlaceholderComponent, data: { title: 'Leaves & Time Off' } },
-            { path: 'org-chart', component: PlaceholderComponent, data: { title: 'Organization Chart' } },
-            { path: 'company-policy', component: PlaceholderComponent, data: { title: 'Company Policy' } },
-            { path: 'tax', component: PlaceholderComponent, data: { title: 'Tax Declarations' } },
-            { path: 'assets', component: PlaceholderComponent, data: { title: 'Assets & Devices' } },
+            { path: 'attendance', component: AttendanceComponent },
+            { path: 'leaves', component: LeavesComponent },
+            { path: 'org-chart', component: OrgChartComponent },
+            { path: 'company-policy', component: CompanyPolicyComponent },
+            { path: 'tax', component: TaxComponent },
+            { path: 'assets', component: AssetsComponent },
             { path: 'help', component: HelpComponent }
         ]
     },

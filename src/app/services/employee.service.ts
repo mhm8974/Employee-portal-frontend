@@ -40,7 +40,7 @@ export interface PaySlipRequest {
   providedIn: 'root'
 })
 export class EmployeeService {
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = 'http://192.168.0.137:8000/api';
 
   constructor(private http: HttpClient) { }
 

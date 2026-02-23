@@ -10,6 +10,7 @@ import {
   keyframes,
   style
 } from '@angular/animations';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,21 +43,25 @@ import {
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
-  generatedOtp = '';
   otpBoxes: string[] = ['', '', '', '', '', ''];
 
   expiryTime!: number;
   remainingTime = 0;
+  isLoading = false;
 
   timerSub!: Subscription;
   errorMessage = '';
 
   shakeTrigger = false;
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) { }
+  constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    this.generateOtp();
+    // We NO LONGER generate OTP locally. The backend has already sent it.
     this.setExpiry();
     this.startLiveTimer();
   }
@@ -69,10 +74,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return index;
   }
 
-  generateOtp(): void {
-    this.generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log('OTP:', this.generatedOtp);
-  }
+  // DELETED: generateOtp() - Backend handles this now
 
   setExpiry(): void {
     this.expiryTime = Date.now() + 60 * 1000;
@@ -91,10 +93,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isDisabled(index: number): boolean {
     const firstEmptyIndex = this.otpBoxes.findIndex(val => val === '');
     if (firstEmptyIndex === -1) {
-      // If all filled, only the last one is active
       return index !== 5;
     }
-    // Only the first empty box is active
     return index !== firstEmptyIndex;
   }
 
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (prevInput) {
           prevInput.value = '';
           this.otpBoxes[index - 1] = '';
-          this.cdr.detectChanges(); // Force update to enable prev input
+          this.cdr.detectChanges();
           prevInput.focus();
         }
       }
@@ -127,7 +127,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // NEW: Prevent overwriting if already filled
     if (this.otpBoxes[index] !== '') {
       event.preventDefault();
       return;
@@ -136,24 +135,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     event.preventDefault();
     input.value = event.key;
     this.otpBoxes[index] = event.key;
-    this.cdr.detectChanges(); // Update state to enable next input
+    this.cdr.detectChanges();
 
     if (index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`) as HTMLInputElement;
       if (nextInput) {
-        // nextInput.disabled = false; // No longer needed, handled by binding
         nextInput.focus();
       }
     }
-  }
-
-  private findLastFilledIndex(): number {
-    for (let i = this.otpBoxes.length - 1; i >= 0; i--) {
-      if (this.otpBoxes[i] !== '') {
-        return i;
-      }
-    }
-    return -1;
   }
 
   triggerShake(): void {
@@ -163,43 +152,69 @@ export class DashboardComponent implements OnInit, OnDestroy {
   verifyOtp(): void {
     const enteredOtp = this.otpBoxes.join('');
 
+    if (enteredOtp.length < 6) {
+      this.errorMessage = 'Please enter complete code';
+      this.triggerShake();
+      return;
+    }
+
     if (this.remainingTime === 0) {
       this.errorMessage = 'OTP expired';
       this.triggerShake();
       return;
     }
 
-    if (enteredOtp !== this.generatedOtp) {
-      this.errorMessage = 'Invalid OTP';
-      this.triggerShake();
-      return;
-    }
+    this.isLoading = true;
+    this.errorMessage = '';
 
-    this.router.navigate(['/secure']);
+    const employeeId = this.authService.getEmployeeId() || '';
+
+    console.log('[Dashboard] Attempting OTP verification:', {
+      employeeId: employeeId,
+      otpEntered: enteredOtp,
+      length: enteredOtp.length
+    });
+
+    this.authService.verifyOtp({
+      employee_id: employeeId,
+      otp_code: enteredOtp
+    }).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('[Dashboard] Verification detail:', response);
+        if (response.success) {
+          console.log('[Dashboard] OTP Verified successfully');
+          this.router.navigate(['/secure']);
+        } else {
+          this.errorMessage = response.message || 'Verification failed';
+          this.triggerShake();
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = err.message || 'Invalid OTP';
+        this.triggerShake();
+        console.error('[Dashboard] OTP Verification Error:', err);
+      }
+    });
   }
 
   resendOtp(): void {
     if (this.remainingTime > 0) return;
 
-    this.generateOtp();
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    // TODO: Add resendOtp to AuthService if available on backend
+    // For now, we manually refresh the timer to allow retry
     this.setExpiry();
     this.startLiveTimer();
     this.otpBoxes = ['', '', '', '', '', ''];
-    this.errorMessage = '';
+    this.isLoading = false;
 
     setTimeout(() => {
-      for (let i = 0; i < 6; i++) {
-        const input = document.getElementById(`otp-${i}`) as HTMLInputElement;
-        if (input) {
-          input.disabled = i > 0;
-          input.value = '';
-        }
-      }
-
       const firstInput = document.getElementById('otp-0') as HTMLInputElement;
-      if (firstInput) {
-        firstInput.focus();
-      }
+      if (firstInput) firstInput.focus();
     }, 0);
   }
 }

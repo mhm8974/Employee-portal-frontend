@@ -266,15 +266,16 @@
 }
 
 /* INFO GRID */
-
-/* INFO GRID */
 .info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
-    /* Reduced from 20px */
     margin-bottom: 20px;
-    /* Also reduced bottom margin for overall density */
+}
+
+.info-grid .info-col:last-child {
+    grid-column: 3;
+    justify-self: end;
 }
 
 .info-line {

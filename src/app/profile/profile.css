@@ -26,9 +26,13 @@ body {
   background: linear-gradient(135deg, #1f3a8a, #2d4da8);
   color: white;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  /* Changed from flex-start to center */
   justify-content: center;
-  padding: 60px;
+  padding: 80px;
+  text-align: center;
+  /* Center text as well for better balance */
 }
 
 .welcome-text {
@@ -66,22 +70,34 @@ body {
   max-width: 360px;
 }
 
-.greeting {
+.brand-logo-container {
+  display: flex;
+  justify-content: center;
+  /* Ensure container centers the image */
   margin-bottom: 40px;
+  width: 100%;
 }
 
-.greeting span {
-  color: #1f3a8a;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+.left-logo .brand-logo {
+  max-width: 400px;
+  /* Increased from 160px */
+  mix-blend-mode: normal;
+}
+
+.brand-logo {
+  max-width: 180px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 .login-title {
-  font-size: 24px;
-  font-weight: 500;
-  color: #111;
-  margin: 0 0 40px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 32px 0;
+  text-align: center;
+  letter-spacing: -0.01em;
 }
 
 /* INPUTS - Underline Style */
@@ -105,7 +121,7 @@ input[type="password"] {
   border-radius: 0;
   font-size: 16px;
   color: #111;
-  margin-bottom: 32px;
+  margin-bottom: 12px;
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -195,8 +211,8 @@ input[type="password"]:focus {
 .error-text {
   color: #ef4444;
   font-size: 11px;
-  margin-top: -28px;
-  margin-bottom: 24px;
+  margin-top: -8px;
+  margin-bottom: 12px;
   font-weight: 500;
 }
 

@@ -1,0 +1,312 @@
+.tax-container {
+    padding: 40px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+}
+
+.title-group h1 {
+    font-size: 32px;
+    font-weight: 300;
+    color: #000;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #888;
+    margin: 0;
+}
+
+.declare-btn {
+    padding: 12px 32px;
+    background: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.declare-btn:hover {
+    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* MINIMALIST TAX SUMMARY */
+.tax-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px 40px;
+    background: white;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    margin-bottom: 48px;
+}
+
+.summary-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.summary-metric label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-metric .value {
+    font-size: 28px;
+    font-weight: 300;
+    color: #0f172a;
+}
+
+.summary-metric.highlight {
+    padding-left: 48px;
+    border-left: 1px solid #f1f5f9;
+}
+
+.text-blue {
+    color: #1e4ed8 !important;
+}
+
+.text-red {
+    color: #ef4444 !important;
+}
+
+/* CLEAN INVESTMENT TABLE */
+.investment-list-container {
+    background: white;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 48px;
+}
+
+.section-header {
+    background: #f8fafc;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.section-header h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #475569;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.official-tax-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.official-tax-table th {
+    text-align: left;
+    padding: 12px 24px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.official-tax-table td {
+    padding: 20px 24px;
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #f8fafc;
+}
+
+.category-name {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.amount-val {
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.proof-state {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.proof-state[data-state="Approved"] {
+    color: #10b981;
+}
+
+.proof-state[data-state="Pending"] {
+    color: #94a3b8;
+}
+
+.official-status-chip {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.official-status-chip[data-status="Verified"] {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.official-status-chip[data-status="Declared"] {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* MODAL STYLES (Same as Leaves) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-card {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 32px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.info-box {
+    background: #fefce8;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #fef08a;
+    font-size: 12px;
+    color: #a16207;
+    line-height: 1.5;
+}
+
+.modal-footer {
+    padding: 24px 32px;
+    background: #f8fafc;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.cancel-btn {
+    padding: 10px 24px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.submit-btn {
+    padding: 10px 24px;
+    background: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

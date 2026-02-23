@@ -1,0 +1,68 @@
+<div class="tax-container">
+
+    <div class="header-section">
+        <div class="title-group">
+            <h1>Tax Declarations</h1>
+            <p class="subtitle">Investment planning and tax estimation for FY {{ financialYear }}</p>
+        </div>
+        <button class="declare-btn" (click)="toggleDeclareModal()">Declare Investment</button>
+    </div>
+
+    <!-- MINIMALIST TAX SUMMARY -->
+    <div class="tax-summary-row">
+        <div class="summary-metric">
+            <label>Gross Annual Income</label>
+            <span class="value">{{ formatCurrency(summary.grossIncome) }}</span>
+        </div>
+        <div class="summary-metric">
+            <label>Total Exemptions</label>
+            <span class="value text-blue">{{ formatCurrency(summary.totalInvestments) }}</span>
+        </div>
+        <div class="summary-metric highlight">
+            <label>Estimated Tax Payable</label>
+            <span class="value text-red">{{ formatCurrency(summary.estimatedTax) }}</span>
+        </div>
+    </div>
+
+
+    <!-- DECLARE MODAL -->
+    <div class="modal-overlay" *ngIf="showDeclareModal" (click)="toggleDeclareModal()">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Declare New Investment</h3>
+                <button class="close-btn" (click)="toggleDeclareModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Investment Category</label>
+                    <input type="text" placeholder="e.g. LIC, PPF, Tuition Fees" [(ngModel)]="newInvestment.category">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Section</label>
+                        <select [(ngModel)]="newInvestment.section">
+                            <option *ngFor="let s of sections" [value]="s">{{ s }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" [(ngModel)]="newInvestment.amount" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p>Important: Submission of scanned proof will be required for verification during the final tax
+                        assessment period.</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="cancel-btn" (click)="toggleDeclareModal()">Cancel</button>
+                <button class="submit-btn" (click)="submitDeclaration()">Declare Now</button>
+            </div>
+        </div>
+    </div>
+
+</div>

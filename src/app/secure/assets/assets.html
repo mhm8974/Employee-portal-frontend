@@ -1,0 +1,81 @@
+<div class="assets-container">
+
+    <div class="header-section">
+        <div class="title-group">
+            <h1>Assets & Devices</h1>
+            <p class="subtitle">Inventory of company property assigned to you</p>
+        </div>
+    </div>
+
+    <!-- ASSET GRID -->
+    <!-- MINIMALIST ASSET LIST -->
+    <div class="asset-list-container">
+        <table class="official-asset-table">
+            <thead>
+                <tr>
+                    <th>ASSET DESCRIPTION</th>
+                    <th>SERIAL ID</th>
+                    <th>ASSIGNED ON</th>
+                    <th>STATUS</th>
+                    <th class="text-right">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let asset of myAssets">
+                    <td>
+                        <div class="asset-name-group">
+                            <span class="asset-name">{{ asset.name }}</span>
+                            <span class="asset-specs">{{ asset.specs }}</span>
+                        </div>
+                    </td>
+                    <td><span class="code-font">{{ asset.serialNumber }}</span></td>
+                    <td>{{ asset.assignedDate }}</td>
+                    <td>
+                        <span class="official-status" [attr.data-status]="asset.status">
+                            {{ asset.status }}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <button class="minimal-report-btn" (click)="toggleReportModal(asset.id)">
+                            Report Issue
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- EMPTY STATE EXAMPLE -->
+    <div class="info-box" *ngIf="myAssets.length === 0">
+        <p>No assets are currently assigned to your profile.</p>
+    </div>
+
+    <!-- REPORT MODAL -->
+    <div class="modal-overlay" *ngIf="showReportModal" (click)="toggleReportModal()">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Report Asset Issue</h3>
+                <button class="close-btn" (click)="toggleReportModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="asset-mini-info">
+                    <label>Asset ID</label>
+                    <span>{{ selectedAssetId }}</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Describe the problem</label>
+                    <textarea rows="4" placeholder="Describe the hardware or software issue in detail..."
+                        [(ngModel)]="issueDescription"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="cancel-btn" (click)="toggleReportModal()">Cancel</button>
+                <button class="submit-btn" (click)="submitReport()">Submit Report</button>
+            </div>
+        </div>
+    </div>
+
+</div>

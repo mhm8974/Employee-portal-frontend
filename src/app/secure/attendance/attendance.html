@@ -1,0 +1,53 @@
+<div class="attendance-container">
+
+    <!-- HEADER AREA -->
+    <div class="header-section">
+        <div class="title-group">
+            <h1>Attendance Register</h1>
+            <p class="subtitle">Track your working hours and maintain your professional activity log</p>
+        </div>
+        <div class="live-clock">
+            <span class="clock-date">{{ currentTime | date:'EEEE, MMMM d, y' }}</span>
+            <span class="clock-time">{{ currentTime | date:'hh:mm:ss a' }}</span>
+        </div>
+    </div>
+
+    <!-- MINIMALIST ACTION AREA -->
+    <div class="attendance-action-row" [class.online]="isCheckedIn">
+        <div class="status-summary">
+            <span class="status-dot"></span>
+            <span class="status-text">{{ isCheckedIn ? 'Currently Online' : 'Currently Offline' }}</span>
+        </div>
+
+        <div class="punch-control">
+            <button *ngIf="!isCheckedIn" class="btn-punch in" (click)="toggleCheckIn()">
+                PUNCH IN
+            </button>
+            <button *ngIf="isCheckedIn" class="btn-punch out" (click)="toggleCheckIn()">
+                PUNCH OUT
+            </button>
+        </div>
+    </div>
+
+    <!-- CLEAN METRICS LIST -->
+    <div class="attendance-metrics-row">
+        <div class="metric-item">
+            <label>Weekly Working Hours</label>
+            <span class="value">42.50</span>
+        </div>
+        <div class="metric-item">
+            <label>Average Login Time</label>
+            <span class="value">08:24</span>
+        </div>
+        <div class="metric-item">
+            <label>Punctuality Index</label>
+            <span class="value success">98.2%</span>
+        </div>
+        <div class="metric-item">
+            <label>Total Present Days</label>
+            <span class="value">18 / 21</span>
+        </div>
+    </div>
+
+
+</div>

@@ -1,0 +1,71 @@
+<div class="leaves-container">
+
+    <div class="header-section">
+        <div class="title-group">
+            <h1>Leaves & Time Off</h1>
+            <p class="subtitle">Manage your leave applications and track your balances</p>
+        </div>
+        <button class="apply-btn" (click)="toggleApplyModal()">Apply for Leave</button>
+    </div>
+
+    <!-- BALANCE CARDS -->
+    <div class="balance-grid">
+        <div class="balance-card" *ngFor="let balance of leaveBalances">
+            <div class="card-header">
+                <span class="type">{{ balance.type }}</span>
+                <div class="dot" [style.backgroundColor]="balance.color"></div>
+            </div>
+            <div class="card-body">
+                <span class="current">{{ balance.current }}</span>
+                <span class="total">/ {{ balance.total }} Days Left</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width]="(balance.current / balance.total * 100) + '%'"
+                    [style.backgroundColor]="balance.color"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- APPLY MODAL -->
+    <div class="modal-overlay" *ngIf="showApplyModal" (click)="toggleApplyModal()">
+        <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>New Leave Application</h3>
+                <button class="close-btn" (click)="toggleApplyModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Leave Type</label>
+                    <select [(ngModel)]="newLeave.type">
+                        <option *ngFor="let b of leaveBalances" [value]="b.type">{{ b.type }}</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" [(ngModel)]="newLeave.startDate">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" [(ngModel)]="newLeave.endDate">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Reason for Leave</label>
+                    <textarea rows="3" placeholder="Explain your reason briefly..."
+                        [(ngModel)]="newLeave.reason"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="cancel-btn" (click)="toggleApplyModal()">Cancel</button>
+                <button class="submit-btn" (click)="submitLeave()">Submit Application</button>
+            </div>
+        </div>
+    </div>
+
+</div>

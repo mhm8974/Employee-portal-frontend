@@ -1,0 +1,23 @@
+<div class="policy-container">
+    <div class="header-section">
+        <div class="title-group">
+            <h1>Company Policy</h1>
+            <p class="subtitle">Official guidelines, compliance documents, and internal frameworks</p>
+        </div>
+    </div>
+
+    <div class="policy-content-area">
+        <div class="policy-item" *ngFor="let policy of policies">
+            <div class="item-header">
+                <h2>{{ policy.name }}</h2>
+            </div>
+            <div class="item-body">
+                <p>{{ policy.content }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="policy-footer">
+        <p>Contact the HR department at **hr@pranali.gov.in** for any clarifications regarding these policies.</p>
+    </div>
+</div>

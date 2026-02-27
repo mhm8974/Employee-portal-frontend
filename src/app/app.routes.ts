@@ -27,10 +27,9 @@ export const routes: Routes = [
             { path: 'settings', component: SettingsComponent },
             { path: 'attendance', component: AttendanceComponent },
             { path: 'leaves', component: LeavesComponent },
-            { path: 'org-chart', component: OrgChartComponent },
-            { path: 'company-policy', component: CompanyPolicyComponent },
+            { path: 'attendance', component: AttendanceComponent },
+            { path: 'leaves', component: LeavesComponent },
             { path: 'tax', component: TaxComponent },
-            { path: 'assets', component: AssetsComponent },
             { path: 'help', component: HelpComponent }
         ]
     },

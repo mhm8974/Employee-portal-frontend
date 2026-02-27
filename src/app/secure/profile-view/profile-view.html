@@ -52,6 +52,12 @@
 
                 <!-- DOCUMENT HEADER -->
                 <div class="doc-header">
+                    <div class="validation-qr">
+                        <div class="qr-code">
+                            <img [src]="getVerifierQrUrl()" alt="Verification QR" *ngIf="getVerifierQrUrl()">
+                        </div>
+                        <!-- <span class="qr-text">VERIFY PAYSLIP</span> -->
+                    </div>
                     <div class="gov-title">
                         <img src="assets/images/sikkim_logo.png" alt="Sikkim Logo" class="gov-logo">
                         <h3>GOVERNMENT OF SIKKIM</h3>

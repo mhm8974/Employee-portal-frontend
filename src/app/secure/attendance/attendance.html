@@ -12,22 +12,6 @@
         </div>
     </div>
 
-    <!-- MINIMALIST ACTION AREA -->
-    <div class="attendance-action-row" [class.online]="isCheckedIn">
-        <div class="status-summary">
-            <span class="status-dot"></span>
-            <span class="status-text">{{ isCheckedIn ? 'Currently Online' : 'Currently Offline' }}</span>
-        </div>
-
-        <div class="punch-control">
-            <button *ngIf="!isCheckedIn" class="btn-punch in" (click)="toggleCheckIn()">
-                PUNCH IN
-            </button>
-            <button *ngIf="isCheckedIn" class="btn-punch out" (click)="toggleCheckIn()">
-                PUNCH OUT
-            </button>
-        </div>
-    </div>
 
     <!-- CLEAN METRICS LIST -->
     <div class="attendance-metrics-row">

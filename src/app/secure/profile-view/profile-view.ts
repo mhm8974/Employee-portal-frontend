@@ -281,45 +281,15 @@ export class ProfileViewComponent implements OnInit {
     }
 
     downloadPayslip(): void {
-        this.isPayslipLoading = true;
-        const employeeId = localStorage.getItem('employeeId') || '20240101000001';
+        const employeeId = localStorage.getItem('employeeId') || 'CPF12345';
 
         if (!employeeId) {
-            this.isPayslipLoading = false;
             alert('Please login to download payslip');
             return;
         }
 
-        const params = { employee_id: employeeId, year: this.selectedYear.toString(), month: this.selectedMonth, format: 'pdf' };
-
-        this.http.get<any>(`${this.apiUrl}/api/payslips/download`, { params, responseType: 'json' })
-            .pipe(catchError(error => {
-                this.isPayslipLoading = false;
-                this.cdr.detectChanges();
-                const msg = error.status === 404 || error.status === 501 ? 'PDF download not yet implemented.'
-                    : error.status === 0 ? 'Cannot connect to server.' : `Download failed: ${error.message || 'Try again later.'}`;
-                alert(msg);
-                return of(null);
-            }))
-            .subscribe(response => {
-                if (response?.message) {
-                    this.isPayslipLoading = false;
-                    this.cdr.detectChanges();
-                    alert(`Backend Message: ${response.message}`);
-                }
-                if (response instanceof Blob) {
-                    const url = window.URL.createObjectURL(response);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `payslip_${employeeId}_${this.selectedMonth}_${this.selectedYear}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                }
-                this.isPayslipLoading = false;
-                this.cdr.detectChanges();
-            });
+        const downloadUrl = `${this.apiUrl}/api/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
+        window.open(downloadUrl, '_blank');
     }
 
     downloadPaySlip(): void {
@@ -343,4 +313,14 @@ export class ProfileViewComponent implements OnInit {
     getEmail(): string { return this.employeeData?.email || 'N/A'; }
     getPhone(): string { return this.employeeData?.mobile || 'N/A'; }
     getJoiningDate(): string { return this.formatDate(this.employeeData?.join_date); }
+
+    getVerifierQrUrl(): string {
+        if (!this.paySlipData) return '';
+
+        const employeeId = this.paySlipData.employee_id;
+        const verifierUrl = `${this.apiUrl}/api/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
+
+        // Using api.qrserver.com for a high-quality digital QR code
+        return `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(verifierUrl)}`;
+    }
 }

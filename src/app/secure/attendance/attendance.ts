@@ -18,8 +18,6 @@ interface AttendanceRecord {
     styleUrls: ['./attendance.css']
 })
 export class AttendanceComponent implements OnInit {
-    isCheckedIn = false;
-    checkInTime: Date | null = null;
     currentTime: Date = new Date();
 
     history: AttendanceRecord[] = [
@@ -36,24 +34,6 @@ export class AttendanceComponent implements OnInit {
         }, 1000);
     }
 
-    toggleCheckIn(): void {
-        if (!this.isCheckedIn) {
-            this.isCheckedIn = true;
-            this.checkInTime = new Date();
-        } else {
-            const checkOutTime = new Date();
-            const newRecord: AttendanceRecord = {
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                checkIn: this.formatTime(this.checkInTime!),
-                checkOut: this.formatTime(checkOutTime),
-                totalHours: '08:00', // Mock value for now
-                status: 'Present'
-            };
-            this.history.unshift(newRecord);
-            this.isCheckedIn = false;
-            this.checkInTime = null;
-        }
-    }
 
     formatTime(date: Date): string {
         return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });

@@ -171,7 +171,7 @@ export class Profile implements OnInit {
 
         if (isSuccess) {
           const idToStore = respData.employee_id || response.employee_id || this.employeeId;
-          localStorage.setItem('employee_id', String(idToStore));
+          localStorage.setItem('employeeId', String(idToStore));
 
           // Debug fallback for storage
           localStorage.setItem('employeeId', String(idToStore));

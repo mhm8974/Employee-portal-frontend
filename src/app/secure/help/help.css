@@ -1,3 +1,18 @@
+/* SEARCH HERO */
+.help-hero {
+    padding: 60px 24px;
+    background: white;
+    text-align: center;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.hero-content h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
 .help-container {
     background-color: #fcfcfc;
     min-height: 100vh;

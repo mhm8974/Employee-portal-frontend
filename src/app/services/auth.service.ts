@@ -124,8 +124,8 @@ export class AuthService {
         }
 
         if (employeeId) {
-          console.log('[AuthService] Saving employee_id:', employeeId);
-          localStorage.setItem('employee_id', String(employeeId));
+          console.log('[AuthService] Saving employeeId:', employeeId);
+          localStorage.setItem('employeeId', String(employeeId));
         }
 
         if (response.employee_data || respData.employee_data) {
@@ -289,12 +289,12 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('auth_token');
-    localStorage.removeItem('employee_id');
+    localStorage.removeItem('employeeId');
     localStorage.removeItem('user_data');
   }
 
   getEmployeeId(): string | null {
-    return localStorage.getItem('employee_id');
+    return localStorage.getItem('employeeId');
   }
 
   validateToken(): Observable<any> {

@@ -1,11 +1,17 @@
 <div class="help-container">
+    <!-- SEARCH HERO -->
+    <section class="help-hero">
+        <div class="hero-content">
+            <h1>How can we help you today?</h1>
+        </div>
+    </section>
 
     <div class="help-content">
         <!-- CATEGORIES GRID -->
         <section class="categories-section">
             <h2 class="section-title">Knowledge Base</h2>
             <div class="categories-grid">
-                <div class="category-card" *ngFor="let cat of filteredCategories">
+                <div class="category-card" *ngFor="let cat of categories">
                     <div class="cat-icon" *ngIf="cat.icon">{{ cat.icon }}</div>
                     <h3 class="cat-title">{{ cat.title }}</h3>
                     <p class="cat-desc">{{ cat.description }}</p>

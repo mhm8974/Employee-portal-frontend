@@ -24,7 +24,6 @@ interface FAQ {
     styleUrls: ['./help.css']
 })
 export class HelpComponent {
-    searchQuery: string = '';
 
     categories: HelpCategory[] = [
         {
@@ -92,11 +91,4 @@ export class HelpComponent {
         faq.isOpen = !faq.isOpen;
     }
 
-    get filteredCategories() {
-        if (!this.searchQuery) return this.categories;
-        return this.categories.filter(c =>
-            c.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            c.description.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-    }
 }

@@ -280,3 +280,50 @@ input[type="password"]:focus {
     transform: translateX(-8px);
   }
 }
+
+/* ========================================= */
+/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
+/* ========================================= */
+@media (max-width: 900px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    flex: none;
+    padding: 60px 40px;
+  }
+
+  .auth-right {
+    flex: 1;
+    padding: 40px;
+    align-items: flex-start;
+  }
+
+  .welcome-text h1 {
+    font-size: 36px;
+  }
+
+  .welcome-text p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .auth-left {
+    padding: 40px 20px;
+  }
+
+  .auth-right {
+    padding: 40px 20px;
+  }
+
+  .welcome-text h1 {
+    font-size: 28px;
+  }
+
+  .left-logo .brand-logo {
+    max-width: 250px;
+    /* Prevent massive logo forcing width */
+  }
+}

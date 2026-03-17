@@ -6,7 +6,6 @@ import { ProfileViewComponent } from './secure/profile-view/profile-view';
 import { SettingsComponent } from './secure/settings/settings';
 import { AttendanceComponent } from './secure/attendance/attendance';
 import { LeavesComponent } from './secure/leaves/leaves';
-import { TaxComponent } from './secure/tax/tax';
 import { HelpComponent } from './secure/help/help';
 
 export const routes: Routes = [
@@ -22,7 +21,6 @@ export const routes: Routes = [
             { path: 'settings', component: SettingsComponent },
             { path: 'attendance', component: AttendanceComponent },
             { path: 'leaves', component: LeavesComponent },
-            { path: 'tax', component: TaxComponent },
             { path: 'help', component: HelpComponent }
         ]
     },

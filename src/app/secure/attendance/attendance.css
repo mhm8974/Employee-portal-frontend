@@ -15,7 +15,7 @@
 .title-group h1 {
     font-size: 28px;
     font-weight: 300;
-    color: #0f172a;
+    color: var(--text-primary);
     margin: 0 0 6px 0;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -23,7 +23,7 @@
 
 .subtitle {
     font-size: 14px;
-    color: #64748b;
+    color: var(--text-secondary);
     margin: 0;
 }
 
@@ -32,15 +32,15 @@
     display: flex;
     flex-direction: column;
     padding: 12px 24px;
-    background: #f8fafc;
+    background: var(--bg-secondary);
     border-radius: 12px;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-secondary);
 }
 
 .clock-date {
     font-size: 12px;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--text-muted);
     text-transform: uppercase;
     margin-bottom: 2px;
 }
@@ -48,10 +48,9 @@
 .clock-time {
     font-size: 22px;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text-primary);
     font-variant-numeric: tabular-nums;
 }
-
 
 /* CLEAN METRICS LIST */
 .attendance-metrics-row {
@@ -59,8 +58,8 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 0;
     margin-bottom: 48px;
-    border: 1px solid #f1f5f9;
-    background: white;
+    border: 1px solid var(--border-secondary);
+    background: var(--bg-card);
     border-radius: 12px;
 }
 
@@ -72,13 +71,13 @@
 }
 
 .metric-item:not(:last-child) {
-    border-right: 1px solid #f1f5f9;
+    border-right: 1px solid var(--border-secondary);
 }
 
 .metric-item label {
     font-size: 11px;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -86,7 +85,7 @@
 .metric-item .value {
     font-size: 28px;
     font-weight: 300;
-    color: #0f172a;
+    color: var(--text-primary);
 }
 
 .value.success {
@@ -95,10 +94,10 @@
 
 /* ACTIVITY SECTION */
 .activity-section {
-    background: #fff;
+    background: var(--bg-card);
     border-radius: 20px;
     padding: 32px;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-secondary);
 }
 
 .activity-header {
@@ -111,18 +110,18 @@
 .activity-header h2 {
     font-size: 18px;
     font-weight: 600;
-    color: #0f172a;
+    color: var(--text-primary);
     margin: 0;
 }
 
 .filter-btn {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
     padding: 8px 16px;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 500;
-    color: #475569;
+    color: var(--text-secondary);
     cursor: pointer;
 }
 
@@ -136,35 +135,36 @@
     padding: 16px;
     font-size: 11px;
     text-transform: uppercase;
-    color: #94a3b8;
-    border-bottom: 2px solid #f8fafc;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-secondary);
 }
 
 .log-table td {
     padding: 20px 16px;
     font-size: 14px;
-    border-bottom: 1px solid #f8fafc;
+    border-bottom: 1px solid var(--border-secondary);
+    color: var(--text-body);
 }
 
 .log-date {
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text-primary);
 }
 
 .log-time-chip {
     display: inline-flex;
     align-items: center;
     padding: 4px 10px;
-    background: #f1f5f9;
+    background: var(--bg-secondary);
     border-radius: 6px;
     font-weight: 500;
     font-size: 12px;
-    color: #475569;
+    color: var(--text-secondary);
 }
 
 .chip-sep {
     margin: 0 8px;
-    color: #cbd5e1;
+    color: var(--text-muted);
 }
 
 .status-badge {
@@ -194,4 +194,69 @@
 .half-day {
     background: #fffbeb;
     color: #d97706;
+}
+
+/* ========================================= */
+/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
+/* ========================================= */
+@media (max-width: 900px) {
+    .attendance-container {
+        padding: 24px 20px;
+    }
+
+    .attendance-metrics-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .metric-item:nth-child(2) {
+        border-right: none;
+    }
+
+    .metric-item:nth-child(1),
+    .metric-item:nth-child(2) {
+        border-bottom: 1px solid var(--border-secondary);
+    }
+}
+
+@media (max-width: 600px) {
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .live-clock {
+        align-self: flex-start;
+        text-align: left;
+    }
+
+    .attendance-metrics-row {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-item {
+        border-right: none !important;
+        border-bottom: 1px solid var(--border-secondary);
+    }
+
+    .metric-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-section {
+        padding: 20px;
+    }
+
+    .activity-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    /* Wrap table in scrollable container */
+    .log-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
 }

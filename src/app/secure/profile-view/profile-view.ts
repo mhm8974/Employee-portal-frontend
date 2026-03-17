@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
@@ -61,6 +61,7 @@ export class ProfileViewComponent implements OnInit {
     isLoading = false;
     isPayslipLoading = false;
     errorMessage = '';
+    showActionSheet = false;
 
     /* MOCK DATA CONFIG moved to AuthService */
     get useMockData(): boolean {
@@ -72,13 +73,18 @@ export class ProfileViewComponent implements OnInit {
     constructor(
         private http: HttpClient,
         private authService: AuthService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private location: Location
     ) { }
 
     ngOnInit(): void {
         this.loadEmployeeData();
         this.loadPaySlipData();
     }
+    isMobileScreen(): boolean {
+        return window.innerWidth < 900;
+    }
+
     async openPrintDialog() {
         // Look for the ID directly in the document
         const element = document.getElementById('payslip');
@@ -88,15 +94,45 @@ export class ProfileViewComponent implements OnInit {
             return;
         }
 
+        // On mobile, offer a choice via custom action sheet
+        if (this.isMobileScreen()) {
+            this.showActionSheet = true;
+            return; // Exit here; the action sheet will handle the rest
+        }
+
         const options = {
             margin: 10,
-            filename: 'payslip.pdf',
+            filename: `payslip_${this.selectedMonth}_${this.selectedYear}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        } as const;
+            html2canvas: {
+                scale: 3, // Increased scale for consistency
+                useCORS: true,
+                letterRendering: true,
+                scrollY: -window.scrollY,
+                windowWidth: 800,
+                onclone: (clonedDoc: Document) => {
+                    const clonedElement = clonedDoc.getElementById('payslip');
+                    if (clonedElement) {
+                        // Aggressively neutralize mobile-only scaling and margins
+                        clonedElement.style.transform = 'none';
+                        clonedElement.style.margin = '0';
+                        clonedElement.style.width = '800px';
+                        clonedElement.style.minWidth = '800px';
+                        clonedElement.style.position = 'absolute';
+                        clonedElement.style.left = '0';
+                        clonedElement.style.top = '0';
+                        clonedElement.style.display = 'block';
+                        clonedElement.style.visibility = 'visible';
+                    }
+                    clonedDoc.body.style.width = '800px';
+                    clonedDoc.body.style.overflow = 'visible';
+                    clonedDoc.body.style.background = 'white';
+                }
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
+        };
 
-        const worker = html2pdf().from(element).set(options);
+        const worker = html2pdf().from(element).set(options as any);
         const pdfOutput = await worker.outputPdf('bloburl');
 
         // Create a hidden iframe to trigger the print
@@ -106,9 +142,72 @@ export class ProfileViewComponent implements OnInit {
         document.body.appendChild(iframe);
 
         iframe.onload = () => {
+            iframe.contentWindow?.focus();
             iframe.contentWindow?.print();
+            // Cleanup: avoid keeping the iframe in the DOM
+            setTimeout(() => {
+                if (document.body.contains(iframe)) {
+                    document.body.removeChild(iframe);
+                }
+            }, 5000);
         };
     }
+
+    private async downloadPdfDirectly(element: HTMLElement) {
+        const options = {
+            margin: 10,
+            filename: `payslip_${this.selectedMonth}_${this.selectedYear}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: {
+                scale: 3, // High scale for perfect clarity
+                useCORS: true,
+                letterRendering: true,
+                scrollY: 0,
+                windowWidth: 800, // Force the window to 800px for the capture
+                onclone: (clonedDoc: Document) => {
+                    const clonedElement = clonedDoc.getElementById('payslip');
+                    if (clonedElement) {
+                        // Aggressively neutralize mobile-only scaling and margins
+                        clonedElement.style.transform = 'none';
+                        clonedElement.style.margin = '0';
+                        clonedElement.style.width = '800px';
+                        clonedElement.style.minWidth = '800px';
+                        clonedElement.style.position = 'absolute';
+                        clonedElement.style.left = '0';
+                        clonedElement.style.top = '0';
+                        clonedElement.style.display = 'block';
+                        clonedElement.style.visibility = 'visible';
+                    }
+                    // Force the cloned body to be wide enough to contain the 800px element
+                    clonedDoc.body.style.width = '800px';
+                    clonedDoc.body.style.overflow = 'visible';
+                }
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
+        };
+
+        await html2pdf().from(element).set(options as any).save();
+    }
+
+
+    async handleAction(action: string) {
+        this.showActionSheet = false;
+
+        if (action === 'download') {
+            const element = document.getElementById('payslip');
+            if (element) {
+                await this.downloadPdfDirectly(element);
+            }
+        }
+    }
+
+    closeActionSheet(event?: MouseEvent) {
+        if (event) {
+            event.stopPropagation();
+        }
+        this.showActionSheet = false;
+    }
+
     loadEmployeeData(): void {
         this.isLoading = true;
         this.errorMessage = '';
@@ -320,7 +419,7 @@ export class ProfileViewComponent implements OnInit {
         const employeeId = this.paySlipData.employee_id;
         const verifierUrl = `${this.apiUrl}/api/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
 
-        // Using api.qrserver.com for a high-quality digital QR code
-        return `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(verifierUrl)}`;
+        // Switching back to api.qrserver.com as it was working better for you
+        return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(verifierUrl)}`;
     }
 }

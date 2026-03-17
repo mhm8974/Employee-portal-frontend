@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { ThemeService } from '../services/theme.service';
 import { MOCK_EMPLOYEE } from './secure.mocks';
 
 @Component({
@@ -13,25 +15,38 @@ import { MOCK_EMPLOYEE } from './secure.mocks';
 })
 export class SecureComponent implements OnInit {
   showLogoutConfirm = false;
-  isSidebarOpen = false;
   userData: any = null;
+  isMobileMenuOpen = false;
 
   constructor(
     private authService: AuthService,
+    private themeService: ThemeService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.themeService.loadTheme();
     this.loadUserData();
+
+    // Reset scroll position on every navigation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      window.scrollTo(0, 0);
+
+      // Also ensure shell-content itself is reset if it has internal scroll
+      const shellContent = document.querySelector('.shell-content');
+      if (shellContent) {
+        shellContent.scrollTo(0, 0);
+      }
+    });
   }
 
   loadUserData(): void {
-    // Retrieve user data from service/local storage
     const storedData = this.authService.getUserData();
     if (storedData) {
       this.userData = storedData;
     } else {
-      // Fallback to mock data for demonstration if no data found
       this.userData = MOCK_EMPLOYEE;
     }
   }
@@ -46,12 +61,10 @@ export class SecureComponent implements OnInit {
   }
 
   getInitials(): string {
-    // Extract first name and last name initials as requested
     if (this.userData?.first_name && this.userData?.last_name) {
       return (this.userData.first_name[0] + this.userData.last_name[0]).toUpperCase();
     }
 
-    // Fallback logic using full name if split fields aren't available
     const name = this.employeeFullName;
     if (!name || name === 'Employee') return '??';
     const names = name.split(' ').filter(n => n.trim().length > 0);
@@ -61,8 +74,17 @@ export class SecureComponent implements OnInit {
     return names[0][0].toUpperCase();
   }
 
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+  }
+
   logout(): void {
     this.showLogoutConfirm = true;
+    this.closeMobileMenu();
   }
 
   confirmLogout(): void {
@@ -73,9 +95,5 @@ export class SecureComponent implements OnInit {
 
   cancelLogout(): void {
     this.showLogoutConfirm = false;
-  }
-
-  toggleSidebar(): void {
-    this.isSidebarOpen = !this.isSidebarOpen;
   }
 }

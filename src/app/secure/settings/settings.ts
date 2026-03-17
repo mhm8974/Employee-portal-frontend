@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-settings',
@@ -9,7 +10,7 @@ import { FormsModule } from '@angular/forms';
     templateUrl: './settings.html',
     styleUrls: ['./settings.css']
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
     // Notification Preferences
     payslipAlerts = true;
     leaveStatusAlerts = true;
@@ -30,6 +31,12 @@ export class SettingsComponent {
     confirmPassword = '';
     passwordMessage = '';
     passwordError = false;
+
+    constructor(private themeService: ThemeService) { }
+
+    ngOnInit(): void {
+        this.darkMode = this.themeService.isDarkMode;
+    }
 
     togglePasswordForm(): void {
         this.showPasswordForm = !this.showPasswordForm;
@@ -63,7 +70,6 @@ export class SettingsComponent {
             return;
         }
 
-        // TODO: Backend integration
         console.log('[Backend Integration Hook] Password change requested');
         this.passwordMessage = 'Password changed successfully';
         this.passwordError = false;
@@ -80,6 +86,7 @@ export class SettingsComponent {
     }
 
     saveDisplayPreferences(): void {
+        this.themeService.setDarkMode(this.darkMode);
         console.log('[Backend Integration Hook] Saving display:', {
             darkMode: this.darkMode,
             compactView: this.compactView

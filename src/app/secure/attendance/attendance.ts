@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { interval, Subscription } from 'rxjs';
 
 interface AttendanceRecord {
     date: string;
@@ -17,8 +18,9 @@ interface AttendanceRecord {
     templateUrl: './attendance.html',
     styleUrls: ['./attendance.css']
 })
-export class AttendanceComponent implements OnInit {
+export class AttendanceComponent implements OnInit, OnDestroy {
     currentTime: Date = new Date();
+    private timerSub!: Subscription;
 
     history: AttendanceRecord[] = [
         { date: 'Feb 20, 2026', checkIn: '09:05 AM', checkOut: '05:30 PM', totalHours: '08:25', status: 'Present' },
@@ -28,15 +30,24 @@ export class AttendanceComponent implements OnInit {
         { date: 'Feb 16, 2026', checkIn: '09:02 AM', checkOut: '05:20 PM', totalHours: '08:18', status: 'Present' },
     ];
 
+    constructor(private cdr: ChangeDetectorRef) { }
+
     ngOnInit(): void {
-        setInterval(() => {
-            this.currentTime = new Date();
-        }, 1000);
+        this.startLiveClock();
     }
 
+    ngOnDestroy(): void {
+        this.timerSub?.unsubscribe();
+    }
+
+    startLiveClock(): void {
+        this.timerSub = interval(1000).subscribe(() => {
+            this.currentTime = new Date();
+            this.cdr.detectChanges();
+        });
+    }
 
     formatTime(date: Date): string {
         return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
     }
-
 }

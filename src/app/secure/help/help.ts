@@ -42,7 +42,7 @@ export class HelpComponent {
             id: 'payroll',
             title: 'Payroll & Benefits',
             icon: '',
-            description: 'Viewing payslips, tax declarations, and understanding deductions.'
+            description: 'Viewing payslips and understanding deductions.'
         },
         {
             id: 'leaves',

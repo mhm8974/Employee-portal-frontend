@@ -14,7 +14,7 @@
 .title-group h1 {
     font-size: 32px;
     font-weight: 300;
-    color: #000;
+    color: var(--text-heading);
     margin: 0 0 8px 0;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -22,14 +22,14 @@
 
 .subtitle {
     font-size: 14px;
-    color: #888;
+    color: var(--text-subtitle);
     margin: 0;
 }
 
 .apply-btn {
     padding: 12px 32px;
-    background: #000;
-    color: white;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
     border: none;
     border-radius: 8px;
     font-weight: 500;
@@ -39,7 +39,7 @@
 }
 
 .apply-btn:hover {
-    background: #333;
+    background: var(--btn-primary-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -53,11 +53,11 @@
 }
 
 .balance-card {
-    background: white;
+    background: var(--bg-card);
     padding: 24px;
     border-radius: 12px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    border: 1px solid var(--border-secondary);
+    box-shadow: var(--card-shadow);
 }
 
 .card-header {
@@ -70,7 +70,7 @@
 .card-header .type {
     font-size: 12px;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -88,18 +88,18 @@
 .card-body .current {
     font-size: 32px;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text-primary);
 }
 
 .card-body .total {
     font-size: 14px;
-    color: #94a3b8;
+    color: var(--text-muted);
     margin-left: 4px;
 }
 
 .progress-bar {
     height: 6px;
-    background: #f1f5f9;
+    background: var(--border-secondary);
     border-radius: 100px;
     overflow: hidden;
 }
@@ -111,10 +111,10 @@
 
 /* HISTORY SECTION */
 .history-section {
-    background: white;
+    background: var(--bg-card);
     padding: 32px;
     border-radius: 12px;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-secondary);
 }
 
 .section-header {
@@ -124,7 +124,7 @@
 .section-header h2 {
     font-size: 18px;
     font-weight: 500;
-    color: #1e293b;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -141,17 +141,17 @@
 .history-table th {
     text-align: left;
     padding: 16px;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-weight: 600;
     font-size: 11px;
     text-transform: uppercase;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-secondary);
 }
 
 .history-table td {
     padding: 16px;
-    color: #475569;
-    border-bottom: 1px solid #f8fafc;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-secondary);
 }
 
 .reason-cell {
@@ -190,7 +190,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.4);
+    background: var(--modal-overlay);
     backdrop-filter: blur(4px);
     z-index: 2000;
     display: flex;
@@ -199,7 +199,7 @@
 }
 
 .modal-card {
-    background: white;
+    background: var(--modal-bg);
     width: 100%;
     max-width: 500px;
     border-radius: 16px;
@@ -223,7 +223,7 @@
 
 .modal-header {
     padding: 24px 32px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border-secondary);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -233,13 +233,14 @@
     margin: 0;
     font-size: 18px;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .close-btn {
     background: none;
     border: none;
     font-size: 24px;
-    color: #94a3b8;
+    color: var(--text-muted);
     cursor: pointer;
 }
 
@@ -256,7 +257,7 @@
     display: block;
     font-size: 12px;
     font-weight: 600;
-    color: #64748b;
+    color: var(--text-secondary);
     text-transform: uppercase;
     margin-bottom: 8px;
 }
@@ -271,27 +272,52 @@ select,
 input,
 textarea {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #e2e8f0;
+    padding: 12px 16px;
+    /* Precise padding */
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 15px;
+    /* Slightly larger for better mobile clarity */
+    font-family: inherit;
     outline: none;
     transition: border-color 0.2s;
     box-sizing: border-box;
-    /* Fix for alignment */
     resize: none;
-    /* Disable resizing */
+    background: var(--bg-input);
+    color: var(--text-primary);
+    text-align: left;
+    display: block;
+}
+
+/* Specific left alignment for date inputs (overrides mobile defaults) */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: left !important;
+    min-height: 45px;
+    /* Perfect match for select box height */
+}
+
+/* Force left alignment for the text value in Safari/iOS */
+input[type="date"]::-webkit-date-and-time-value {
+    text-align: left !important;
+    margin: 0;
+}
+
+/* Ensure the calendar icon doesn't shift the text */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    margin-left: 0;
 }
 
 select:focus,
 input:focus,
 textarea:focus {
-    border-color: #1f3a8a;
+    border-color: #6366f1;
 }
 
 .modal-footer {
     padding: 24px 32px;
-    background: #f8fafc;
+    background: var(--bg-secondary);
     display: flex;
     justify-content: flex-end;
     gap: 12px;
@@ -299,19 +325,93 @@ textarea:focus {
 
 .cancel-btn {
     padding: 10px 24px;
-    background: white;
-    border: 1px solid #e2e8f0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.submit-btn {
+    padding: 10px 24px;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: none;
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
 }
 
-.submit-btn {
-    padding: 10px 24px;
-    background: #000;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
+/* ========================================= */
+/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
+/* ========================================= */
+@media (max-width: 900px) {
+    .leaves-container {
+        padding: 24px 20px;
+    }
+
+    .balance-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .balance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .history-section {
+        padding: 20px;
+    }
+
+    /* Wrap table in scrollable container */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .history-table {
+        white-space: nowrap;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    /* Ensure form groups in rows take full width on mobile */
+    .form-row .form-group {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .form-row .form-group:last-child {
+        margin-bottom: 24px;
+    }
+
+    .modal-card {
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 12px 12px 0 0;
+        align-self: flex-end;
+        /* Bottom sheet effect on mobile */
+    }
+
+    /* Relocate Apply button to bottom-right (FAB style) */
+    .apply-btn {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        padding: 16px 24px;
+        border-radius: 100px;
+        /* Modern pill shape for mobile */
+    }
 }

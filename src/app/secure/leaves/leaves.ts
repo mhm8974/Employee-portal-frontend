@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,7 +19,17 @@ interface LeaveRequest {
     templateUrl: './leaves.html',
     styleUrls: ['./leaves.css']
 })
-export class LeavesComponent {
+export class LeavesComponent implements OnInit {
+    isLoading = true;
+
+    constructor(private cdr: ChangeDetectorRef) { }
+
+    ngOnInit(): void {
+        setTimeout(() => {
+            this.isLoading = false;
+            this.cdr.markForCheck();
+        }, 1000);
+    }
     leaveBalances = [
         { type: 'Earned Leave (EL)', current: 15, total: 30, color: '#1f3a8a' },
         { type: 'Casual Leave (CL)', current: 6, total: 12, color: '#0ea5e9' },

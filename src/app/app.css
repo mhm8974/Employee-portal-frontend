@@ -1,4 +1,3 @@
-@use "../../../variables.scss" as *;
 
 
 :host {
@@ -12,6 +11,19 @@
     width: 100%;
     margin-top: calc(var(--content-padding) / 2);
     max-height: calc(100% - var(--toolbar-height));
+  }
+}
+
+/* Removed global page transition */
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

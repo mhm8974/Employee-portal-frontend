@@ -5,7 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 
 export interface LoginRequest {
   employee_id: string;
-  password: string;
+  password?: string;
   captcha_id: string;
   captcha_text: string;
 }
@@ -80,8 +80,8 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.0.137:8000/api';
-  public useMockData = true; // Set to false when backend is available
+  private apiUrl = 'http://192.168.0.115:8000/api';
+  public useMockData = true; // Set 
 
   constructor(private http: HttpClient) { }
 
@@ -96,6 +96,7 @@ export class AuthService {
       })
     );
   }
+
 
   login(loginData: LoginRequest): Observable<LoginResponse> {
     const headers = new HttpHeaders({

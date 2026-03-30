@@ -1,4 +1,4 @@
-import { EmployeeData, PaySlipData } from './profile-view/profile-view';
+import { EmployeeData, PaySlipData } from './payslip/payslip';
 
 export const MOCK_EMPLOYEE: EmployeeData = {
     employee_id: '20240101000001',

@@ -4,6 +4,7 @@
     background: var(--bg-card);
     text-align: center;
     border-bottom: 1px solid var(--border-secondary);
+    animation: fadeInUp 0.6s ease-out;
 }
 
 .hero-content h1 {
@@ -19,11 +20,22 @@
     cursor: default;
 }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* CONTENT AREA */
 .help-content {
     max-width: 1100px;
     margin: 0 auto;
     padding: 60px 24px;
+    animation: fadeInUp 0.6s ease-out;
 }
 
 .section-title {
@@ -43,17 +55,30 @@
 }
 
 .category-card {
-    background: var(--bg-card);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     padding: 32px;
-    border-radius: 16px;
-    border: 1px solid var(--border-secondary);
-    transition: all 0.3s ease;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 }
+
+:host-context(.dark-theme) .category-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    box-shadow: none;
+}
+
 
 @media (hover: hover) {
     .category-card:hover {
@@ -99,12 +124,24 @@
 
 /* FAQ SECTION */
 .faq-list {
-    background: var(--bg-card);
-    border-radius: 16px;
-    border: 1px solid var(--border-secondary);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
     overflow: hidden;
     margin-bottom: 80px;
+    position: relative;
+    z-index: 1;
 }
+
+:host-context(.dark-theme) .faq-list {
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    box-shadow: none;
+}
+
 
 .faq-item {
     border-bottom: 1px solid var(--border-secondary);
@@ -120,8 +157,12 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    background: var(--bg-card);
+    background: transparent;
     transition: background 0.2s;
+}
+
+:host-context(.dark-theme) .faq-header {
+    background: transparent;
 }
 
 @media (hover: hover) {
@@ -151,14 +192,27 @@
 
 /* CONTACT SECTION */
 .contact-card {
-    background: var(--bg-secondary);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     padding: 40px;
-    border-radius: 20px;
+    border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid var(--border-primary);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 }
+
+:host-context(.dark-theme) .contact-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    box-shadow: none;
+}
+
 
 .contact-info h3 {
     font-size: 22px;

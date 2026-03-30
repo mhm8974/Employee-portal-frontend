@@ -1,4 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+/* HIDE SCROLLBARS GLOBALLY */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 /* GLOBAL RESET */
 html,
 body {
@@ -68,6 +76,24 @@ body {
 
   /* Transition */
   --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+  /* ========== FLUID DESIGN TOKENS ========== */
+  /* Re-calculates based on viewport width (320px to 1440px) */
+  
+  /* Typography */
+  --font-fluid-display: clamp(2rem, 1.333rem + 3.333vw, 4rem);  /* 32px -> 64px */
+  --font-fluid-h1: clamp(1.5rem, 0.857rem + 3.214vw, 3rem);      /* 24px -> 48px */
+  --font-fluid-h2: clamp(1.25rem, 0.964rem + 1.429vw, 2.25rem);  /* 20px -> 36px */
+  --font-fluid-lg: clamp(1rem, 0.821rem + 0.893vw, 1.625rem);   /* 16px -> 26px */
+  --font-fluid-base: clamp(0.875rem, 0.839rem + 0.179vw, 1rem); /* 14px -> 16px */
+  
+  /* Spacing & Layout */
+  --space-fluid-xs: clamp(0.5rem, 0.357rem + 0.714vw, 1rem);     /* 8px -> 16px */
+  --space-fluid-md: clamp(1.5rem, 0.786rem + 3.571vw, 4rem);     /* 24px -> 64px */
+  --space-fluid-lg: clamp(2.5rem, 1.071rem + 7.143vw, 7.5rem);   /* 40px -> 120px */
+  
+  --sidebar-fluid-width: clamp(15rem, 13.857rem + 5.714vw, 19rem); /* 240px -> 304px */
+  --header-fluid-height: clamp(5rem, 4.286rem + 3.571vw, 7.5rem);  /* 80px -> 120px */
 }
 
 /* ========== DARK THEME ========== */
@@ -137,6 +163,58 @@ body * {
 body {
   background-color: var(--bg-primary);
   color: var(--text-body);
+}
+
+/* ========== SKELETON SHIMMER SYSTEM ========== */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-input) 25%,
+    var(--border-primary) 50%,
+    var(--bg-input) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 4px;
+  color: transparent !important;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ========== PREMIUM MESH AURA ========== */
+.mesh-aura-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-color: #f1f5f9;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(220, 100%, 80%, 0.5) 0px, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(200, 100%, 85%, 0.4) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(180, 100%, 80%, 0.5) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(240, 100%, 90%, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(210, 100%, 85%, 0.4) 0px, transparent 50%);
+  background-attachment: fixed;
+  animation: auraRotate 20s infinite alternate ease-in-out;
+}
+
+@keyframes auraRotate {
+  0% { filter: hue-rotate(0deg) saturate(1); }
+  100% { filter: hue-rotate(30deg) saturate(1.2); }
+}
+
+:host-context(.dark-theme) .mesh-aura-bg {
+  background-color: #0f172a;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(220, 100%, 20%, 0.5) 0px, transparent 50%),
+    radial-gradient(at 50% 0%, hsla(200, 100%, 15%, 0.4) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(180, 100%, 20%, 0.5) 0px, transparent 50%);
+  opacity: 0.6;
 }
 
 /* ========== GLOBAL RESPONSIVE FIXES ========== */

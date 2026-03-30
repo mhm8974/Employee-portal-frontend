@@ -217,4 +217,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (firstInput) firstInput.focus();
     }, 0);
   }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/profile']);
+  }
 }

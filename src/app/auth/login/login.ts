@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import {
   trigger,
   state,
@@ -13,11 +13,11 @@ import {
 } from '@angular/animations';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-login',
   standalone: true,
   imports: [FormsModule, CommonModule],
-  templateUrl: './profile.html',
-  styleUrls: ['./profile.css'],
+  templateUrl: './login.html',
+  styleUrls: ['./login.css'],
   animations: [
     trigger('shake', [
       state('false', style({ transform: 'translateX(0)' })),
@@ -40,15 +40,13 @@ import {
     ])
   ]
 })
-export class Profile implements OnInit {
+export class LoginComponent implements OnInit {
   employeeId = '';
-  password = '';
   captchaId = '';
   captchaImage = '';
   captchaInput = '';
 
   showIdError = false;
-  passwordError = false;
   captchaError = false;
   errorMessage = '';
   shakeTrigger = false;
@@ -104,7 +102,6 @@ export class Profile implements OnInit {
   login(): void {
     this.errorMessage = '';
     this.showIdError = false;
-    this.passwordError = false;
     this.captchaError = false;
     this.isLoading = true;
 
@@ -113,16 +110,6 @@ export class Profile implements OnInit {
       this.triggerShake();
       this.isLoading = false;
       return;
-    }
-
-    // Skip Password check if using mock data
-    if (!this.authService.useMockData) {
-      if (!this.password) {
-        this.errorMessage = 'Password is required';
-        this.triggerShake();
-        this.isLoading = false;
-        return;
-      }
     }
 
     // Skip CAPTCHA check if using mock data
@@ -137,7 +124,7 @@ export class Profile implements OnInit {
 
     const loginData = {
       employee_id: this.employeeId,
-      password: this.password,
+      password: '', // Sending blank as per removal from project
       captcha_id: this.captchaId,
       captcha_text: this.captchaInput
     };
@@ -198,9 +185,7 @@ export class Profile implements OnInit {
           if (isCaptchaError) {
             this.captchaError = true;
             this.loadCaptcha();
-          } else if (msg.toLowerCase().includes('password')) {
-            this.passwordError = true;
-          }
+          } 
 
           this.triggerShake();
         }
@@ -215,9 +200,7 @@ export class Profile implements OnInit {
         if (isCaptchaError) {
           this.captchaError = true;
           this.loadCaptcha();
-        } else if (msg.toLowerCase().includes('password')) {
-          this.passwordError = true;
-        }
+        } 
 
         this.triggerShake();
       }
@@ -226,7 +209,6 @@ export class Profile implements OnInit {
 
   resetForNewLogin(): void {
     this.employeeId = '';
-    this.password = '';
     this.captchaInput = '';
     this.errorMessage = '';
     this.showIdError = false;

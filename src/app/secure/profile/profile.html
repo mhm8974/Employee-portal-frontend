@@ -1,0 +1,88 @@
+<div class="profile-dashboard">
+  <!-- Profile Header Card -->
+  <div class="profile-header-card">
+    <div class="profile-cover"></div>
+    <div class="profile-main-info">
+      <div class="avatar-container">
+        <div class="avatar">
+          <span class="initials">{{ getInitials() }}</span>
+        </div>
+      </div>
+      <div class="user-details">
+        <h1 class="user-name">{{ employeeData.name }}</h1>
+        <p class="user-title">{{ employeeData.designation }} • {{ employeeData.section }}</p>
+        <div class="status-badge">Active Employee</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Info Grid -->
+  <div class="details-grid-wrapper">
+    <!-- Personal Information -->
+    <div class="info-card">
+      <div class="card-header">
+
+        <h2>Personal Information</h2>
+      </div>
+      <div class="card-body">
+        <div class="info-group">
+          <span class="label">Full Name</span>
+          <span class="value">{{ employeeData.name }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Date of Birth</span>
+          <span class="value">{{ employeeData.dob }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Gender</span>
+          <span class="value">{{ employeeData.gender }}</span>
+        </div>
+
+        <div class="info-group">
+          <span class="label">Contact Number</span>
+          <span class="value">{{ employeeData.phone }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Email Address</span>
+          <span class="value">{{ employeeData.email }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employment Details -->
+    <div class="info-card">
+      <div class="card-header">
+
+        <h2>Employment Details</h2>
+      </div>
+      <div class="card-body">
+        <div class="info-group">
+          <span class="label">Designation</span>
+          <span class="value">{{ employeeData.designation }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Section / Department</span>
+          <span class="value">{{ employeeData.section }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">CPF Number</span>
+          <span class="value emphasis">{{ employeeData.cpfNo }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Appointment Order Date</span>
+          <span class="value">{{ employeeData.appointmentDate }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Date of Retirement</span>
+          <span class="value">{{ employeeData.retirementDate }}</span>
+        </div>
+        <div class="info-group">
+          <span class="label">Work Location</span>
+          <span class="value">{{ employeeData.location }}</span>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

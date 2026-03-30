@@ -12,11 +12,14 @@
   <nav class="sidebar-nav">
     <div class="nav-section">
       <div class="nav-section-label">Main Menu</div>
+      <a routerLink="home" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
+        <span class="nav-label">Home</span>
+      </a>
       <a routerLink="profile" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
         <span class="nav-label">Employee Profile</span>
       </a>
-      <a routerLink="attendance" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">Attendance Register</span>
+      <a routerLink="payslip" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
+        <span class="nav-label">Payslip</span>
       </a>
       <a routerLink="leaves" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
         <span class="nav-label">Leaves & Time Off</span>
@@ -49,7 +52,7 @@
   </div>
 </div>
 
-<!-- BLUE BAR -->
+<!-- VIBRANT MESH TOP BAR -->
 <div class="top-bar">
   <div class="sidebar-align-container">
     <img src="assets/images/pranali_logo_2.png" alt="Pranali Logo" class="header-logo">

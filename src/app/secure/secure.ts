@@ -90,7 +90,7 @@ export class SecureComponent implements OnInit {
   confirmLogout(): void {
     this.showLogoutConfirm = false;
     this.authService.logout();
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/login']);
   }
 
   cancelLogout(): void {

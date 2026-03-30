@@ -13,10 +13,10 @@ body {
 
 .sidebar {
   position: fixed;
-  top: 100px;
+  top: var(--header-fluid-height);
   left: 0;
-  width: 280px;
-  height: calc(100% - 100px);
+  width: var(--sidebar-fluid-width);
+  height: calc(100% - var(--header-fluid-height));
   background: var(--sidebar-bg);
   z-index: 1001;
   display: flex;
@@ -27,11 +27,7 @@ body {
 }
 
 .sidebar-header {
-  height: 60px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 24px;
+  display: none; /* Hidden on desktop to remove empty space */
 }
 
 .close-mobile-btn {
@@ -46,7 +42,7 @@ body {
 /* Sidebar Navigation */
 .sidebar-nav {
   flex-grow: 1;
-  padding: 0 0 10px;
+  padding: 24px 0 10px; /* Slight top padding so text doesn't touch the very top */
   /* Removed horizontal padding to allow full-width hover bg */
   overflow-y: auto;
   scrollbar-width: thin;
@@ -137,8 +133,8 @@ body {
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: clamp(32px, 2.5vw, 40px);
+  height: clamp(32px, 2.5vw, 40px);
   background: var(--avatar-bg);
   border-radius: 10px;
   display: flex;
@@ -155,7 +151,7 @@ body {
 }
 
 .user-name {
-  font-size: 14px;
+  font-size: var(--font-fluid-base);
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -193,20 +189,34 @@ body {
 
 /* TOP BAR */
 .top-bar {
-  height: 100px;
+  height: var(--header-fluid-height);
   width: 100%;
-  background: linear-gradient(135deg, #1f3a8a, #2d4da8);
-  border-bottom: none;
+  /* Mesh Gradient: Highly vibrant blends of the logo's internal colors */
+  background: 
+    radial-gradient(at 0% 0%, rgba(31, 58, 138, 0.9) 0%, transparent 50%),
+    radial-gradient(at 50% 0%, rgba(16, 185, 129, 0.25) 0%, transparent 70%),
+    radial-gradient(at 80% 10%, rgba(245, 158, 11, 0.15) 0%, transparent 50%), /* Yellow hint */
+    radial-gradient(at 100% 0%, rgba(239, 68, 68, 0.2) 0%, transparent 60%),
+    #1e3a8a;
+  background-size: 200% 200%;
+  animation: mesh-flow 15s infinite alternate ease-in-out;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1002;
   position: fixed;
   top: 0;
   left: 0;
   display: flex;
   align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes mesh-flow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
 }
 
 .sidebar-align-container {
-  width: 280px;
+  width: var(--sidebar-fluid-width);
   height: 100%;
   display: flex;
   justify-content: flex-start;
@@ -216,14 +226,16 @@ body {
 }
 
 .header-logo {
-  height: 80px;
+  height: calc(var(--header-fluid-height) * 0.68); 
   width: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  transition: transform 0.3s ease;
 }
 
 .shell-content {
-  margin-left: 280px;
-  max-width: calc(100% - 280px);
-  padding-top: 140px;
+  margin-left: var(--sidebar-fluid-width);
+  max-width: calc(100% - var(--sidebar-fluid-width));
+  padding-top: calc(var(--header-fluid-height) + 40px);
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -461,6 +473,9 @@ body {
   }
 
   .sidebar-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
     height: 70px;
     padding: 0 24px;
   }

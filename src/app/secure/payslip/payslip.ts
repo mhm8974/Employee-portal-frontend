@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { catchError, of } from 'rxjs';
+import { QRCodeComponent } from 'angularx-qrcode';
 import { MOCK_EMPLOYEE, MOCK_PAYSLIP, MOCK_PAYSLIP_MARCH_2024 } from '../secure.mocks';
 import html2pdf from 'html2pdf.js';
 
@@ -42,13 +43,13 @@ export interface PaySlipData {
 }
 
 @Component({
-    selector: 'app-profile-view',
+    selector: 'app-payslip',
     standalone: true,
-    imports: [CommonModule, FormsModule],
-    templateUrl: './profile-view.html',
-    styleUrls: ['./profile-view.css']
+    imports: [CommonModule, FormsModule, QRCodeComponent],
+    templateUrl: './payslip.html',
+    styleUrls: ['./payslip.css']
 })
-export class ProfileViewComponent implements OnInit {
+export class PayslipComponent implements OnInit {
     years = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
     months = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
@@ -57,6 +58,7 @@ export class ProfileViewComponent implements OnInit {
 
     employeeData: EmployeeData | null = null;
     paySlipData: PaySlipData | null = null;
+    qrCodeUrl: string = '';
 
     isLoading = false;
     isPayslipLoading = false;
@@ -68,7 +70,7 @@ export class ProfileViewComponent implements OnInit {
         return this.authService.useMockData;
     }
 
-    private apiUrl = 'http://192.168.0.137:8000';
+    private apiUrl = 'http://192.168.0.115:8000/api';
 
     constructor(
         private http: HttpClient,
@@ -229,7 +231,7 @@ export class ProfileViewComponent implements OnInit {
             return;
         }
 
-        this.http.get<any>(`${this.apiUrl}/api/employee/${employeeId}`)
+        this.http.get<any>(`${this.apiUrl}/employee/${employeeId}`)
             .pipe(catchError(error => {
                 this.errorMessage = this.getErrorMessage(error);
                 this.isLoading = false;
@@ -271,6 +273,12 @@ export class ProfileViewComponent implements OnInit {
                 }
 
                 this.isPayslipLoading = false;
+                
+                // For mock data, we can generate a dummy verification URL
+                if (this.paySlipData) {
+                    this.qrCodeUrl = `https://verification.pranali.com/verify?token=MOCK_${this.selectedMonth}_${this.selectedYear}`;
+                }
+                
                 this.cdr.markForCheck();
             }, 500);
             return;
@@ -285,7 +293,7 @@ export class ProfileViewComponent implements OnInit {
 
         const params = { employee_id: employeeId, year: this.selectedYear.toString(), month: this.selectedMonth };
 
-        this.http.get<any>(`${this.apiUrl}/api/payslips`, { params })
+        this.http.get<any>(`${this.apiUrl}/payslips`, { params })
             .pipe(catchError(error => {
                 this.paySlipData = null;
                 this.errorMessage = error.status === 404
@@ -297,6 +305,21 @@ export class ProfileViewComponent implements OnInit {
             .subscribe(response => {
                 if (response?.success && response.data) {
                     this.paySlipData = response.data;
+                    
+                    // Step 1: Generate token when payslip loads
+                    const employeeId = localStorage.getItem('employeeId') || '20240101000001';
+                    this.http.post(`${this.apiUrl}/payslips/generate-verification-token`, null, {
+                        params: {
+                            employee_id: employeeId,
+                            month: this.selectedMonth,
+                            year: this.selectedYear.toString()
+                        }
+                    }).subscribe((res: any) => {
+                        if (res.success) {
+                            this.qrCodeUrl = `${this.apiUrl}${res.verification_url}`;
+                        }
+                    });
+
                     this.cdr.markForCheck();
                 } else {
                     this.paySlipData = null;
@@ -387,7 +410,7 @@ export class ProfileViewComponent implements OnInit {
             return;
         }
 
-        const downloadUrl = `${this.apiUrl}/api/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
+        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
         window.open(downloadUrl, '_blank');
     }
 

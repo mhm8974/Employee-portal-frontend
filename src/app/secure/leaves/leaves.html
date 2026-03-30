@@ -10,21 +10,34 @@
 
     <!-- BALANCE CARDS -->
     <div class="balance-grid">
-        <div class="balance-card" *ngFor="let balance of leaveBalances">
-            <div class="card-header">
-                <span class="type">{{ balance.type }}</span>
-                <div class="dot" [style.backgroundColor]="balance.color"></div>
+        <!-- Skeleton State -->
+        <ng-container *ngIf="isLoading">
+            <div class="balance-card" *ngFor="let i of [1,2,3]">
+                <div class="skeleton-shimmer" style="height: 12px; width: 60%; margin-bottom: 24px;">&nbsp;</div>
+                <div class="skeleton-shimmer" style="height: 32px; width: 40%; margin-bottom: 24px;">&nbsp;</div>
+                <div class="skeleton-shimmer" style="height: 8px; width: 100%;">&nbsp;</div>
             </div>
-            <div class="card-body">
-                <span class="current">{{ balance.current }}</span>
-                <span class="total">/ {{ balance.total }} Days Left</span>
+        </ng-container>
+
+        <!-- Real Data State -->
+        <ng-container *ngIf="!isLoading">
+            <div class="balance-card" *ngFor="let balance of leaveBalances">
+                <div class="card-header">
+                    <span class="type">{{ balance.type }}</span>
+                </div>
+                <div class="card-body">
+                    <span class="current">{{ balance.current }}</span>
+                    <span class="total">/ {{ balance.total }} Days Left</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" [style.width]="(balance.current / balance.total * 100) + '%'"
+                        [style.backgroundColor]="balance.color"></div>
+                </div>
             </div>
-            <div class="progress-bar">
-                <div class="progress-fill" [style.width]="(balance.current / balance.total * 100) + '%'"
-                    [style.backgroundColor]="balance.color"></div>
-            </div>
-        </div>
+        </ng-container>
     </div>
+
+
 
 
     <!-- APPLY MODAL -->

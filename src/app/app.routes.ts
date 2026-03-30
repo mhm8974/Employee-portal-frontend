@@ -1,28 +1,30 @@
 import { Routes } from '@angular/router';
-import { Profile } from './profile/profile';
+import { LoginComponent } from './auth/login/login';
 import { DashboardComponent } from './dashboard/dashboard';
 import { SecureComponent } from './secure/secure';
-import { ProfileViewComponent } from './secure/profile-view/profile-view';
+import { PayslipComponent } from './secure/payslip/payslip';
 import { SettingsComponent } from './secure/settings/settings';
-import { AttendanceComponent } from './secure/attendance/attendance';
 import { LeavesComponent } from './secure/leaves/leaves';
 import { HelpComponent } from './secure/help/help';
+import { HomeComponent } from './secure/home/home';
+import { ProfileComponent } from './secure/profile/profile';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'profile', pathMatch: 'full' },
-    { path: 'profile', component: Profile },
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'login', component: LoginComponent },
     { path: 'dashboard', component: DashboardComponent },
     {
         path: 'secure',
         component: SecureComponent,
         children: [
-            { path: '', redirectTo: 'profile', pathMatch: 'full' },
-            { path: 'profile', component: ProfileViewComponent },
+            { path: '', redirectTo: 'home', pathMatch: 'full' },
+            { path: 'home', component: HomeComponent },
+            { path: 'profile', component: ProfileComponent },
+            { path: 'payslip', component: PayslipComponent },
             { path: 'settings', component: SettingsComponent },
-            { path: 'attendance', component: AttendanceComponent },
             { path: 'leaves', component: LeavesComponent },
             { path: 'help', component: HelpComponent }
         ]
     },
-    { path: '**', redirectTo: 'profile' }
+    { path: '**', redirectTo: 'login' }
 ];

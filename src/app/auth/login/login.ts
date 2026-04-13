@@ -103,6 +103,8 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
+    if (this.isLoading) return; // Prevention lock
+
     this.errorMessage = '';
     this.showIdError = false;
     this.captchaError = false;
@@ -191,10 +193,11 @@ export class LoginComponent implements OnInit {
           this.errorMessage = msg;
           console.warn('[Profile] Login rejected by backend:', msg);
 
-          // ONLY refresh captcha if the error is specifically about the captcha
+          // ALWAYS refresh captcha and CLEAR input if invalid
           const isCaptchaError = msg.toLowerCase().includes('captcha');
           if (isCaptchaError) {
             this.captchaError = true;
+            this.captchaInput = ''; // CLEAR THE TRAP
             this.loadCaptcha();
           } 
 

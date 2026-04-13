@@ -5,7 +5,6 @@ import { catchError, tap } from 'rxjs/operators';
 
 export interface LoginRequest {
   employee_id: string;
-  password?: string;
   captcha_id: string;
   captcha_text: string;
 }
@@ -81,7 +80,7 @@ export interface UserProfile {
 })
 export class AuthService {
   private apiUrl = 'http://192.168.0.115:8000/api';
-  public useMockData = true; // Set 
+  public useMockData = false; // Set to false to use the real backend
 
   constructor(private http: HttpClient) { }
 
@@ -89,7 +88,6 @@ export class AuthService {
     console.log('[AuthService] Fetching CAPTCHA from:', `${this.apiUrl}/captcha`);
     return this.http.get<{ captcha_id: string, image: string }>(`${this.apiUrl}/captcha`).pipe(
       timeout(10000), // Wait for 10s
-      retry(2),       // Retry 2 times if it fails
       catchError(error => {
         console.error('[AuthService] CAPTCHA fetch failed:', error);
         return throwError(() => error);
@@ -97,13 +95,12 @@ export class AuthService {
     );
   }
 
-
   login(loginData: LoginRequest): Observable<LoginResponse> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
 
-    console.log('[AuthService] Sending login request to:', `${this.apiUrl}/auth/login`, loginData);
+    console.log('[AuthService] Sending login payload (No Password):', loginData);
 
     return this.http.post<LoginResponse>(
       `${this.apiUrl}/auth/login`,
@@ -182,11 +179,26 @@ export class AuthService {
       otpData,
       { headers }
     ).pipe(
-      tap(response => {
+      tap((response: any) => {
         console.log('[AuthService] OTP Verification Response:', response);
+
+        // Save the session token
         if (response.token) {
           this.setToken(response.token);
         }
+
+        // Save the employee_id from the OTP response (critical for profile calls)
+        if (response.employee_id) {
+          console.log('[AuthService] Storing employee_id from OTP response:', response.employee_id);
+          localStorage.setItem('employeeId', String(response.employee_id));
+        }
+
+        // Save employee_type if provided
+        if (response.employee_type) {
+          localStorage.setItem('employee_type', response.employee_type);
+        }
+
+        // Store full employee data if nested object is provided
         if (response.employee_data) {
           this.storeUserData(response.employee_data);
         }

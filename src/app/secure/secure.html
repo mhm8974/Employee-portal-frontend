@@ -11,28 +11,28 @@
 
   <nav class="sidebar-nav">
     <div class="nav-section">
-      <div class="nav-section-label">Main Menu</div>
+      <div class="nav-section-label">{{ 'Main Menu' | translate }}</div>
       <a routerLink="home" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">Home</span>
+        <span class="nav-label">{{ 'Home' | translate }}</span>
       </a>
       <a routerLink="profile" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">Employee Profile</span>
+        <span class="nav-label">{{ 'Employee Profile' | translate }}</span>
       </a>
       <a routerLink="payslip" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">Payslip</span>
+        <span class="nav-label">{{ 'Payslip' | translate }}</span>
       </a>
       <a routerLink="leaves" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">Leaves & Time Off</span>
+        <span class="nav-label">{{ 'Leaves & Time Off' | translate }}</span>
       </a>
     </div>
 
     <div class="nav-section">
-      <div class="nav-section-label">System</div>
+      <div class="nav-section-label">{{ 'SYSTEM' | translate }}</div>
       <a routerLink="settings" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">Settings</span>
+        <span class="nav-label">{{ 'Settings' | translate }}</span>
       </a>
       <a routerLink="help" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">Help Center</span>
+        <span class="nav-label">{{ 'Help Center' | translate }}</span>
       </a>
     </div>
   </nav>
@@ -47,7 +47,7 @@
           <div class="user-id">{{ employeeId }}</div>
         </div>
       </div>
-      <button class="logout-btn" (click)="logout()">Logout</button>
+      <button class="logout-btn" (click)="logout()">{{ 'Logout' | translate }}</button>
     </div>
   </div>
 </div>
@@ -56,6 +56,31 @@
 <div class="top-bar">
   <div class="sidebar-align-container">
     <img src="assets/images/pranali_logo_2.png" alt="Pranali Logo" class="header-logo">
+  </div>
+  
+  <!-- SEARCH WRAPPER — Contains both pill and dropdown as siblings -->
+  <div class="search-wrapper">
+    <!-- SEARCH BAR (Front Layer) -->
+    <div class="header-search" [class.is-open]="isSearchOpen">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" 
+             [(ngModel)]="searchQuery" 
+             (input)="onSearchInput()"
+             (keyup.enter)="onSearch()" 
+             (blur)="closeSearchDropdown()"
+             [placeholder]="'Search services, employees, or documents...' | translate" 
+             class="search-input">
+    </div>
+
+    <!-- SEARCH RESULTS DROPDOWN (Back Layer — behind the pill) -->
+    <div class="search-dropdown" *ngIf="isSearchOpen">
+      <div class="search-result" *ngFor="let item of searchResults" (mousedown)="selectResult(item)">
+        <div class="result-info">
+          <span class="result-label">{{ item.label | translate }}</span>
+        </div>
+        <i class="fas fa-arrow-right result-arrow"></i>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -75,11 +100,11 @@
 <div class="modal-overlay modal-logout" *ngIf="showLogoutConfirm" (click)="cancelLogout()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-content">
-      <h3 class="modal-title">Logout</h3>
+      <h3 class="modal-title">{{ 'Logout' | translate }}</h3>
       <p class="modal-text">Do you want to logout from pranali?</p>
       <div class="modal-actions">
-        <button class="modal-btn cancel" (click)="cancelLogout()">Cancel</button>
-        <button class="modal-btn confirm" (click)="confirmLogout()">Confirm</button>
+        <button class="modal-btn cancel" (click)="cancelLogout()">{{ 'Cancel' | translate }}</button>
+        <button class="modal-btn confirm" (click)="confirmLogout()">{{ 'Logout' | translate }}</button>
       </div>
     </div>
   </div>

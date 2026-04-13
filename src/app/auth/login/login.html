@@ -35,9 +35,6 @@
           <img *ngIf="captchaImage" [src]="captchaImage" alt="CAPTCHA" class="backend-captcha">
           <div *ngIf="!captchaImage" class="captcha-loader">Loading...</div>
         </div>
-        <button type="button" class="refresh-btn" (click)="loadCaptcha()" title="Refresh Captcha">
-          <i class="fa-solid fa-rotate"></i>
-        </button>
       </div>
 
       <!-- CAPTCHA INPUT -->

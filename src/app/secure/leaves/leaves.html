@@ -2,14 +2,14 @@
 
     <div class="header-section">
         <div class="title-group">
-            <h1>Leaves & Time Off</h1>
-            <p class="subtitle">Manage your leave applications and track your balances</p>
+            <h1>{{ 'Leaves & Time Off' | translate }}</h1>
+            <p class="subtitle">{{ 'Manage your leave applications and track your balances' | translate }}</p>
         </div>
-        <button class="apply-btn" (click)="toggleApplyModal()">Apply for Leave</button>
+        <button class="apply-btn" id="apply-leave" (click)="toggleApplyModal()">{{ 'Apply for Leave' | translate }}</button>
     </div>
 
     <!-- BALANCE CARDS -->
-    <div class="balance-grid">
+    <div class="balance-grid" id="leave-balance">
         <!-- Skeleton State -->
         <ng-container *ngIf="isLoading">
             <div class="balance-card" *ngFor="let i of [1,2,3]">
@@ -23,11 +23,11 @@
         <ng-container *ngIf="!isLoading">
             <div class="balance-card" *ngFor="let balance of leaveBalances">
                 <div class="card-header">
-                    <span class="type">{{ balance.type }}</span>
+                    <span class="type">{{ balance.type | translate }}</span>
                 </div>
                 <div class="card-body">
                     <span class="current">{{ balance.current }}</span>
-                    <span class="total">/ {{ balance.total }} Days Left</span>
+                    <span class="total">/ {{ balance.total }} {{ 'Days Left' | translate }}</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" [style.width]="(balance.current / balance.total * 100) + '%'"
@@ -44,39 +44,39 @@
     <div class="modal-overlay" *ngIf="showApplyModal" (click)="toggleApplyModal()">
         <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-                <h3>New Leave Application</h3>
+                <h3>{{ 'New Leave Application' | translate }}</h3>
                 <button class="close-btn" (click)="toggleApplyModal()">&times;</button>
             </div>
 
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Leave Type</label>
+                    <label>{{ 'Leave Type' | translate }}</label>
                     <select [(ngModel)]="newLeave.type">
-                        <option *ngFor="let b of leaveBalances" [value]="b.type">{{ b.type }}</option>
+                        <option *ngFor="let b of leaveBalances" [value]="b.type">{{ b.type | translate }}</option>
                     </select>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Start Date</label>
+                        <label>{{ 'Start Date' | translate }}</label>
                         <input type="date" [(ngModel)]="newLeave.startDate">
                     </div>
                     <div class="form-group">
-                        <label>End Date</label>
+                        <label>{{ 'End Date' | translate }}</label>
                         <input type="date" [(ngModel)]="newLeave.endDate">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Reason for Leave</label>
-                    <textarea rows="3" placeholder="Explain your reason briefly..."
+                    <label>{{ 'Reason for Leave' | translate }}</label>
+                    <textarea rows="3" [placeholder]="'Explain your reason briefly...' | translate"
                         [(ngModel)]="newLeave.reason"></textarea>
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="cancel-btn" (click)="toggleApplyModal()">Cancel</button>
-                <button class="submit-btn" (click)="submitLeave()">Submit Application</button>
+                <button class="cancel-btn" (click)="toggleApplyModal()">{{ 'Cancel' | translate }}</button>
+                <button class="submit-btn" (click)="submitLeave()">{{ 'Submit Application' | translate }}</button>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@
       <div class="user-details">
         <h1 class="user-name">{{ employeeData.name }}</h1>
         <p class="user-title">{{ employeeData.designation }} • {{ employeeData.section }}</p>
-        <div class="status-badge">Active Employee</div>
+        <div class="status-badge">{{ 'Active Employee' | translate }}</div>
       </div>
     </div>
   </div>
@@ -22,28 +22,28 @@
     <div class="info-card">
       <div class="card-header">
 
-        <h2>Personal Information</h2>
+        <h2 id="personal-info">{{ 'Personal Information' | translate }}</h2>
       </div>
       <div class="card-body">
         <div class="info-group">
-          <span class="label">Full Name</span>
+          <span class="label">{{ 'Full Name' | translate }}</span>
           <span class="value">{{ employeeData.name }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Date of Birth</span>
+          <span class="label">{{ 'Date of Birth' | translate }}</span>
           <span class="value">{{ employeeData.dob }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Gender</span>
+          <span class="label">{{ 'Gender' | translate }}</span>
           <span class="value">{{ employeeData.gender }}</span>
         </div>
 
         <div class="info-group">
-          <span class="label">Contact Number</span>
+          <span class="label">{{ 'Contact Number' | translate }}</span>
           <span class="value">{{ employeeData.phone }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Email Address</span>
+          <span class="label">{{ 'Email Address' | translate }}</span>
           <span class="value">{{ employeeData.email }}</span>
         </div>
       </div>
@@ -53,31 +53,31 @@
     <div class="info-card">
       <div class="card-header">
 
-        <h2>Employment Details</h2>
+        <h2 id="employment-details">{{ 'Employment Details' | translate }}</h2>
       </div>
       <div class="card-body">
         <div class="info-group">
-          <span class="label">Designation</span>
+          <span class="label">{{ 'Designation' | translate }}</span>
           <span class="value">{{ employeeData.designation }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Section / Department</span>
+          <span class="label">{{ 'Section / Department' | translate }}</span>
           <span class="value">{{ employeeData.section }}</span>
         </div>
         <div class="info-group">
-          <span class="label">CPF Number</span>
+          <span class="label">{{ 'CPF Number' | translate }}</span>
           <span class="value emphasis">{{ employeeData.cpfNo }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Appointment Order Date</span>
+          <span class="label">{{ 'Appointment Order Date' | translate }}</span>
           <span class="value">{{ employeeData.appointmentDate }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Date of Retirement</span>
+          <span class="label">{{ 'Date of Retirement' | translate }}</span>
           <span class="value">{{ employeeData.retirementDate }}</span>
         </div>
         <div class="info-group">
-          <span class="label">Work Location</span>
+          <span class="label">{{ 'Work Location' | translate }}</span>
           <span class="value">{{ employeeData.location }}</span>
         </div>
       </div>

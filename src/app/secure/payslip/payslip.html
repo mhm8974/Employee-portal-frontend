@@ -22,11 +22,21 @@
             </div>
         </div>
 
-        <!-- RIGHT - Download -->
-        <div class="right">
-            <button class="download-btn" (click)="openPrintDialog()">
+        <!-- RIGHT - Download (PC Native Dropdown) -->
+        <div class="right download-container">
+            <button class="download-btn" id="download-payslip" (click)="openPrintDialog()">
                 Download Pay Slip
             </button>
+            
+            <!-- PC Native Dropdown Menu -->
+            <div class="desktop-dropdown" *ngIf="showDropdown && !isMobileScreen()">
+                <button class="dropdown-item" (click)="handleAction('download')">
+                    <i class="fas fa-file-pdf"></i> Download as PDF
+                </button>
+                <button class="dropdown-item" (click)="handleAction('print')">
+                    <i class="fas fa-print"></i> Print Payslip
+                </button>
+            </div>
         </div>
     </div>
 
@@ -220,20 +230,23 @@
         </div>
     </div>
 
-    <!-- iOS Style Action Sheet -->
-    <div class="ios-action-sheet-overlay" *ngIf="showActionSheet" (click)="closeActionSheet($event)">
+    <!-- iOS Style Action Sheet (MOBILE ONLY) -->
+    <div class="ios-action-sheet-overlay" *ngIf="showActionSheet && isMobileScreen()" (click)="closeActionSheet($event)">
         <div class="ios-action-sheet" (click)="$event.stopPropagation()">
             <!-- Header Group (Blurred) -->
             <div class="ios-action-group blurred">
                 <div class="ios-action-header">
                     <p class="ios-title">Download Pay Slip</p>
-                    <p class="ios-subtitle">Would you like to save this as a PDF?</p>
+                    <p class="ios-subtitle">How would you like to handle this payslip?</p>
                 </div>
             </div>
             <!-- Actions Group (Merged - White) -->
             <div class="ios-action-group actions">
                 <button class="ios-action-btn primary" (click)="handleAction('download')">
                     Download as PDF
+                </button>
+                <button class="ios-action-btn primary" (click)="handleAction('print')">
+                    Print Payslip
                 </button>
                 <button class="ios-action-btn cancel" (click)="handleAction('cancel')">
                     Cancel

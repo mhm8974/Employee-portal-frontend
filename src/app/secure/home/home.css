@@ -26,7 +26,7 @@
 
 .badge {
   display: inline-block;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
   margin-bottom: 16px;
@@ -37,18 +37,18 @@
 .hero-content h1 {
   font-size: 48px;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-heading);
   line-height: 1.1;
   margin-bottom: 24px;
 }
 
 .highlight {
-  color: #1f3a8a;
+  color: #3b82f6; /* Lighter blue for dark mode compatibility */
 }
 
 .hero-subtitle {
   font-size: 18px;
-  color: #64748b;
+  color: var(--text-secondary);
   line-height: 1.6;
   max-width: 600px;
 }
@@ -58,6 +58,11 @@
   /* Reduced drop shadow for minimalism */
   filter: drop-shadow(0 10px 20px rgba(31, 58, 138, 0.08));
   animation: float 6s ease-in-out infinite;
+  transition: filter 0.3s ease;
+}
+
+:host-context(.dark-theme) .floating-logo {
+  filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
 }
 
 @keyframes float {
@@ -75,7 +80,7 @@
 
 .overview-card {
   padding: 32px 0;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--border-primary);
   transition: opacity 0.3s ease;
 }
 
@@ -99,12 +104,12 @@
 .overview-card h3 {
   font-size: 20px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-heading);
   margin-bottom: 16px;
 }
 
 .overview-card p {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 15px;
   line-height: 1.6;
 }
@@ -112,10 +117,10 @@
 /* VISION BANNER */
 .vision-banner {
   padding: 60px 40px;
-  background: #f8fafc;
-  color: #1e293b;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   text-align: center;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .vision-text {
@@ -131,7 +136,7 @@
 
 .vision-text p {
   font-size: 18px;
-  color: #475569;
+  color: var(--text-secondary);
   line-height: 1.7;
 }
 

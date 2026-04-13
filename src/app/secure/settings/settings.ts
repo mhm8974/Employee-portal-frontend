@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
+import { TranslationService } from '../../services/translation.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-settings',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [TranslatePipe, CommonModule, FormsModule],
     templateUrl: './settings.html',
     styleUrls: ['./settings.css']
 })
@@ -24,6 +26,13 @@ export class SettingsComponent implements OnInit {
     showPhoneInDirectory = true;
     showEmailInDirectory = true;
 
+    // Security Settings
+    twoFactorEnabled = false;
+
+    // Global Preferences
+    selectedLanguage = 'en';
+
+
     // Password Change
     showPasswordForm = false;
     currentPassword = '';
@@ -32,10 +41,11 @@ export class SettingsComponent implements OnInit {
     passwordMessage = '';
     passwordError = false;
 
-    constructor(private themeService: ThemeService) { }
+    constructor(private themeService: ThemeService, private translationService: TranslationService) { }
 
     ngOnInit(): void {
         this.darkMode = this.themeService.isDarkMode;
+        this.selectedLanguage = this.translationService.currentLanguage;
     }
 
     togglePasswordForm(): void {
@@ -87,9 +97,11 @@ export class SettingsComponent implements OnInit {
 
     saveDisplayPreferences(): void {
         this.themeService.setDarkMode(this.darkMode);
+        this.translationService.setLanguage(this.selectedLanguage);
         console.log('[Backend Integration Hook] Saving display:', {
             darkMode: this.darkMode,
-            compactView: this.compactView
+            compactView: this.compactView,
+            language: this.selectedLanguage
         });
     }
 
@@ -97,6 +109,12 @@ export class SettingsComponent implements OnInit {
         console.log('[Backend Integration Hook] Saving privacy:', {
             showPhoneInDirectory: this.showPhoneInDirectory,
             showEmailInDirectory: this.showEmailInDirectory
+        });
+    }
+
+    saveSecurityPreferences(): void {
+        console.log('[Backend Integration Hook] Saving security:', {
+            twoFactorEnabled: this.twoFactorEnabled
         });
     }
 }

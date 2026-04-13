@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { catchError, finalize, tap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import {
   trigger,
@@ -76,10 +77,12 @@ export class LoginComponent implements OnInit {
     }
 
     this.authService.getCaptcha().subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('[Profile] CAPTCHA loaded successfully:', response.captcha_id);
+        
         this.captchaImage = response.image;
         this.captchaId = response.captcha_id;
+        
         this.cdr.detectChanges(); // Force update
       },
       error: (err) => {
@@ -122,14 +125,17 @@ export class LoginComponent implements OnInit {
       }
     }
 
+    const cleanId = (this.captchaId || '').trim();
+    const cleanInput = (this.captchaInput || '').trim();
+    const cleanEmployeeId = (this.employeeId || '').trim();
+
     const loginData = {
-      employee_id: this.employeeId,
-      password: '', // Sending blank as per removal from project
-      captcha_id: this.captchaId,
-      captcha_text: this.captchaInput
+      employee_id: cleanEmployeeId,
+      captcha_id: cleanId,
+      captcha_text: cleanInput
     };
 
-    console.log('[Profile] Attempting login with payload:', { ...loginData, password: '***' });
+    console.warn('[Profile] SENDING LOGIN:', loginData);
 
     if (this.authService.useMockData) {
       setTimeout(() => {
@@ -140,30 +146,35 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authService.login(loginData).subscribe({
-      next: (response) => {
+    this.authService.login(loginData).pipe(
+      finalize(() => {
         this.isLoading = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (response: any) => {
         console.log('[Profile] Login response payload:', response);
+        
+        // Debug Hint for Dev Mode
+        if ((response as any).dev_hint_otp) {
+          console.warn('--- DEV MODE: OTP IS ' + (response as any).dev_hint_otp + ' ---');
+          alert('DEV MODE DETECTED! OTP is: ' + (response as any).dev_hint_otp);
+        }
 
-        // Robust success check (including common nested patterns)
         const respData = (response as any).data || response;
-        const isSuccess = response.success === true ||
-          respData.success === true ||
-          (response as any).status === 'success' ||
-          (respData as any).status === 'success' ||
-          !!response.token ||
-          !!respData.token ||
-          !!response.employee_id ||
-          !!respData.employee_id;
+        console.log('[Profile] Normalized Response Data:', respData);
+
+        const isSuccess = response.success === true || 
+                          respData.success === true || 
+                          (response as any).status === 'success' ||
+                          (respData as any).status === 'success';
 
         if (isSuccess) {
-          const idToStore = respData.employee_id || response.employee_id || this.employeeId;
+          const idToStore = respData.employee_id || response.employee_id || cleanEmployeeId;
           localStorage.setItem('employeeId', String(idToStore));
 
-          // Debug fallback for storage
-          localStorage.setItem('employeeId', String(idToStore));
-
-          const target = (response.requires_otp === false || respData.requires_otp === false) ? '/secure' : '/dashboard';
+          const requiresOtp = response.requires_otp !== false && respData.requires_otp !== false;
+          const target = requiresOtp ? '/dashboard' : '/secure'; // Defaults to OTP if not explicitly false
           console.log(`[Profile] Success detected. Navigating to ${target}...`);
 
           this.router.navigate([target]).then(navSuccess => {

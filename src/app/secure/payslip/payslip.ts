@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -6,7 +6,7 @@ import { AuthService, UserProfile } from '../../services/auth.service';
 import { catchError, of } from 'rxjs';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { MOCK_EMPLOYEE, MOCK_PAYSLIP, MOCK_PAYSLIP_MARCH_2024 } from '../secure.mocks';
-import html2pdf from 'html2pdf.js';
+// Removed html2pdf usage as we are moving to backend-driven PDF generation.
 
 export interface EmployeeData extends UserProfile {
     section?: string;
@@ -64,6 +64,7 @@ export class PayslipComponent implements OnInit {
     isPayslipLoading = false;
     errorMessage = '';
     showActionSheet = false;
+    showDropdown = false;
 
     /* MOCK DATA CONFIG moved to AuthService */
     get useMockData(): boolean {
@@ -88,118 +89,75 @@ export class PayslipComponent implements OnInit {
     }
 
     async openPrintDialog() {
-        // Look for the ID directly in the document
-        const element = document.getElementById('payslip');
-
-        if (!element) {
-            console.error("Could not find element with id 'payslip'. Is it hidden by an *ngIf?");
-            return;
-        }
-
-        // On mobile, offer a choice via custom action sheet
         if (this.isMobileScreen()) {
             this.showActionSheet = true;
-            return; // Exit here; the action sheet will handle the rest
+        } else {
+            this.showDropdown = !this.showDropdown;
         }
+    }
 
-        const options = {
-            margin: 10,
-            filename: `payslip_${this.selectedMonth}_${this.selectedYear}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: {
-                scale: 3, // Increased scale for consistency
-                useCORS: true,
-                letterRendering: true,
-                scrollY: -window.scrollY,
-                windowWidth: 800,
-                onclone: (clonedDoc: Document) => {
-                    const clonedElement = clonedDoc.getElementById('payslip');
-                    if (clonedElement) {
-                        // Aggressively neutralize mobile-only scaling and margins
-                        clonedElement.style.transform = 'none';
-                        clonedElement.style.margin = '0';
-                        clonedElement.style.width = '800px';
-                        clonedElement.style.minWidth = '800px';
-                        clonedElement.style.position = 'absolute';
-                        clonedElement.style.left = '0';
-                        clonedElement.style.top = '0';
-                        clonedElement.style.display = 'block';
-                        clonedElement.style.visibility = 'visible';
-                    }
-                    clonedDoc.body.style.width = '800px';
-                    clonedDoc.body.style.overflow = 'visible';
-                    clonedDoc.body.style.background = 'white';
-                }
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
-        };
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent) {
+        // Automatically close the desktop dropdown when clicking away
+        if (!this.showDropdown) return;
+        
+        const target = event.target as HTMLElement;
+        const isClickInside = target.closest('.download-container');
+        
+        if (!isClickInside) {
+            this.showDropdown = false;
+        }
+    }
 
-        const worker = html2pdf().from(element).set(options as any);
-        const pdfOutput = await worker.outputPdf('bloburl');
-
-        // Create a hidden iframe to trigger the print
+    private triggerPrint(url: string) {
+        // Professional hidden iframe print logic
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
-        iframe.src = pdfOutput;
+        iframe.src = url;
         document.body.appendChild(iframe);
 
         iframe.onload = () => {
-            iframe.contentWindow?.focus();
-            iframe.contentWindow?.print();
-            // Cleanup: avoid keeping the iframe in the DOM
-            setTimeout(() => {
-                if (document.body.contains(iframe)) {
-                    document.body.removeChild(iframe);
-                }
-            }, 5000);
-        };
-    }
-
-    private async downloadPdfDirectly(element: HTMLElement) {
-        const options = {
-            margin: 10,
-            filename: `payslip_${this.selectedMonth}_${this.selectedYear}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: {
-                scale: 3, // High scale for perfect clarity
-                useCORS: true,
-                letterRendering: true,
-                scrollY: 0,
-                windowWidth: 800, // Force the window to 800px for the capture
-                onclone: (clonedDoc: Document) => {
-                    const clonedElement = clonedDoc.getElementById('payslip');
-                    if (clonedElement) {
-                        // Aggressively neutralize mobile-only scaling and margins
-                        clonedElement.style.transform = 'none';
-                        clonedElement.style.margin = '0';
-                        clonedElement.style.width = '800px';
-                        clonedElement.style.minWidth = '800px';
-                        clonedElement.style.position = 'absolute';
-                        clonedElement.style.left = '0';
-                        clonedElement.style.top = '0';
-                        clonedElement.style.display = 'block';
-                        clonedElement.style.visibility = 'visible';
+            try {
+                iframe.contentWindow?.focus();
+                iframe.contentWindow?.print();
+                // Cleanup
+                setTimeout(() => {
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
                     }
-                    // Force the cloned body to be wide enough to contain the 800px element
-                    clonedDoc.body.style.width = '800px';
-                    clonedDoc.body.style.overflow = 'visible';
-                }
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
+                }, 5000);
+            } catch (err) {
+                console.error('[Print Handler] Error triggering print:', err);
+                // Fallback: Just open in new tab if iframe printing is blocked
+                window.open(url, '_blank');
+            }
         };
-
-        await html2pdf().from(element).set(options as any).save();
     }
+
+    /* Redundant clientside PDF methods removed as we are now using the official backend PDF endpoint */
+
+
 
 
     async handleAction(action: string) {
         this.showActionSheet = false;
+        this.showDropdown = false;
+
+        const employeeId = this.employeeId === 'N/A' || !this.employeeId 
+            ? (localStorage.getItem('employeeId') || 'CPF12345') 
+            : this.employeeId;
+
+        if (!employeeId) {
+            alert('Please login');
+            return;
+        }
+
+        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
 
         if (action === 'download') {
-            const element = document.getElementById('payslip');
-            if (element) {
-                await this.downloadPdfDirectly(element);
-            }
+            window.open(downloadUrl, '_blank');
+        } else if (action === 'print') {
+            this.triggerPrint(downloadUrl);
         }
     }
 
@@ -306,7 +264,7 @@ export class PayslipComponent implements OnInit {
                 if (response?.success && response.data) {
                     this.paySlipData = response.data;
                     
-                    // Step 1: Generate token when payslip loads
+                    // Step 1: Generate validation token using POST endpoint
                     const employeeId = localStorage.getItem('employeeId') || '20240101000001';
                     this.http.post(`${this.apiUrl}/payslips/generate-verification-token`, null, {
                         params: {
@@ -315,9 +273,16 @@ export class PayslipComponent implements OnInit {
                             year: this.selectedYear.toString()
                         }
                     }).subscribe((res: any) => {
-                        if (res.success) {
-                            this.qrCodeUrl = `${this.apiUrl}${res.verification_url}`;
+                        if (res.token || res.verification_url) {
+                            // Strip /api from apiUrl if the verification_url already includes it
+                            const baseHost = this.apiUrl.split(':8000')[0] + ':8000';
+                            this.qrCodeUrl = `${baseHost}${res.verification_url}`;
+                            console.log('[QR Generator] Verification URL Set:', this.qrCodeUrl);
                         }
+                    }, err => {
+                        console.error('[QR Generator] Failed to generate token:', err);
+                        // Fallback URL
+                        this.qrCodeUrl = `${this.apiUrl}/payslips/verify?employee_id=${employeeId}&month=${this.selectedMonth}`;
                     });
 
                     this.cdr.markForCheck();
@@ -436,13 +401,8 @@ export class PayslipComponent implements OnInit {
     getPhone(): string { return this.employeeData?.mobile || 'N/A'; }
     getJoiningDate(): string { return this.formatDate(this.employeeData?.join_date); }
 
+    // Not used anymore as the QR data is fetched from the token endpoint
     getVerifierQrUrl(): string {
-        if (!this.paySlipData) return '';
-
-        const employeeId = this.paySlipData.employee_id;
-        const verifierUrl = `${this.apiUrl}/api/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
-
-        // Switching back to api.qrserver.com as it was working better for you
-        return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(verifierUrl)}`;
+        return this.qrCodeUrl;
     }
 }

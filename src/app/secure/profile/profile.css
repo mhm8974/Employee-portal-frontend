@@ -21,7 +21,7 @@
 .profile-header-card {
   margin-bottom: 30px;
   padding-bottom: 30px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .profile-cover {
@@ -42,15 +42,15 @@
 .avatar {
   width: 100px;
   height: 100px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 32px;
   font-weight: 500;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
 }
 
 .user-details {
@@ -60,21 +60,21 @@
 .user-name {
   font-size: 36px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-heading);
   margin: 0 0 8px 0;
   letter-spacing: -0.5px;
 }
 
 .user-title {
   font-size: 16px;
-  color: #64748b;
+  color: var(--text-secondary);
   margin: 0 0 16px 0;
   font-weight: 400;
 }
 
 .status-badge {
   display: inline-block;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.5px;
@@ -100,7 +100,7 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 32px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-primary);
   padding-bottom: 16px;
 }
 
@@ -128,7 +128,7 @@
 .card-header h2 {
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-heading);
   margin: 0;
 }
 
@@ -149,19 +149,19 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .value {
   font-size: 16px;
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 400;
 }
 
 .value.emphasis {
   font-family: monospace;
   font-size: 16px;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 /* RESPONSIVE */

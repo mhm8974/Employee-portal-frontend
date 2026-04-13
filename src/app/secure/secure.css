@@ -27,7 +27,8 @@ body {
 }
 
 .sidebar-header {
-  display: none; /* Hidden on desktop to remove empty space */
+  display: none;
+  /* Hidden on desktop to remove empty space */
 }
 
 .close-mobile-btn {
@@ -42,7 +43,8 @@ body {
 /* Sidebar Navigation */
 .sidebar-nav {
   flex-grow: 1;
-  padding: 24px 0 10px; /* Slight top padding so text doesn't touch the very top */
+  padding: 24px 0 10px;
+  /* Slight top padding so text doesn't touch the very top */
   /* Removed horizontal padding to allow full-width hover bg */
   overflow-y: auto;
   scrollbar-width: thin;
@@ -192,10 +194,11 @@ body {
   height: var(--header-fluid-height);
   width: 100%;
   /* Mesh Gradient: Highly vibrant blends of the logo's internal colors */
-  background: 
+  background:
     radial-gradient(at 0% 0%, rgba(31, 58, 138, 0.9) 0%, transparent 50%),
     radial-gradient(at 50% 0%, rgba(16, 185, 129, 0.25) 0%, transparent 70%),
-    radial-gradient(at 80% 10%, rgba(245, 158, 11, 0.15) 0%, transparent 50%), /* Yellow hint */
+    radial-gradient(at 80% 10%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
+    /* Yellow hint */
     radial-gradient(at 100% 0%, rgba(239, 68, 68, 0.2) 0%, transparent 60%),
     #1e3a8a;
   background-size: 200% 200%;
@@ -207,12 +210,20 @@ body {
   left: 0;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  /* Switch to start and use margin-left: auto for search */
+  padding-right: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes mesh-flow {
-  0% { background-position: 0% 0%; }
-  100% { background-position: 100% 100%; }
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 100% 100%;
+  }
 }
 
 .sidebar-align-container {
@@ -226,11 +237,199 @@ body {
 }
 
 .header-logo {
-  height: calc(var(--header-fluid-height) * 0.68); 
+  height: calc(var(--header-fluid-height) * 0.68);
   width: auto;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
+
+:host-context(.dark-theme) .header-logo {
+  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+}
+
+/* SEARCH WRAPPER — Positioning parent for sibling stacking */
+.search-wrapper {
+  position: relative;
+  margin-left: auto;
+  margin-right: 120px;
+  width: clamp(240px, 30vw, 480px);
+}
+
+/* SEARCH BAR — Front layer (z-index: 2) */
+.header-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  /* CRITICAL: Includes padding and border in width */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 0 20px;
+  width: 100%;
+  height: 44px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  /* FRONT — sits on top of dropdown sibling */
+}
+
+/* Open State */
+.header-search.is-open {
+  background: rgba(15, 23, 42, 1);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.search-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin-right: 14px;
+}
+
+.search-input {
+  background: transparent !important;
+  border: none !important;
+  color: white !important;
+  font-size: 15px;
+  width: 100%;
+  outline: none !important;
+}
+
+/* SEARCH DROPDOWN — Back layer (z-index: 1), behind the pill sibling */
+.search-dropdown {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  background: rgba(30, 41, 59, 0.85);
+  /* More translucent to emphasize glassmorphism */
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: none;
+  border-radius: 0 0 24px 24px;
+  max-height: 400px;
+  overflow-y: overlay;
+  scrollbar-width: none;
+  scrollbar-gutter: auto;
+  -ms-overflow-style: none;
+  z-index: 1;
+  /* BACK — behind the pill sibling */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.search-dropdown::-webkit-scrollbar {
+  display: none;
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* First result padding to account for the overlapping pill */
+.search-result:first-child {
+  border-top: none;
+  padding-top: 36px;
+}
+
+.search-result:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.result-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.result-arrow {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 0;
+  transition: all 0.2s ease;
+  transform: translateX(-5px);
+}
+
+.search-result:hover .result-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 12px;
+  border-bottom: none;
+  /* Removed borders for cleaner look */
+}
+
+.search-result:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.result-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.result-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-arrow {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  opacity: 0;
+  transition: all 0.2s ease;
+  transform: translateX(-5px);
+}
+
+.search-result:hover .result-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 
 .shell-content {
   margin-left: var(--sidebar-fluid-width);
@@ -383,8 +582,46 @@ body {
 
   .sidebar-align-container {
     padding-left: 16px;
-    width: 100%;
+    width: auto;
+    /* Allow items to stack naturally */
     /* Let it shrink on mobile */
+  }
+
+  .header-search {
+    width: 44px;
+    /* Collapse to icon-only on mobile or very small */
+    padding: 0;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    margin-right: 10px;
+  }
+
+  .header-search:focus-within {
+    width: calc(100vw - 120px);
+    position: absolute;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(20px);
+    padding: 0 16px;
+    z-index: 100;
+  }
+
+  .header-search .search-icon {
+    margin-right: 0;
+    font-size: 18px;
+  }
+
+  .header-search:focus-within .search-icon {
+    margin-right: 12px;
+  }
+
+  .header-search .search-input {
+    display: none;
+  }
+
+  .header-search:focus-within .search-input {
+    display: block;
   }
 
   .header-logo {

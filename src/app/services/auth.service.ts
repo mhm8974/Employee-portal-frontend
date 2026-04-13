@@ -80,7 +80,7 @@ export interface UserProfile {
 })
 export class AuthService {
   private apiUrl = 'http://192.168.0.115:8000/api';
-  public useMockData = false; // Set to false to use the real backend
+  public useMockData = true; // Set to false to use the real backend
 
   constructor(private http: HttpClient) { }
 

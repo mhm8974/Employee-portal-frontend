@@ -12,12 +12,13 @@
 }
 
 /* PREMIUM OTP CARD */
+/* PREMIUM OTP CARD */
 .otp-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 420px;
   background: white;
   text-align: center;
-  padding: 48px 40px;
+  padding: 32px 32px; /* Tightened padding */
   border-radius: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
   border: 1px solid #f1f5f9;
@@ -26,79 +27,84 @@
 .brand-logo-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px; /* Reduced from 40px */
 }
 
 .brand-logo {
-  max-width: 160px;
+  max-width: 140px;
   height: auto;
 }
 
 .otp-header h2 {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
   letter-spacing: -0.02em;
 }
 
 .subtext {
-  font-size: 15px;
+  font-size: 14px;
   color: #64748b;
-  margin-bottom: 40px;
-  line-height: 1.6;
+  margin-bottom: 24px; /* Reduced from 40px */
+  line-height: 1.5;
 }
 
-/* OTP INPUTS - Branded Styling */
+/* OTP INPUTS */
 .otp-inputs {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: 10px;
+  margin-bottom: 24px;
 }
 
 .otp-inputs input {
-  width: 52px;
-  height: 60px;
+  width: 48px;
+  height: 56px;
   text-align: center;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   border-radius: 12px;
   border: 1.5px solid #e2e8f0;
   background: #f8fafc;
   color: #1e293b;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
-.otp-inputs input::placeholder {
-  color: #cbd5e1;
-  font-weight: 400;
+/* ERROR - Compact & Sized to match boxes */
+.error-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
+
+.error {
+  color: #ef4444;
+  font-size: 13px;
+  background: #fff1f2;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #fee2e2;
+  max-width: 350px; /* Aligned with input group width */
+  width: auto;
+  font-weight: 500;
+}
+
 
 .otp-inputs input:focus {
-  border-color: #1f3a8a;
+  border-color: #1e3a8a;
   background: white;
-  box-shadow: 0 0 0 4px rgba(31, 58, 138, 0.1);
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
   outline: none;
   transform: translateY(-2px);
 }
 
 .otp-inputs input.filled {
-  border-color: #1f3a8a;
+  border-color: #1e3a8a;
   background: white;
 }
 
-.otp-inputs input:disabled {
-  background: #f9fafb;
-  color: #111;
-  opacity: 1;
-  /* Standard browsers */
-  -webkit-text-fill-color: #111;
-  /* iOS Safari override */
-  cursor: default;
-}
-
-/* TIMER & RESEND */
+/* TIMER */
 .timer {
   font-size: 14px;
   color: #64748b;
@@ -109,59 +115,22 @@
   color: #1e293b;
 }
 
-.resend-container {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.resend-container p {
-  margin: 0;
-  color: #94a3b8;
-}
-
-.resend {
-  color: #1f3a8a;
-  cursor: pointer;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  font-size: 14px;
-}
-
-.resend:hover {
-  color: #2d4da8;
-  text-decoration: underline;
-}
-
-/* ERROR MESSAGE */
-.error-container {
-  margin-bottom: 24px;
-}
-
-.error {
-  color: #ef4444;
-  font-size: 14px;
-  margin: 0;
-  background: #fff1f2;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #ffe4e6;
-  font-weight: 500;
-}
-
-/* VERIFY BUTTON - Branded */
+/* ACTION BUTTON */
 .verify-btn {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   background: #000000;
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
+  margin-bottom: 16px; /* Reduced from 24px */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .verify-btn:hover {
@@ -169,8 +138,43 @@
   transform: translateY(-1px);
 }
 
-.verify-btn:active {
-  transform: translateY(0);
+.verify-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* RESEND */
+.resend-container p {
+  margin: 0 0 4px 0; /* Reduced from 8px */
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.resend {
+  color: #1e3a8a;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.resend:hover {
+  text-decoration: underline;
+}
+
+/* ERROR */
+.error-container {
+  margin-bottom: 24px;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 14px;
+  background: #fff1f2;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ffe4e6;
 }
 
 /* FOOTER */
@@ -184,57 +188,15 @@
   color: #64748b;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  cursor: pointer;
 }
 
 .back-link:hover {
-  color: #1f3a8a;
-}
-
-/* MOBILE RESPONSIVENESS */
-@media (max-width: 480px) {
-  .otp-page {
-    padding: 16px;
-  }
-
-  .otp-card {
-    padding: 32px 20px;
-    border-radius: 16px;
-  }
-
-  .otp-card h2 {
-    font-size: 20px;
-  }
-
-  .subtext {
-    font-size: 13px;
-    margin-bottom: 24px;
-  }
-
-  .otp-inputs {
-    gap: 4px; /* Reduced from 6px */
-    margin-bottom: 24px;
-  }
-
-  .otp-inputs input {
-    width: 34px; /* Reduced from 38px */
-    height: 44px;
-    font-size: 16px;
-    border-radius: 8px;
-  }
-
-  .timer {
-    margin-bottom: 24px;
-  }
-
-  .verify-btn {
-    padding: 12px;
-  }
+  color: #1e3a8a;
 }
 
 /* DARK MODE OVERRIDES */
@@ -243,7 +205,8 @@ body.dark-theme .otp-page {
 }
 
 body.dark-theme .otp-card {
-  background: transparent;
+  background: var(--bg-card);
+  border-color: var(--border-primary);
 }
 
 body.dark-theme .otp-card h2 {
@@ -260,29 +223,8 @@ body.dark-theme .otp-inputs input {
   color: var(--text-primary);
 }
 
-body.dark-theme .otp-inputs input:focus {
-  background: var(--bg-card);
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-}
-
-body.dark-theme .otp-inputs input.filled {
-  background: var(--bg-card);
-}
-
-body.dark-theme .otp-inputs input:disabled {
-  background: var(--bg-input);
-  color: var(--text-primary);
-  opacity: 1;
-  -webkit-text-fill-color: var(--text-primary);
-}
-
 body.dark-theme .verify-btn {
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
-  border-color: var(--btn-primary-bg);
 }
-
-body.dark-theme .verify-btn:hover {
-  background: var(--btn-primary-hover);
-}
+

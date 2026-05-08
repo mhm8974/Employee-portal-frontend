@@ -238,3 +238,35 @@ body {
     /* Keep original spacing for Employee Profile */
   }
 }
+
+/* ========== COMPACT VIEW MODE ========== */
+body.compact-view {
+  /* Reduce fluid spacing tokens by ~30% */
+  --space-fluid-xs: clamp(0.35rem, 0.25rem + 0.5vw, 0.7rem);
+  --space-fluid-md: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --space-fluid-lg: clamp(1.5rem, 0.75rem + 5vw, 4.5rem);
+
+  /* Sharpen typography */
+  --font-fluid-display: clamp(1.5rem, 1rem + 2vw, 3rem);
+  --font-fluid-h1: clamp(1.25rem, 0.75rem + 2.5vw, 2.25rem);
+  --font-fluid-h2: clamp(1.1rem, 0.8rem + 1vw, 1.8rem);
+  --font-fluid-lg: clamp(0.9rem, 0.75rem + 0.7vw, 1.3rem);
+  --font-fluid-base: clamp(0.8rem, 0.78rem + 0.1vw, 0.95rem);
+
+  /* Tighter sidebar and header */
+  --sidebar-fluid-width: clamp(13rem, 12rem + 4vw, 16rem);
+  --header-fluid-height: clamp(4rem, 3.5rem + 2vw, 5.5rem);
+}
+
+body.compact-view .nav-item {
+  padding: 8px 32px;
+}
+
+body.compact-view .nav-section {
+  margin-bottom: 20px;
+}
+
+body.compact-view .info-card {
+  padding: 15px;
+  gap: 12px;
+}

@@ -11,11 +11,12 @@ import {
   style
 } from '@angular/animations';
 import { AuthService } from '../services/auth.service';
+import { TranslatePipe } from '../pipes/translate.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   animations: [
@@ -64,6 +65,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // We NO LONGER generate OTP locally. The backend has already sent it.
     this.setExpiry();
     this.startLiveTimer();
+
+    // Initialize MSG91 Widget
+    this.authService.initMsg91Widget(
+      (data) => {
+        // On Success
+        if (data && data.access_token) {
+          this.verifyMsg91Token(data.access_token);
+        }
+      },
+      (error) => {
+        this.errorMessage = 'Failed to initialize verification widget';
+        this.cdr.detectChanges();
+      }
+    );
+  }
+
+  verifyMsg91Token(accessToken: string): void {
+    this.isLoading = true;
+    this.cdr.detectChanges();
+
+    this.authService.verifyMsg91Token(accessToken).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success) {
+          this.router.navigate(['/secure']);
+        } else {
+          this.errorMessage = response.message || 'Token verification failed';
+          this.triggerShake();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = err.message || 'Server error';
+        this.triggerShake();
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   ngOnDestroy(): void {

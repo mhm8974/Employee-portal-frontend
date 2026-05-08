@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
@@ -24,7 +24,7 @@ export class SecureComponent implements OnInit {
   searchResults: SearchItem[] = [];
   isSearchOpen = false;
 
-  // Searchable registry of all portal features with anchor fragments
+  // Registry of searchable portal features and routes
   private searchableItems: SearchItem[] = [
     // Home
     { label: 'Home', route: '/secure/home', icon: 'fas fa-home', keywords: ['dashboard', 'home', 'overview', 'pranali', 'ifms', 'welcome'] },
@@ -54,7 +54,8 @@ export class SecureComponent implements OnInit {
     private authService: AuthService,
     private themeService: ThemeService,
     private translationService: TranslationService,
-    private router: Router
+    private router: Router,
+    private el: ElementRef
   ) { }
 
   ngOnInit(): void {
@@ -64,7 +65,7 @@ export class SecureComponent implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      // If there's no fragment, scroll to top
+      // Scroll to top on navigation without fragment
       if (!this.router.url.includes('#')) {
         window.scrollTo(0, 0);
         const shellContent = document.querySelector('.shell-content');
@@ -72,7 +73,7 @@ export class SecureComponent implements OnInit {
           shellContent.scrollTo(0, 0);
         }
       }
-      // Close search on navigation
+      // Close search interface on navigation
       this.clearSearch();
     });
   }
@@ -108,7 +109,7 @@ export class SecureComponent implements OnInit {
     return names[0][0].toUpperCase();
   }
 
-  // Live search: filters items as user types
+  // Filters search results based on user input
   onSearchInput(): void {
     const query = this.searchQuery.trim().toLowerCase();
     if (!query) {
@@ -116,7 +117,7 @@ export class SecureComponent implements OnInit {
       this.isSearchOpen = false;
       return;
     }
-    // Strictly match only the visible label (translated), ignoring hidden keywords
+    // Filter items by matching query against translated labels
     this.searchResults = this.searchableItems.filter(item => {
       const translatedLabel = this.translationService.translate(item.label).toLowerCase();
       return translatedLabel.includes(query);
@@ -124,7 +125,7 @@ export class SecureComponent implements OnInit {
     this.isSearchOpen = this.searchResults.length > 0;
   }
 
-  // Navigate to the selected result with anchor support
+  // Navigates to the route associated with the selected search result
   selectResult(item: SearchItem): void {
     if (item.fragment) {
       this.router.navigate([item.route], { fragment: item.fragment });
@@ -134,7 +135,7 @@ export class SecureComponent implements OnInit {
     this.clearSearch();
   }
 
-  // Enter key: navigate to the first result
+  // Selects the first search result when Enter is pressed
   onSearch(): void {
     if (this.searchResults.length > 0) {
       this.selectResult(this.searchResults[0]);
@@ -148,10 +149,31 @@ export class SecureComponent implements OnInit {
   }
 
   closeSearchDropdown(): void {
-    // Small delay to allow click events on results to fire first
+    // Delays dropdown closing to permit result selection
     setTimeout(() => {
-      this.isSearchOpen = false;
+      if (!this.searchQuery.trim()) {
+        this.isSearchOpen = false;
+      }
     }, 200);
+  }
+
+  toggleSearch(): void {
+    this.isSearchOpen = !this.isSearchOpen;
+    
+    if (this.isSearchOpen) {
+      // Resets search state when opening the search bar
+      this.searchQuery = '';
+      this.searchResults = [];
+      
+      setTimeout(() => {
+        const input = document.querySelector('.search-input') as HTMLInputElement;
+        if (input) input.focus();
+      }, 100);
+    } else {
+      // Resets search state when closing the search bar via icon
+      this.searchQuery = '';
+      this.searchResults = [];
+    }
   }
 
   toggleMobileMenu(): void {
@@ -160,6 +182,17 @@ export class SecureComponent implements OnInit {
 
   closeMobileMenu(): void {
     this.isMobileMenuOpen = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Closes search dropdown if clicked outside on mobile viewports
+    if (window.innerWidth > 900) return;
+
+    const clickedInside = this.el.nativeElement.querySelector('.search-wrapper')?.contains(event.target);
+    if (!clickedInside && this.isSearchOpen) {
+      this.isSearchOpen = false;
+    }
   }
 
   logout(): void {

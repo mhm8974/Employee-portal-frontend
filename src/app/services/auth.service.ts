@@ -64,8 +64,11 @@ export interface UserProfile {
   mobile?: string;
   date_of_birth?: string;
   hire_date?: string;
-  profile_image?: string;
+  appointment_date?: string;
+  retirement_date?: string;
   join_date?: string;
+  cpf_no?: string;
+  profile_image?: string;
   address?: string;
   city?: string;
   state?: string;
@@ -81,6 +84,10 @@ export interface UserProfile {
 export class AuthService {
   private apiUrl = 'http://192.168.0.115:8000/api';
   public useMockData = true; // Set to false to use the real backend
+
+  // MSG91 Configuration (User should replace these with actual values from dashboard)
+  private readonly MSG91_WIDGET_ID = '3464677a5641323330343336'; // Example ID - replace with real one
+  private readonly MSG91_AUTH_TOKEN = '391038TyM82hU673994e6P1'; // Example Token - replace with real one
 
   constructor(private http: HttpClient) { }
 
@@ -207,6 +214,52 @@ export class AuthService {
         console.error('[AuthService] OTP Verification Failed:', error);
         return this.handleError(error);
       })
+    );
+  }
+
+  initMsg91Widget(onSuccess: (data: any) => void, onFailure?: (error: any) => void): void {
+    if (typeof window.initOTPWidget !== 'function') {
+      console.error('[AuthService] MSG91 script not loaded');
+      return;
+    }
+
+    const employeeData = this.getUserData();
+    const mobile = employeeData?.mobile || '';
+
+    const configuration = {
+      widgetId: this.MSG91_WIDGET_ID,
+      tokenAuth: this.MSG91_AUTH_TOKEN,
+      identifier: mobile,
+      exposeMethods: true,
+      success: (data: any) => {
+        console.log('[AuthService] MSG91 Success:', data);
+        onSuccess(data);
+      },
+      failure: (error: any) => {
+        console.error('[AuthService] MSG91 Failure:', error);
+        if (onFailure) onFailure(error);
+      }
+    };
+
+    window.initOTPWidget(configuration);
+  }
+
+  verifyMsg91Token(accessToken: string): Observable<VerifyOTPResponse> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<VerifyOTPResponse>(
+      `${this.apiUrl}/auth/verify-msg91-token`,
+      { access_token: accessToken, employee_id: this.getEmployeeId() },
+      { headers }
+    ).pipe(
+      tap(response => {
+        if (response.success && response.token) {
+          this.setToken(response.token);
+        }
+      }),
+      catchError(error => this.handleError(error))
     );
   }
 

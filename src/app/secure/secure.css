@@ -22,13 +22,13 @@ body {
   display: flex;
   flex-direction: column;
   padding: 0 0 20px;
-  /* Removed top padding to align items at the top */
+
   border-right: 1px solid var(--border-primary);
 }
 
 .sidebar-header {
   display: none;
-  /* Hidden on desktop to remove empty space */
+
 }
 
 .close-mobile-btn {
@@ -44,8 +44,7 @@ body {
 .sidebar-nav {
   flex-grow: 1;
   padding: 24px 0 10px;
-  /* Slight top padding so text doesn't touch the very top */
-  /* Removed horizontal padding to allow full-width hover bg */
+
   overflow-y: auto;
   scrollbar-width: thin;
 }
@@ -76,7 +75,7 @@ body {
 
 .nav-section-label {
   padding: 0 44px 12px;
-  /* Increased padding to compensate for container change (32+12) */
+
   font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
@@ -88,14 +87,16 @@ body {
   display: flex;
   align-items: center;
   padding: 12px 44px;
-  /* Increased padding to compensate for container change (32+12) */
+
   color: var(--nav-item-color);
   text-decoration: none;
   font-size: 14px;
   font-weight: 400;
   transition: all 0.1s ease;
   margin: 0;
-  border-left: 2px solid transparent;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
   cursor: default;
   user-select: none;
 }
@@ -104,14 +105,19 @@ body {
   background: var(--bg-hover);
   color: var(--text-primary);
   padding-left: 48px;
-  /* Compensated hover padding (36+12) */
+
 }
 
 .nav-item.active {
   background: var(--nav-item-active-bg);
   color: var(--nav-item-active-color);
   font-weight: 600;
-  border-left-color: var(--nav-item-active-border);
+  border-left: 3px solid var(--nav-item-active-border) !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Sidebar Footer */
@@ -193,25 +199,17 @@ body {
 .top-bar {
   height: var(--header-fluid-height);
   width: 100%;
-  /* Mesh Gradient: Highly vibrant blends of the logo's internal colors */
-  background:
-    radial-gradient(at 0% 0%, rgba(31, 58, 138, 0.9) 0%, transparent 50%),
-    radial-gradient(at 50% 0%, rgba(16, 185, 129, 0.25) 0%, transparent 70%),
-    radial-gradient(at 80% 10%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
-    /* Yellow hint */
-    radial-gradient(at 100% 0%, rgba(239, 68, 68, 0.2) 0%, transparent 60%),
-    #1e3a8a;
-  background-size: 200% 200%;
-  animation: mesh-flow 15s infinite alternate ease-in-out;
+  background: #1e3a8a;
+  /* Deep professional blue */
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  z-index: 1002;
+  z-index: 2500;
   position: fixed;
   top: 0;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  /* Switch to start and use margin-left: auto for search */
+
   padding-right: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
@@ -247,45 +245,84 @@ body {
   filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
 }
 
-/* SEARCH WRAPPER — Positioning parent for sibling stacking */
 .search-wrapper {
   position: relative;
   margin-left: auto;
-  margin-right: 120px;
-  width: clamp(240px, 30vw, 480px);
+  margin-right: 10px;
+  width: auto;
+  z-index: 2100;
 }
 
-/* SEARCH BAR — Front layer (z-index: 2) */
+@media (min-width: 901px) {
+  .search-wrapper {
+    margin-right: 60px;
+  }
+}
+
+/* Search Bar Base Styles */
 .header-search {
   position: relative;
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  /* CRITICAL: Includes padding and border in width */
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 24px;
-  padding: 0 20px;
-  width: 100%;
-  height: 44px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: transparent;
+  border: none;
+  border-radius: 14px;
+  padding: 0 13px;
+  width: 44px;
+  height: 34px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: none;
+  overflow: hidden;
   z-index: 2;
-  /* FRONT — sits on top of dropdown sibling */
+  border-radius: 17px;
 }
 
-/* Open State */
+
 .header-search.is-open {
-  background: rgba(15, 23, 42, 1);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  background: #0b1120;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  width: clamp(240px, 30vw, 480px);
+  padding: 0 20px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
-.search-icon {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
+.header-search:focus-within {
+  border-color: #3b82f6;
+}
+
+/* Desktop Overrides */
+@media (min-width: 901px) {
+
+  .header-search,
+  .header-search.is-open {
+    background: #0b1120;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    width: clamp(320px, 40vw, 600px);
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 20px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  }
+
+  .header-search .search-icon-svg {
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+
+  .header-search .search-input {
+    opacity: 1;
+    visibility: visible;
+    color: white !important;
+  }
+}
+
+.search-icon-svg {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.header-search.is-open .search-icon-svg {
   margin-right: 14px;
 }
 
@@ -296,29 +333,47 @@ body {
   font-size: 15px;
   width: 100%;
   outline: none !important;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-/* SEARCH DROPDOWN — Back layer (z-index: 1), behind the pill sibling */
+.header-search.is-open .search-input {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.1s;
+  color: white !important;
+}
+
+.header-search.is-open .search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Search Dropdown Desktop */
+@media (min-width: 901px) {
+  .search-dropdown {
+    top: 20px;
+    border-radius: 0 0 20px 20px;
+  }
+}
+
 .search-dropdown {
   position: absolute;
-  top: 22px;
+  top: 17px;
   left: 0;
   right: 0;
   box-sizing: border-box;
-  background: rgba(30, 41, 59, 0.85);
-  /* More translucent to emphasize glassmorphism */
-  backdrop-filter: blur(25px) saturate(200%);
-  -webkit-backdrop-filter: blur(25px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #0b1120;
+  border: 1px solid rgba(148, 163, 184, 0.2);
   border-top: none;
-  border-radius: 0 0 24px 24px;
+  border-radius: 0 0 17px 17px;
   max-height: 400px;
   overflow-y: overlay;
   scrollbar-width: none;
   scrollbar-gutter: auto;
   -ms-overflow-style: none;
   z-index: 1;
-  /* BACK — behind the pill sibling */
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -331,12 +386,13 @@ body {
   display: flex;
   align-items: center;
   padding: 14px 20px;
+  gap: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* First result padding to account for the overlapping pill */
+/* Top padding adjustment for dropdown overlap */
 .search-result:first-child {
   border-top: none;
   padding-top: 36px;
@@ -358,15 +414,14 @@ body {
   color: rgba(255, 255, 255, 0.95);
 }
 
-.result-arrow {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
+.result-arrow-svg {
   opacity: 0;
   transition: all 0.2s ease;
   transform: translateX(-5px);
+  flex-shrink: 0;
 }
 
-.search-result:hover .result-arrow {
+.search-result:hover .result-arrow-svg {
   opacity: 1;
   transform: translateX(0);
 }
@@ -386,20 +441,7 @@ body {
   }
 }
 
-.search-result {
-  display: flex;
-  align-items: center;
-  padding: 14px 20px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  gap: 12px;
-  border-bottom: none;
-  /* Removed borders for cleaner look */
-}
 
-.search-result:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
 
 .result-info {
   flex: 1;
@@ -411,7 +453,7 @@ body {
 .result-label {
   font-size: 14px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -457,10 +499,8 @@ body {
 
 .modal-overlay.modal-logout {
   z-index: 1005;
-  /* Must be above sidebar and mobile overlay */
 }
 
-/* ... existing modal styles ... */
 .modal-container {
   background: var(--modal-bg);
   padding: 24px;
@@ -588,40 +628,88 @@ body {
   }
 
   .header-search {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
     width: 44px;
     /* Collapse to icon-only on mobile or very small */
     padding: 0;
     justify-content: center;
     border: none;
     background: transparent;
-    margin-right: 10px;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  .header-search.is-open,
   .header-search:focus-within {
-    width: calc(100vw - 120px);
-    position: absolute;
-    right: 16px;
-    background: rgba(0, 0, 0, 0.82);
-    backdrop-filter: blur(20px);
+    width: 220px;
+    background: #0b1120;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    justify-content: flex-start;
     padding: 0 16px;
-    z-index: 100;
+    z-index: 2100;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    /* Softer, thinner shadow for mobile */
   }
 
-  .header-search .search-icon {
+  .header-search .search-icon-svg {
     margin-right: 0;
-    font-size: 18px;
   }
 
-  .header-search:focus-within .search-icon {
+  .header-search.is-open .search-icon-svg,
+  .header-search:focus-within .search-icon-svg {
     margin-right: 12px;
+  }
+
+  /* MOBILE SUGGESTION BOX OPTIMIZATIONS */
+  .search-dropdown {
+    top: 0;
+    /* Start exactly at the visual center of the pill to hide the join perfectly */
+    width: 220px;
+    right: 16px;
+    left: auto;
+    border-radius: 0 0 17px 17px;
+    max-height: 350px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    /* Matches the pill border exactly */
+    border-top: none !important;
+    /* Force removal of top border */
+    outline: none !important;
+  }
+
+  .search-result:first-child {
+    padding-top: 44px;
+    /* More space to clear the overlapping pill */
+  }
+
+  .search-result {
+    padding: 18px 20px;
+    /* Larger tap targets for thumb */
+    gap: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .search-result:first-child {
+    padding-top: 36px;
+    /* Restandardized padding for the center-join */
+  }
+
+  .result-label {
+    font-size: 15px;
+    /* Slightly easier to read on mobile */
   }
 
   .header-search .search-input {
     display: none;
   }
 
+  .header-search.is-open .search-input,
   .header-search:focus-within .search-input {
     display: block;
+    opacity: 1;
+    visibility: visible;
   }
 
   .header-logo {

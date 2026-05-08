@@ -169,80 +169,7 @@
     border-color: var(--border-primary);
 }
 
-/* PASSWORD FORM */
-.password-form {
-    padding: 20px 0 8px;
-    border-top: 1px solid var(--border-secondary);
-    margin-top: 8px;
-}
 
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px 0;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--border-input);
-    border-radius: 0;
-    font-size: 15px;
-    color: var(--text-primary);
-    transition: border 0.2s ease;
-    box-sizing: border-box;
-}
-
-.form-group input:focus {
-    outline: none;
-    border-bottom-color: var(--text-heading);
-}
-
-.form-group input::placeholder {
-    color: var(--text-muted);
-}
-
-.save-btn {
-    background: var(--btn-primary-bg);
-    color: var(--btn-primary-text);
-    border: none;
-    padding: 10px 24px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin-top: 8px;
-}
-
-.save-btn:hover {
-    background: var(--btn-primary-hover);
-}
-
-/* PASSWORD MESSAGES */
-.password-message {
-    padding: 8px 0;
-    font-size: 13px;
-    margin-bottom: 8px;
-}
-
-.password-message.error {
-    color: #ef4444;
-}
-
-.password-message.success {
-    color: #059669;
-}
 
 /* ========================================= */
 /* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
@@ -292,14 +219,5 @@
         flex-shrink: 0;
     }
 
-    .save-btn {
-        width: 100%;
-        padding: 12px;
-    }
 
-    /* Adjust form inputs for full width on mobile */
-    .form-group input {
-        font-size: 16px;
-        /* Prevent iOS zoom */
-    }
 }

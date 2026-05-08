@@ -6,52 +6,6 @@
         </div>
     </div>
 
-    <!-- Account & Security -->
-    <div class="settings-section">
-        <h3 class="section-title">{{ 'Account & Security' | translate }}</h3>
-
-        <div class="setting-item">
-            <div class="setting-info">
-                <div class="setting-label" id="change-password">{{ 'Change Password' | translate }}</div>
-                <div class="setting-description">{{ 'Update your login credentials' | translate }}</div>
-            </div>
-            <button class="setting-action-btn" (click)="togglePasswordForm()">
-                {{ showPasswordForm ? 'Cancel' : 'Change' }}
-            </button>
-        </div>
-
-        <!-- Password Form -->
-        <div class="password-form" *ngIf="showPasswordForm">
-            <div class="form-group">
-                <label>{{ 'Current Password' | translate }}</label>
-                <input type="password" [(ngModel)]="currentPassword" [placeholder]="'Enter current password' | translate" />
-            </div>
-            <div class="form-group">
-                <label>{{ 'New Password' | translate }}</label>
-                <input type="password" [(ngModel)]="newPassword" [placeholder]="'Enter new password' | translate" />
-            </div>
-            <div class="form-group">
-                <label>{{ 'Confirm Password' | translate }}</label>
-                <input type="password" [(ngModel)]="confirmPassword" [placeholder]="'Confirm new password' | translate" />
-            </div>
-            <div class="password-message" *ngIf="passwordMessage" [class.error]="passwordError"
-                [class.success]="!passwordError">
-                {{ passwordMessage }}
-            </div>
-            <button class="save-btn" (click)="changePassword()">{{ 'Update Password' | translate }}</button>
-        </div>
-        <div class="setting-item">
-            <div class="setting-info">
-                <div class="setting-label">{{ 'Two-Factor Authentication (2FA)' | translate }}</div>
-                <div class="setting-description">{{ 'Protect your account with an extra layer of security' | translate }}</div>
-            </div>
-            <label class="toggle">
-                <input type="checkbox" [(ngModel)]="twoFactorEnabled" (ngModelChange)="saveSecurityPreferences()" />
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-    </div>
-
     <!-- Notification Preferences -->
     <div class="settings-section">
         <h3 class="section-title">{{ 'Notification Preferences' | translate }}</h3>

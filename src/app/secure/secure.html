@@ -1,7 +1,7 @@
-<!-- MOBILE OVERLAY -->
+<!-- Mobile navigation overlay -->
 <div class="mobile-overlay" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
 
-<!-- SIDEBAR -->
+<!-- Main sidebar navigation -->
 <div class="sidebar" [class.active]="isMobileMenuOpen">
   <div class="sidebar-header">
     <button class="close-mobile-btn" (click)="closeMobileMenu()">
@@ -37,7 +37,7 @@
     </div>
   </nav>
 
-  <!-- Profile Footer -->
+  <!-- User profile and logout options -->
   <div class="sidebar-footer">
     <div class="minimal-profile">
       <div class="profile-meta">
@@ -52,39 +52,43 @@
   </div>
 </div>
 
-<!-- VIBRANT MESH TOP BAR -->
+<!-- Top application header -->
 <div class="top-bar">
   <div class="sidebar-align-container">
     <img src="assets/images/pranali_logo_2.png" alt="Pranali Logo" class="header-logo">
   </div>
-  
-  <!-- SEARCH WRAPPER — Contains both pill and dropdown as siblings -->
+
+  <!-- Search component container -->
   <div class="search-wrapper">
-    <!-- SEARCH BAR (Front Layer) -->
+    <!-- Search input element -->
     <div class="header-search" [class.is-open]="isSearchOpen">
-      <i class="fas fa-search search-icon"></i>
-      <input type="text" 
-             [(ngModel)]="searchQuery" 
-             (input)="onSearchInput()"
-             (keyup.enter)="onSearch()" 
-             (blur)="closeSearchDropdown()"
-             [placeholder]="'Search services, employees, or documents...' | translate" 
-             class="search-input">
+      <svg class="search-icon-svg" (click)="toggleSearch()" viewBox="0 0 24 24" width="20" height="20" fill="none"
+        stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" [(ngModel)]="searchQuery" (input)="onSearchInput()" (keyup.enter)="onSearch()"
+        (blur)="closeSearchDropdown()" [placeholder]="'Search services, employees, or documents...' | translate"
+        class="search-input">
     </div>
 
-    <!-- SEARCH RESULTS DROPDOWN (Back Layer — behind the pill) -->
-    <div class="search-dropdown" *ngIf="isSearchOpen">
+    <!-- Search results dropdown container -->
+    <div class="search-dropdown" *ngIf="isSearchOpen && searchResults.length > 0">
       <div class="search-result" *ngFor="let item of searchResults" (mousedown)="selectResult(item)">
         <div class="result-info">
           <span class="result-label">{{ item.label | translate }}</span>
         </div>
-        <i class="fas fa-arrow-right result-arrow"></i>
+        <svg class="result-arrow-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="white"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CHILD ROUTE CONTENT -->
+<!-- Main application content area -->
 <div class="shell-content">
   <div class="mobile-header-backdrop" [class.hidden]="isMobileMenuOpen" *ngIf="!isMobileMenuOpen"></div>
   <button class="mobile-menu-btn" [class.hidden]="isMobileMenuOpen" *ngIf="!isMobileMenuOpen"
@@ -96,7 +100,7 @@
   <router-outlet></router-outlet>
 </div>
 
-<!-- LOGOUT CONFIRMATION MODAL -->
+<!-- Logout confirmation modal dialog -->
 <div class="modal-overlay modal-logout" *ngIf="showLogoutConfirm" (click)="cancelLogout()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-content">

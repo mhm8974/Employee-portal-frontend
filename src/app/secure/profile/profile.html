@@ -10,10 +10,18 @@
       </div>
       <div class="user-details">
         <h1 class="user-name">{{ employeeData.name }}</h1>
-        <p class="user-title">{{ employeeData.designation }} • {{ employeeData.section }}</p>
-        <div class="status-badge">{{ 'Active Employee' | translate }}</div>
+        <p class="user-title" *ngIf="employeeData.designation || employeeData.section">
+          {{ employeeData.designation }}<span *ngIf="employeeData.designation && employeeData.section"> • </span>{{ employeeData.section }}
+        </p>
+        <div class="status-badge" *ngIf="employeeData.name">{{ 'Active Employee' | translate }}</div>
       </div>
     </div>
+  </div>
+
+  <!-- Error Message Alert -->
+  <div class="profile-error-alert" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ errorMessage }}
   </div>
 
   <!-- Detailed Info Grid -->
@@ -21,7 +29,6 @@
     <!-- Personal Information -->
     <div class="info-card">
       <div class="card-header">
-
         <h2 id="personal-info">{{ 'Personal Information' | translate }}</h2>
       </div>
       <div class="card-body">
@@ -42,6 +49,7 @@
           <span class="label">{{ 'Contact Number' | translate }}</span>
           <span class="value">{{ employeeData.phone }}</span>
         </div>
+
         <div class="info-group">
           <span class="label">{{ 'Email Address' | translate }}</span>
           <span class="value">{{ employeeData.email }}</span>
@@ -52,7 +60,6 @@
     <!-- Employment Details -->
     <div class="info-card">
       <div class="card-header">
-
         <h2 id="employment-details">{{ 'Employment Details' | translate }}</h2>
       </div>
       <div class="card-body">
@@ -76,13 +83,12 @@
           <span class="label">{{ 'Date of Retirement' | translate }}</span>
           <span class="value">{{ employeeData.retirementDate }}</span>
         </div>
+
         <div class="info-group">
           <span class="label">{{ 'Work Location' | translate }}</span>
           <span class="value">{{ employeeData.location }}</span>
         </div>
       </div>
     </div>
-
-
   </div>
 </div>

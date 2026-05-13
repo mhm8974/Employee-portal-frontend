@@ -177,10 +177,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
 
     if (index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`) as HTMLInputElement;
-      if (nextInput) {
-        nextInput.focus();
-      }
+      setTimeout(() => {
+        const nextInput = document.getElementById(`otp-${index + 1}`) as HTMLInputElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 0);
     }
   }
 

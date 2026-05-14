@@ -82,12 +82,12 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.0.115:8000/api';
-  public useMockData = false; // ACTIVATE REAL BACKEND
+  private apiUrl = 'http://192.168.0.138:8000/api';
+  public useMockData = false; // false for backend ,true for mock
 
-  // MSG91 Configuration (Using Real Widget ID provided by user)
-  private readonly MSG91_WIDGET_ID = '36656869654e393237333630'; 
-  private readonly MSG91_AUTH_TOKEN = 'PASTE_YOUR_AUTH_TOKEN_HERE'; 
+  // MSG91 Configuration (REAL LIVE CREDENTIALS)
+  private readonly MSG91_WIDGET_ID = '36656869654e393237333630';
+  private readonly MSG91_AUTH_TOKEN = '503495T5EZKwiw6a05969dP1';
 
   constructor(private http: HttpClient) { }
 

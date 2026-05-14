@@ -83,11 +83,11 @@ export interface UserProfile {
 })
 export class AuthService {
   private apiUrl = 'http://192.168.0.115:8000/api';
-  public useMockData = true; // Set to false to use the real backend
+  public useMockData = false; // ACTIVATE REAL BACKEND
 
-  // MSG91 Configuration (User should replace these with actual values from dashboard)
-  private readonly MSG91_WIDGET_ID = '3464677a5641323330343336'; // Example ID - replace with real one
-  private readonly MSG91_AUTH_TOKEN = '391038TyM82hU673994e6P1'; // Example Token - replace with real one
+  // MSG91 Configuration (Using Real Widget ID provided by user)
+  private readonly MSG91_WIDGET_ID = '36656869654e393237333630'; 
+  private readonly MSG91_AUTH_TOKEN = 'PASTE_YOUR_AUTH_TOKEN_HERE'; 
 
   constructor(private http: HttpClient) { }
 

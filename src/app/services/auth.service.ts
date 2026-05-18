@@ -82,7 +82,7 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.0.138:8000/api';
+  private apiUrl = 'http://192.168.0.118:8000/api';
   public useMockData = false; // false for backend ,true for mock
 
   // MSG91 Configuration (REAL LIVE CREDENTIALS)
@@ -217,31 +217,40 @@ export class AuthService {
     );
   }
 
-  initMsg91Widget(onSuccess: (data: any) => void, onFailure?: (error: any) => void): void {
-    if (typeof window.initOTPWidget !== 'function') {
-      console.error('[AuthService] MSG91 script not loaded');
-      return;
-    }
+  initMsg91Widget(successCallback: (data: any) => void, failureCallback: (error: any) => void): void {
+    const checkAndInit = (attempts = 0) => {
+      if ((window as any).initSendOTP) {
+        console.log('[AuthService] MSG91 Script found. Initializing...');
 
-    const employeeData = this.getUserData();
-    const mobile = employeeData?.mobile || '';
+        // Get mobile number from session if available
+        const sessionData = localStorage.getItem('pranali_session');
+        const mobile = sessionData ? JSON.parse(sessionData).mobile : '';
 
-    const configuration = {
-      widgetId: this.MSG91_WIDGET_ID,
-      tokenAuth: this.MSG91_AUTH_TOKEN,
-      identifier: mobile,
-      exposeMethods: true,
-      success: (data: any) => {
-        console.log('[AuthService] MSG91 Success:', data);
-        onSuccess(data);
-      },
-      failure: (error: any) => {
-        console.error('[AuthService] MSG91 Failure:', error);
-        if (onFailure) onFailure(error);
+        const configuration = {
+          widgetId: this.MSG91_WIDGET_ID,
+          tokenAuth: this.MSG91_AUTH_TOKEN,
+          identifier: mobile, // Pre-fill the mobile number
+          exposeMethods: false, // false = show the SMS popup automatically
+          success: (data: any) => {
+            console.log('[AuthService] MSG91 Success:', data);
+            successCallback(data);
+          },
+          failure: (error: any) => {
+            console.error('[AuthService] MSG91 Failure:', error);
+            failureCallback(error);
+          }
+        };
+        (window as any).initSendOTP(configuration);
+      } else if (attempts < 5) {
+        console.warn(`[AuthService] MSG91 script not ready, retrying attempt ${attempts + 1}...`);
+        setTimeout(() => checkAndInit(attempts + 1), 1000);
+      } else {
+        console.error('[AuthService] MSG91 script not loaded after 5 attempts');
+        failureCallback('MSG91 script not loaded');
       }
     };
 
-    window.initOTPWidget(configuration);
+    checkAndInit();
   }
 
   verifyMsg91Token(accessToken: string): Observable<VerifyOTPResponse> {

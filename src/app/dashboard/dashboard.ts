@@ -65,20 +65,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // We NO LONGER generate OTP locally. The backend has already sent it.
     this.setExpiry();
     this.startLiveTimer();
-
-    // Initialize MSG91 Widget
-    this.authService.initMsg91Widget(
-      (data) => {
-        // On Success
-        if (data && data.access_token) {
-          this.verifyMsg91Token(data.access_token);
-        }
-      },
-      (error) => {
-        this.errorMessage = 'Failed to initialize verification widget';
-        this.cdr.detectChanges();
-      }
-    );
+    // MSG91 widget is now triggered by the Verify button click (not here)
+    // This prevents browser popup blockers from killing it
   }
 
   verifyMsg91Token(accessToken: string): void {
@@ -193,51 +181,86 @@ export class DashboardComponent implements OnInit, OnDestroy {
   verifyOtp(): void {
     const enteredOtp = this.otpBoxes.join('');
 
-    if (enteredOtp.length < 6) {
-      this.errorMessage = 'Please enter complete code';
-      this.triggerShake();
+    // If user typed a 6-digit OTP (from email), verify it with the backend
+    if (enteredOtp.length === 6) {
+      if (this.remainingTime === 0) {
+        this.errorMessage = 'OTP expired';
+        this.triggerShake();
+        return;
+      }
+
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      const employeeId = this.authService.getEmployeeId() || '';
+
+      console.log('[Dashboard] Attempting OTP verification:', {
+        employeeId: employeeId,
+        otpEntered: enteredOtp,
+        length: enteredOtp.length
+      });
+
+      this.authService.verifyOtp({
+        employee_id: employeeId,
+        otp_code: enteredOtp
+      }).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          console.log('[Dashboard] Verification detail:', response);
+          if (response.success) {
+            console.log('[Dashboard] OTP Verified successfully');
+            this.router.navigate(['/secure']);
+          } else {
+            this.errorMessage = response.message || 'Verification failed';
+            this.triggerShake();
+          }
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorMessage = err.message || 'Invalid OTP';
+          this.triggerShake();
+          console.error('[Dashboard] OTP Verification Error:', err);
+        }
+      });
       return;
     }
 
-    if (this.remainingTime === 0) {
-      this.errorMessage = 'OTP expired';
-      this.triggerShake();
-      return;
-    }
-
+    // If no OTP typed, launch the MSG91 SMS widget popup (user-click triggered)
+    console.log('[Dashboard] No OTP entered. Launching MSG91 SMS widget...');
     this.isLoading = true;
     this.errorMessage = '';
 
-    const employeeId = this.authService.getEmployeeId() || '';
-
-    console.log('[Dashboard] Attempting OTP verification:', {
-      employeeId: employeeId,
-      otpEntered: enteredOtp,
-      length: enteredOtp.length
-    });
-
-    this.authService.verifyOtp({
-      employee_id: employeeId,
-      otp_code: enteredOtp
-    }).subscribe({
-      next: (response) => {
+    this.authService.initMsg91Widget(
+      (data) => {
+        // On Success — widget verified the SMS OTP and gave us a token
         this.isLoading = false;
-        console.log('[Dashboard] Verification detail:', response);
-        if (response.success) {
-          console.log('[Dashboard] OTP Verified successfully');
-          this.router.navigate(['/secure']);
+        console.log('[Dashboard] MSG91 Success payload:', data);
+        
+        // MSG91's response structure changes. We check all possible locations for the token.
+        let token = null;
+        if (typeof data === 'string') {
+          token = data; // Sometimes it just returns the raw string token
+        } else if (data) {
+          token = data.access_token || data.response || data.message || data.token;
+        }
+
+        if (token) {
+          console.log('[Dashboard] MSG91 token received. Verifying with backend...', token);
+          this.verifyMsg91Token(token);
         } else {
-          this.errorMessage = response.message || 'Verification failed';
+          console.warn('[Dashboard] MSG91 success but no token found in payload', data);
+          this.errorMessage = 'SMS verification succeeded, but no token was returned.';
           this.triggerShake();
+          this.cdr.detectChanges();
         }
       },
-      error: (err) => {
+      (error) => {
         this.isLoading = false;
-        this.errorMessage = err.message || 'Invalid OTP';
+        this.errorMessage = 'SMS verification failed. Try entering the email OTP instead.';
         this.triggerShake();
-        console.error('[Dashboard] OTP Verification Error:', err);
+        this.cdr.detectChanges();
       }
-    });
+    );
   }
 
   resendOtp(): void {

@@ -83,7 +83,7 @@ export interface UserProfile {
 })
 export class AuthService {
   private apiUrl = 'http://192.168.0.118:8000/api';
-  public useMockData = false; // false for backend ,true for mock
+  public useMockData = true; // false for backend ,true for mock
 
   // MSG91 Configuration (REAL LIVE CREDENTIALS)
   private readonly MSG91_WIDGET_ID = '36656869654e393237333630';
@@ -214,6 +214,30 @@ export class AuthService {
         console.error('[AuthService] OTP Verification Failed:', error);
         return this.handleError(error);
       })
+    );
+  }
+
+  resendOtp(employeeId: string): Observable<any> {
+    if (this.useMockData) {
+      console.log('[AuthService] Mock Mode: Resending OTP for:', employeeId);
+      return new Observable(observer => {
+        setTimeout(() => {
+          observer.next({ success: true, message: 'OTP resent successfully' });
+          observer.complete();
+        }, 800);
+      });
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(
+      `${this.apiUrl}/auth/resend-otp`,
+      { employee_id: employeeId },
+      { headers }
+    ).pipe(
+      catchError(error => this.handleError(error))
     );
   }
 

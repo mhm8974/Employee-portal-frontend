@@ -79,10 +79,10 @@ export class LoginComponent implements OnInit {
     this.authService.getCaptcha().subscribe({
       next: (response: any) => {
         console.log('[Profile] CAPTCHA loaded successfully:', response.captcha_id);
-        
+
         this.captchaImage = response.image;
         this.captchaId = response.captcha_id;
-        
+
         this.cdr.detectChanges(); // Force update
       },
       error: (err) => {
@@ -156,7 +156,7 @@ export class LoginComponent implements OnInit {
     ).subscribe({
       next: (response: any) => {
         console.log('[Profile] Login response payload:', response);
-        
+
         // Debug Hint for Dev Mode
         if ((response as any).dev_hint_otp) {
           console.warn('--- DEV MODE: OTP IS ' + (response as any).dev_hint_otp + ' ---');
@@ -166,10 +166,10 @@ export class LoginComponent implements OnInit {
         const respData = (response as any).data || response;
         console.log('[Profile] Normalized Response Data:', respData);
 
-        const isSuccess = response.success === true || 
-                          respData.success === true || 
-                          (response as any).status === 'success' ||
-                          (respData as any).status === 'success';
+        const isSuccess = response.success === true ||
+          respData.success === true ||
+          (response as any).status === 'success' ||
+          (respData as any).status === 'success';
 
         if (isSuccess) {
           const idToStore = respData.employee_id || response.employee_id || cleanEmployeeId;
@@ -214,7 +214,7 @@ export class LoginComponent implements OnInit {
         if (isCaptchaError) {
           this.captchaError = true;
           this.loadCaptcha();
-        } 
+        }
 
         this.triggerShake();
       }

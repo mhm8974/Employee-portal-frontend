@@ -82,12 +82,12 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.0.118:8000/api';
-  public useMockData = true; // false for backend ,true for mock
+  private apiUrl = 'http://192.168.0.133:8000/api';
+  public useMockData = false; // false for backend ,true for mock
 
   // MSG91 Configuration (REAL LIVE CREDENTIALS)
   private readonly MSG91_WIDGET_ID = '36656869654e393237333630';
-  private readonly MSG91_AUTH_TOKEN = '503495T5EZKwiw6a05969dP1';
+  private readonly MSG91_AUTH_TOKEN = '503495TEvgH04z5Ec6a0d6456P1';
 
   constructor(private http: HttpClient) { }
 
@@ -278,13 +278,26 @@ export class AuthService {
   }
 
   verifyMsg91Token(accessToken: string): Observable<VerifyOTPResponse> {
+    const employeeId = this.getEmployeeId();
+    if (!employeeId) {
+      console.error('[AuthService] No employeeId found in localStorage for verification');
+      return throwError(() => new Error('Employee ID missing. Please log in again.'));
+    }
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
 
+    const payload = {
+      token: accessToken,
+      access_token: accessToken,
+      employee_id: employeeId
+    };
+    console.log('[AuthService] Sending verifyMsg91Token payload:', payload);
+
     return this.http.post<VerifyOTPResponse>(
       `${this.apiUrl}/auth/verify-msg91-token`,
-      { access_token: accessToken, employee_id: this.getEmployeeId() },
+      payload,
       { headers }
     ).pipe(
       tap(response => {

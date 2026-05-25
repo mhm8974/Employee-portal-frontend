@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError, timeout, retry } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-
+import { environment } from '../../environments/environment';
 export interface LoginRequest {
   employee_id: string;
   captcha_id: string;
@@ -10,12 +10,14 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  user: any;
   success: boolean;
   message: string;
   token?: string;
   employee_id?: string;
-  requires_otp?: boolean;
+  employee_type?: string;
+  sms_otp_sent?: boolean;
+  masked_phone?: string;
+  masked_email?: string;
   otp_sent_to?: string;
   employee_data?: {
     id: number;
@@ -39,6 +41,8 @@ export interface VerifyOTPResponse {
   success: boolean;
   message: string;
   token?: string;
+  employee_id?: string;
+  employee_type?: string;
   employee_data?: {
     id: number;
     employee_id: string;
@@ -82,12 +86,10 @@ export interface UserProfile {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.0.133:8000/api';
-  public useMockData = false; // false for backend ,true for mock
+  private apiUrl = environment.apiUrl;
+  public useMockData = true; // false for backend ,true for mock
 
-  // MSG91 Configuration (REAL LIVE CREDENTIALS)
-  private readonly MSG91_WIDGET_ID = '36656869654e393237333630';
-  private readonly MSG91_AUTH_TOKEN = '503495TEvgH04z5Ec6a0d6456P1';
+
 
   constructor(private http: HttpClient) { }
 
@@ -246,14 +248,18 @@ export class AuthService {
       if ((window as any).initSendOTP) {
         console.log('[AuthService] MSG91 Script found. Initializing...');
 
-        // Get mobile number from session if available
-        const sessionData = localStorage.getItem('pranali_session');
-        const mobile = sessionData ? JSON.parse(sessionData).mobile : '';
+        const mobile = this.getSmsMobile();
+        if (!mobile) {
+          console.warn('[AuthService] No mobile number available for SMS OTP.');
+          failureCallback('SMS OTP unavailable because no mobile number is available from the backend.');
+          return;
+        }
 
         const configuration = {
-          widgetId: this.MSG91_WIDGET_ID,
-          tokenAuth: this.MSG91_AUTH_TOKEN,
+          widgetId: environment.msg91WidgetId,
+          tokenAuth: environment.msg91AuthToken,
           identifier: mobile, // Pre-fill the mobile number
+          hideMethod: 'mobile', // hide the mobile entry field
           exposeMethods: false, // false = show the SMS popup automatically
           success: (data: any) => {
             console.log('[AuthService] MSG91 Success:', data);
@@ -303,9 +309,27 @@ export class AuthService {
       tap(response => {
         if (response.success && response.token) {
           this.setToken(response.token);
+
+          // Store critical user session data
+          if (response.employee_id) {
+            localStorage.setItem('employeeId', String(response.employee_id));
+          }
+          if (response.employee_type) {
+            localStorage.setItem('employee_type', response.employee_type);
+          }
+          if (response.employee_data) {
+            this.storeUserData(response.employee_data);
+          }
         }
       }),
       catchError(error => this.handleError(error))
+    );
+  }
+
+  verifySmsOtp(employeeId: string, otpCode: string): Observable<VerifyOTPResponse> {
+    return this.http.post<VerifyOTPResponse>(
+      `${this.apiUrl}/auth/verify-sms-otp`,
+      { employee_id: employeeId, otp_code: otpCode }
     );
   }
 
@@ -350,11 +374,38 @@ export class AuthService {
     }
 
     localStorage.setItem('user_data', JSON.stringify(userData));
+
+    if (userData.mobile) {
+      const sessionData = {
+        mobile: userData.mobile,
+        employee_id: userData.employee_id || localStorage.getItem('employeeId') || ''
+      };
+      localStorage.setItem('pranali_session', JSON.stringify(sessionData));
+    }
   }
 
   getUserData(): UserProfile | null {
     const userData = localStorage.getItem('user_data');
     return userData ? JSON.parse(userData) : null;
+  }
+
+  getSmsMobile(): string | null {
+    const userData = this.getUserData();
+    if (userData?.mobile) {
+      return userData.mobile;
+    }
+
+    const sessionData = localStorage.getItem('pranali_session');
+    if (sessionData) {
+      try {
+        const session = JSON.parse(sessionData);
+        return session.mobile || null;
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
   }
 
   getCurrentUserName(): string {

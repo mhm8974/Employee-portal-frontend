@@ -49,6 +49,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   expiryTime!: number;
   remainingTime = 0;
   isLoading = false;
+  isResending = false;
 
   timerSub!: Subscription;
   errorMessage = '';
@@ -62,6 +63,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) { }
 
   emailOtpSent = false;
+  smsOtpSent = false;
+  maskedPhone = '';
+  maskedEmail = '';
   activeTab: 'email' | 'sms' = 'email';
 
   setActiveTab(tab: 'email' | 'sms'): void {
@@ -71,7 +75,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Timer will only start when they click "Send OTP"
+    const smsOtpSentRaw = localStorage.getItem('sms_otp_sent');
+    this.smsOtpSent = smsOtpSentRaw === 'true';
+    if (this.smsOtpSent) {
+      this.activeTab = 'sms';
+      this.maskedPhone = localStorage.getItem('masked_phone') || '';
+      this.maskedEmail = localStorage.getItem('masked_email') || '';
+      this.setExpiry();
+      this.startLiveTimer();
+    }
   }
 
   sendEmailOtp(): void {
@@ -79,20 +91,65 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    // Premium simulated delay to feel like a live SMTP email send
-    setTimeout(() => {
-      this.isLoading = false;
-      this.emailOtpSent = true;
-      this.setExpiry();
-      this.startLiveTimer();
-      this.cdr.detectChanges();
+    const empId = localStorage.getItem('employeeId') || '';
 
-      // Automatically focus first input box
-      setTimeout(() => {
-        const firstInput = document.getElementById('otp-0') as HTMLInputElement;
-        if (firstInput) firstInput.focus();
-      }, 50);
-    }, 800);
+    this.authService.resendOtp(empId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success) {
+          this.emailOtpSent = true;
+          this.setExpiry();
+          this.startLiveTimer();
+
+          // Automatically focus first input box
+          setTimeout(() => {
+            const firstInput = document.getElementById('otp-0') as HTMLInputElement;
+            if (firstInput) firstInput.focus();
+          }, 50);
+        } else {
+          this.errorMessage = response.message || 'Failed to send OTP';
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = err.message || 'Service unavailable';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  sendSmsOtp(): void {
+    this.isResending = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+
+    const empId = localStorage.getItem('employeeId') || '';
+
+    // Request the backend to trigger the SMS OTP
+    this.authService.resendOtp(empId).subscribe({
+      next: (response) => {
+        this.isResending = false;
+        if (response.success) {
+          this.smsOtpSent = true;
+          this.setExpiry();
+          this.startLiveTimer();
+
+          setTimeout(() => {
+            const firstInput = document.getElementById('otp-0') as HTMLInputElement;
+            if (firstInput) firstInput.focus();
+          }, 50);
+        } else {
+          this.errorMessage = response.message || 'Failed to send SMS OTP';
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = err.message || 'Service unavailable';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   verifyMsg91Token(accessToken: string): void {
@@ -118,6 +175,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         console.error('[Dashboard] verifyMsg91Token backend request error:', err);
         this.errorMessage = err.message || 'Server error';
+        this.triggerShake();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  verifySmsOtp(): void {
+    const enteredOtp = this.otpBoxes.join('');
+
+    if (enteredOtp.length !== 6) {
+      this.errorMessage = 'Please enter a 6-digit OTP code';
+      this.triggerShake();
+      return;
+    }
+
+    const employeeId = localStorage.getItem('employeeId') || '';
+    if (!employeeId) {
+      this.errorMessage = 'Employee ID missing. Please log in again.';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+
+    this.authService.verifySmsOtp(employeeId, enteredOtp).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success) {
+          localStorage.setItem('auth_token', response.token || '');
+          this.router.navigate(['/secure']);
+        } else {
+          this.errorMessage = response.message || 'Verification failed. Please try again.';
+          this.triggerShake();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = 'Verification failed. Please try again.';
         this.triggerShake();
         this.cdr.detectChanges();
       }
@@ -201,6 +298,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  onOtpInput(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.replace(/\D/g, '').slice(0, 1);
+    this.otpBoxes[index] = value;
+
+    if (value && index < 5) {
+      setTimeout(() => {
+        const nextInput = document.getElementById(`otp-${index + 1}`) as HTMLInputElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 0);
+    }
+  }
+
+  onOtpKeydown(event: KeyboardEvent, index: number): void {
+    if (event.key !== 'Backspace') {
+      return;
+    }
+
+    event.preventDefault();
+    this.otpBoxes[index] = '';
+
+    if (index > 0) {
+      setTimeout(() => {
+        const previous = document.getElementById(`otp-${index - 1}`) as HTMLInputElement;
+        if (previous) {
+          previous.focus();
+        }
+      }, 0);
+    }
+  }
+
   triggerShake(): void {
     this.shakeTrigger = !this.shakeTrigger;
   }
@@ -250,7 +380,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   resendOtp(): void {
     if (this.remainingTime > 0) return;
 
-    this.isLoading = true;
+    this.isResending = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
 
@@ -258,7 +388,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.authService.resendOtp(empId).subscribe({
       next: (response) => {
-        this.isLoading = false;
+        this.isResending = false;
         if (response.success) {
           this.otpBoxes = ['', '', '', '', '', ''];
           this.setExpiry();
@@ -276,7 +406,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isResending = false;
         this.errorMessage = err.message || 'Resend failed';
         this.cdr.detectChanges();
       }
@@ -287,6 +417,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
+
+    const mobile = this.authService.getSmsMobile();
+    if (!mobile) {
+      this.isLoading = false;
+      this.errorMessage = 'SMS OTP unavailable because your phone number is not available. Please use Email OTP.';
+      this.cdr.detectChanges();
+      return;
+    }
 
     this.authService.initMsg91Widget(
       (data: any) => {

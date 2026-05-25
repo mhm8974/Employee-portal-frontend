@@ -71,7 +71,7 @@ export class PayslipComponent implements OnInit {
         return this.authService.useMockData;
     }
 
-    private apiUrl = 'http://192.168.0.115:8000/api';
+    private apiUrl = 'http://192.168.0.133:8000/api';
 
     constructor(
         private http: HttpClient,
@@ -100,10 +100,10 @@ export class PayslipComponent implements OnInit {
     onDocumentClick(event: MouseEvent) {
         // Automatically close the desktop dropdown when clicking away
         if (!this.showDropdown) return;
-        
+
         const target = event.target as HTMLElement;
         const isClickInside = target.closest('.download-container');
-        
+
         if (!isClickInside) {
             this.showDropdown = false;
         }
@@ -143,8 +143,8 @@ export class PayslipComponent implements OnInit {
         this.showActionSheet = false;
         this.showDropdown = false;
 
-        const employeeId = this.employeeId === 'N/A' || !this.employeeId 
-            ? (localStorage.getItem('employeeId') || 'CPF12345') 
+        const employeeId = this.employeeId === 'N/A' || !this.employeeId
+            ? (localStorage.getItem('employeeId') || 'CPF12345')
             : this.employeeId;
 
         if (!employeeId) {
@@ -231,12 +231,12 @@ export class PayslipComponent implements OnInit {
                 }
 
                 this.isPayslipLoading = false;
-                
+
                 // For mock data, we can generate a dummy verification URL
                 if (this.paySlipData) {
                     this.qrCodeUrl = `https://verification.pranali.com/verify?token=MOCK_${this.selectedMonth}_${this.selectedYear}`;
                 }
-                
+
                 this.cdr.markForCheck();
             }, 500);
             return;
@@ -263,7 +263,7 @@ export class PayslipComponent implements OnInit {
             .subscribe(response => {
                 if (response?.success && response.data) {
                     this.paySlipData = response.data;
-                    
+
                     // Step 1: Generate validation token using POST endpoint
                     const employeeId = localStorage.getItem('employeeId') || '20240101000001';
                     this.http.post(`${this.apiUrl}/payslips/generate-verification-token`, null, {
@@ -274,18 +274,16 @@ export class PayslipComponent implements OnInit {
                         }
                     }).subscribe((res: any) => {
                         if (res.token || res.verification_url) {
-                            // Strip /api from apiUrl if the verification_url already includes it
                             const baseHost = this.apiUrl.split(':8000')[0] + ':8000';
                             this.qrCodeUrl = `${baseHost}${res.verification_url}`;
                             console.log('[QR Generator] Verification URL Set:', this.qrCodeUrl);
                         }
+                        this.cdr.detectChanges();
                     }, err => {
                         console.error('[QR Generator] Failed to generate token:', err);
-                        // Fallback URL
                         this.qrCodeUrl = `${this.apiUrl}/payslips/verify?employee_id=${employeeId}&month=${this.selectedMonth}`;
+                        this.cdr.detectChanges();
                     });
-
-                    this.cdr.markForCheck();
                 } else {
                     this.paySlipData = null;
                 }

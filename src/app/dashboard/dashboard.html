@@ -8,16 +8,10 @@
 
     <!-- Tab Switcher -->
     <div class="otp-tabs">
-      <button 
-        class="tab-btn" 
-        [class.active]="activeTab === 'email'" 
-        (click)="setActiveTab('email')">
+      <button class="tab-btn" [class.active]="activeTab === 'email'" (click)="setActiveTab('email')">
         <span class="icon">✉️</span> {{ 'Email OTP' | translate }}
       </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="activeTab === 'sms'" 
-        (click)="setActiveTab('sms')">
+      <button class="tab-btn" [class.active]="activeTab === 'sms'" (click)="setActiveTab('sms')">
         <span class="icon">📱</span> {{ 'SMS OTP' | translate }}
       </button>
     </div>
@@ -25,15 +19,17 @@
     <!-- Email Tab Content -->
     <div *ngIf="activeTab === 'email'">
       <!-- Case 1: OTP Not Yet Sent -->
-      <div *ngIf="!emailOtpSent" class="minimal-info-container">
-        <div class="minimal-icon blue">✉️</div>
-        <p class="minimal-text">
-          {{ 'To proceed, we will send a secure one-time verification code (OTP) to your registered email address.' | translate }}
-        </p>
-        <button 
-          class="minimal-action-btn blue-btn"
-          [disabled]="isLoading"
-          (click)="sendEmailOtp()">
+      <div *ngIf="!emailOtpSent">
+        <div class="otp-header">
+          <div class="minimal-icon blue">✉️</div>
+          <h2>{{ 'Email Authentication' | translate }}</h2>
+          <p class="subtext">
+            {{ 'To proceed, we will send a secure one-time verification code (OTP) to your registered email address.' |
+            translate }}
+          </p>
+        </div>
+
+        <button class="verify-btn" [disabled]="isLoading" (click)="sendEmailOtp()">
           <span *ngIf="!isLoading">{{ 'Send Email OTP' | translate }}</span>
           <span *ngIf="isLoading" class="btn-loader"></span>
         </button>
@@ -55,17 +51,9 @@
 
         <!-- 6-digit boxes -->
         <div class="otp-inputs">
-          <input
-            *ngFor="let box of otpBoxes; let i = index; trackBy: trackByIndex"
-            type="text"
-            id="otp-{{i}}"
-            maxlength="1"
-            [value]="otpBoxes[i]"
-            [disabled]="isDisabled(i) || isLoading"
-            (keydown)="handleInput($event, i)"
-            autocomplete="off"
-            [class.filled]="otpBoxes[i] !== ''"
-          />
+          <input *ngFor="let box of otpBoxes; let i = index; trackBy: trackByIndex" type="text" id="otp-{{i}}"
+            maxlength="1" [value]="otpBoxes[i]" [disabled]="isDisabled(i) || isLoading"
+            (keydown)="handleInput($event, i)" autocomplete="off" [class.filled]="otpBoxes[i] !== ''" />
         </div>
 
         <!-- Timer / Expiry Info -->
@@ -79,10 +67,7 @@
         </div>
 
         <!-- Action Buttons -->
-        <button
-          class="verify-btn"
-          [disabled]="isLoading || remainingTime === 0"
-          (click)="verifyOtp()">
+        <button class="verify-btn" [disabled]="isLoading || remainingTime === 0" (click)="verifyOtp()">
           <span *ngIf="!isLoading">{{ 'Verify Email OTP' | translate }}</span>
           <span *ngIf="isLoading" class="btn-loader"></span>
         </button>
@@ -90,30 +75,80 @@
         <!-- Resend Flow -->
         <div class="resend-container" *ngIf="remainingTime === 0">
           <p>{{ "Didn't receive the code?" | translate }}</p>
-          <a class="resend" (click)="resendOtp()">{{ 'Resend Email OTP' | translate }}</a>
+          <a class="resend" (click)="resendOtp()" [class.disabled]="isResending">
+            <span *ngIf="!isResending">{{ 'Resend Email OTP' | translate }}</span>
+            <span *ngIf="isResending">{{ 'Resending...' | translate }}</span>
+          </a>
         </div>
       </div>
     </div>
 
     <!-- SMS Tab Content -->
-    <div *ngIf="activeTab === 'sms'" class="minimal-info-container">
-      <div class="minimal-icon green">📱</div>
-      <p class="minimal-text">
-        {{ 'Verify your identity securely using the SMS OTP provider widget.' | translate }}
-      </p>
+    <div *ngIf="activeTab === 'sms'">
+      
+      <!-- Case 1: OTP Not Yet Sent -->
+      <div *ngIf="!smsOtpSent">
+        <div class="otp-header">
+          <div class="minimal-icon green">📱</div>
+          <h2>{{ 'SMS Authentication' | translate }}</h2>
+          <p class="subtext">
+            {{ 'To proceed, we will send a secure one-time verification code (OTP) to your registered mobile number.' | translate }}
+          </p>
+        </div>
 
-      <!-- Error Message -->
-      <div class="error-container" *ngIf="errorMessage && !isLoading">
-        <div class="error">{{ errorMessage | translate }}</div>
+        <button class="verify-btn" [disabled]="isLoading" (click)="sendSmsOtp()">
+          <span *ngIf="!isLoading">{{ 'Send SMS OTP' | translate }}</span>
+          <span *ngIf="isLoading" class="btn-loader"></span>
+        </button>
       </div>
 
-      <button 
-        class="minimal-action-btn green-btn"
-        [disabled]="isLoading"
-        (click)="launchSmsWidget()">
-        <span *ngIf="!isLoading">{{ 'Launch SMS OTP Widget' | translate }}</span>
-        <span *ngIf="isLoading" class="btn-loader"></span>
-      </button>
+      <!-- Case 2: OTP Sent & Awaiting Input -->
+      <div *ngIf="smsOtpSent">
+        <div class="otp-header">
+          <div class="minimal-icon green">📱</div>
+          <h2>{{ 'SMS Verification' | translate }}</h2>
+          <p class="subtext">
+            {{ 'Please enter the 6-digit one-time password sent to your registered number:' | translate }} <strong>{{ maskedPhone }}</strong>
+          </p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-container" *ngIf="errorMessage">
+          <div class="error">{{ errorMessage | translate }}</div>
+        </div>
+
+        <!-- 6-digit boxes -->
+        <div class="otp-inputs">
+          <input *ngFor="let box of otpBoxes; let i = index; trackBy: trackByIndex" type="text" id="otp-{{i}}"
+            maxlength="1" [value]="otpBoxes[i]" [disabled]="isDisabled(i) || isLoading"
+            (keydown)="handleInput($event, i)" autocomplete="off" [class.filled]="otpBoxes[i] !== ''" />
+        </div>
+
+        <!-- Timer / Expiry Info -->
+        <div class="timer">
+          <span *ngIf="remainingTime > 0">
+            {{ 'Code expires in' | translate }} <strong>{{ remainingTime }}s</strong>
+          </span>
+          <span *ngIf="remainingTime === 0" class="expired-alert">
+            ⚠️ {{ 'Code has expired' | translate }}
+          </span>
+        </div>
+
+        <!-- Action Buttons -->
+        <button class="verify-btn" [disabled]="isLoading || remainingTime === 0" (click)="verifySmsOtp()">
+          <span *ngIf="!isLoading">{{ 'Verify SMS OTP' | translate }}</span>
+          <span *ngIf="isLoading" class="btn-loader"></span>
+        </button>
+
+        <!-- Resend Flow -->
+        <div class="resend-container" *ngIf="remainingTime === 0">
+          <p>{{ "Didn't receive the code?" | translate }}</p>
+          <a class="resend" (click)="sendSmsOtp()" [class.disabled]="isResending">
+            <span *ngIf="!isResending">{{ 'Resend SMS OTP' | translate }}</span>
+            <span *ngIf="isResending">{{ 'Resending...' | translate }}</span>
+          </a>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->

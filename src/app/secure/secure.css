@@ -599,6 +599,11 @@ body {
   animation: fadeIn 0.3s ease forwards;
 }
 
+/* Hidden on desktop — only shown inside @media (max-width: 900px) */
+.mobile-header-backdrop {
+  display: none;
+}
+
 .mobile-menu-btn {
   display: none;
   background: none;

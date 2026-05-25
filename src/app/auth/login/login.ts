@@ -174,6 +174,9 @@ export class LoginComponent implements OnInit {
         if (isSuccess) {
           const idToStore = respData.employee_id || response.employee_id || cleanEmployeeId;
           localStorage.setItem('employeeId', String(idToStore));
+          localStorage.setItem('sms_otp_sent', String(respData.sms_otp_sent === true));
+          localStorage.setItem('masked_phone', respData.masked_phone || '');
+          localStorage.setItem('masked_email', respData.masked_email || '');
 
           const requiresOtp = response.requires_otp !== false && respData.requires_otp !== false;
           const target = requiresOtp ? '/dashboard' : '/secure'; // Defaults to OTP if not explicitly false

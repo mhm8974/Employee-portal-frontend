@@ -8,14 +8,16 @@ import { LeavesComponent } from './secure/leaves/leaves';
 import { HelpComponent } from './secure/help/help';
 import { HomeComponent } from './secure/home/home';
 import { ProfileComponent } from './secure/profile/profile';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
-    { path: 'dashboard', component: DashboardComponent },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
     {
         path: 'secure',
         component: SecureComponent,
+        canActivate: [authGuard],
         children: [
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },

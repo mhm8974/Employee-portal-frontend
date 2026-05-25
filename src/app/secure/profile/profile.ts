@@ -64,7 +64,7 @@ export class ProfileComponent implements OnInit {
     }
 
     console.log('[Profile] INITIATING LIVE FETCH: Requesting real data from backend...');
-    const apiUrl = `http://192.168.0.115:8000/api/employee/${employeeId}`;
+    const apiUrl = `http://192.168.0.133:8000/api/employee/${employeeId}`;
 
     this.http.get<any>(apiUrl).pipe(
       catchError(error => {
@@ -84,7 +84,7 @@ export class ProfileComponent implements OnInit {
   private mapBackendToUi(data: any): void {
     // Merge names if needed
     const fullName = data.full_name || `${data.first_name || ''} ${data.last_name || ''}`.trim();
-    
+
     this.employeeData = {
       name: fullName,
       section: data.department || data.section || 'N/A',

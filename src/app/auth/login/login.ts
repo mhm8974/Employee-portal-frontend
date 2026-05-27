@@ -140,10 +140,17 @@ export class LoginComponent implements OnInit {
     console.warn('[Profile] SENDING LOGIN:', loginData);
 
     if (this.authService.useMockData) {
+      console.warn('[Profile] Mock mode detected in login.ts! Attempting navigation in 1s...');
       setTimeout(() => {
         this.isLoading = false;
         localStorage.setItem('employeeId', this.employeeId);
-        this.router.navigate(['/dashboard']);
+        localStorage.setItem('auth_token', 'mock_token_12345'); // Allow authGuard to let us pass
+        console.warn('[Profile] Navigating to /dashboard now...');
+        this.router.navigate(['/dashboard']).then(success => {
+          console.warn('[Profile] Mock Navigation result:', success);
+        }).catch(err => {
+          console.error('[Profile] Mock Navigation crashed:', err);
+        });
       }, 1000);
       return;
     }

@@ -229,6 +229,34 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+.tab-btn:focus,
+.tab-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* PREMIUM MINIMAL ICONS */
+.minimal-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 20px;
+  margin: 0 auto 16px auto;
+}
+
+.minimal-icon.blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.minimal-icon.green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
 
 /* DARK MODE OVERRIDES */
 body.dark-theme .otp-page {

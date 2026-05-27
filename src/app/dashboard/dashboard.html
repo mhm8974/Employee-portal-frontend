@@ -38,6 +38,7 @@
       <!-- Case 2: OTP Sent & Awaiting Input -->
       <div *ngIf="emailOtpSent">
         <div class="otp-header">
+          <div class="minimal-icon blue">✉️</div>
           <h2>{{ 'Email Verification' | translate }}</h2>
           <p class="subtext">
             {{ 'Please enter the 6-digit one-time password sent to your registered email.' | translate }}

@@ -87,7 +87,7 @@ export interface UserProfile {
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
-  public useMockData = true; // false for backend ,true for mock
+  public useMockData = false; // false for backend ,true for mock
 
 
 

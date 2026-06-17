@@ -1,9 +1,9 @@
-// Code editor view loaded
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { MOCK_EMPLOYEE } from '../secure.mocks';
@@ -32,7 +32,6 @@ export class ProfileComponent implements OnInit {
 
   errorMessage = '';
 
-  // For visual styling only
   get useMockData(): boolean {
     return this.authService.useMockData;
   }
@@ -44,6 +43,9 @@ export class ProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // 1. Instantly load from local storage to avoid a blank screen
+    this.loadFromLocalStorage();
+    // 2. Fetch fresh data from backend
     this.loadEmployeeData();
   }
 
@@ -54,35 +56,46 @@ export class ProfileComponent implements OnInit {
 
     if (!employeeId) {
       this.errorMessage = 'Please login to view profile';
+      this.cdr.detectChanges();
       return;
     }
 
-    // If mock data is ENABLED, use it immediately with zero delay
     if (this.useMockData) {
       this.mapBackendToUi(MOCK_EMPLOYEE);
+      this.cdr.detectChanges();
       return;
     }
 
     console.log('[Profile] INITIATING LIVE FETCH: Requesting real data from backend...');
-    const apiUrl = `http://192.168.0.133:8000/api/employee/${employeeId}`;
+    const apiUrl = `${environment.apiUrl}/employee/${employeeId}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authService.getToken()}`
+    });
 
-    this.http.get<any>(apiUrl).pipe(
+    this.http.get<any>(apiUrl, { headers }).pipe(
       catchError(error => {
-        console.error('[Profile] CONNECTION SEVERED: Backend offline or unreachable. Swapping in Mock data...', error);
-        this.errorMessage = 'Backend offline. Using cached mock data.';
-        this.mapBackendToUi(MOCK_EMPLOYEE);
+        console.error('[Profile] CONNECTION SEVERED: Backend offline or unreachable.', error);
+        // If we don't have any cached data loaded, use mock data as a last resort
+        if (!this.employeeData.name) {
+          this.errorMessage = 'Backend offline. Using cached mock data.';
+          this.mapBackendToUi(MOCK_EMPLOYEE);
+        } else {
+          this.errorMessage = 'Backend offline. Showing cached profile.';
+        }
+        this.cdr.detectChanges();
         return of(null);
       })
     ).subscribe(response => {
       if (response) {
         console.log('[Profile] LIVE DATA RECEIVED: Successfully synchronized with backend database.', response);
         this.mapBackendToUi(response);
+        localStorage.setItem('user_data', JSON.stringify(response));
+        this.cdr.detectChanges();
       }
     });
   }
 
   private mapBackendToUi(data: any): void {
-    // Merge names if needed
     const fullName = data.full_name || `${data.first_name || ''} ${data.last_name || ''}`.trim();
 
     this.employeeData = {
@@ -104,6 +117,7 @@ export class ProfileComponent implements OnInit {
     const stored = localStorage.getItem('user_data');
     if (stored) {
       this.mapBackendToUi(JSON.parse(stored));
+      this.cdr.detectChanges();
     }
   }
 

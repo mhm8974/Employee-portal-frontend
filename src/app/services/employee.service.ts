@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface EmployeeProfile {
   id: number;
@@ -40,7 +41,7 @@ export interface PaySlipRequest {
   providedIn: 'root'
 })
 export class EmployeeService {
-  private apiUrl = 'http://192.168.0.133:8000/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

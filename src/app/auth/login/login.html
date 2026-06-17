@@ -1,6 +1,5 @@
 <div class="auth-container">
 
-  <!-- LEFT PANEL -->
   <div class="auth-left">
     <div class="brand-logo-container left-logo">
       <img src="assets/images/pranali_logo_2.png" alt="Pranali Logo" class="brand-logo">
@@ -11,7 +10,6 @@
     </div>
   </div>
 
-  <!-- RIGHT PANEL -->
   <div class="auth-right">
     <div class="login-form">
 
@@ -19,7 +17,6 @@
       <p class="login-title">Login</p>
 
 
-      <!-- CPF / GPF / EMPLOYEE ID -->
       <div class="input-group">
         <input type="text" id="employeeId" [(ngModel)]="employeeId" (blur)="validateId()" (input)="showIdError = false" placeholder=" " required autocomplete="off" />
         <label for="employeeId">CPF / GPF / 14-digit ID</label>
@@ -28,7 +25,6 @@
 
 
 
-      <!-- CAPTCHA IMAGE FROM BACKEND -->
       <label class="static-label">Verify Captcha</label>
       <div class="captcha-row">
         <div class="captcha-img-container">
@@ -37,7 +33,6 @@
         </div>
       </div>
 
-      <!-- CAPTCHA INPUT -->
       <div class="input-group captcha-input-group">
         <input type="text" id="captcha" [(ngModel)]="captchaInput" (input)="captchaError = false" placeholder=" " required autocomplete="off" />
         <label for="captcha">Enter Captcha</label>

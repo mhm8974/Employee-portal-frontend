@@ -1,6 +1,6 @@
-/* secure.css — Shell Layout (Sidebar + Top Bar) */
 
-/* BASE */
+
+
 html,
 body {
   margin: 0;
@@ -40,7 +40,7 @@ body {
   display: none;
 }
 
-/* Sidebar Navigation */
+
 .sidebar-nav {
   flex-grow: 1;
   padding: 24px 0 10px;
@@ -120,7 +120,7 @@ body {
   outline: none !important;
 }
 
-/* Sidebar Footer */
+
 .sidebar-footer {
   padding: 32px 32px 64px;
   margin-top: auto;
@@ -176,7 +176,7 @@ body {
 }
 
 
-/* LOGOUT BUTTON */
+
 .logout-btn {
   background: var(--btn-primary-bg);
   color: var(--btn-primary-text);
@@ -195,12 +195,12 @@ body {
   border-color: var(--btn-primary-hover);
 }
 
-/* TOP BAR */
+
 .top-bar {
   height: var(--header-fluid-height);
   width: 100%;
   background: #1e3a8a;
-  /* Deep professional blue */
+  
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 2500;
   position: fixed;
@@ -259,7 +259,7 @@ body {
   }
 }
 
-/* Search Bar Base Styles */
+
 .header-search {
   position: relative;
   display: flex;
@@ -291,7 +291,7 @@ body {
   border-color: #3b82f6;
 }
 
-/* Desktop Overrides */
+
 @media (min-width: 901px) {
 
   .header-search,
@@ -350,7 +350,7 @@ body {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Search Dropdown Desktop */
+
 @media (min-width: 901px) {
   .search-dropdown {
     top: 20px;
@@ -392,7 +392,7 @@ body {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Top padding adjustment for dropdown overlap */
+
 .search-result:first-child {
   border-top: none;
   padding-top: 36px;
@@ -481,7 +481,7 @@ body {
   box-sizing: border-box;
 }
 
-/* MODAL STYLES */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -583,9 +583,9 @@ body {
   }
 }
 
-/* ========================================= */
-/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
-/* ========================================= */
+
+
+
 
 .mobile-overlay {
   position: fixed;
@@ -599,7 +599,7 @@ body {
   animation: fadeIn 0.3s ease forwards;
 }
 
-/* Hidden on desktop — only shown inside @media (max-width: 900px) */
+
 .mobile-header-backdrop {
   display: none;
 }
@@ -618,18 +618,18 @@ body {
 
 @media (max-width: 900px) {
 
-  /* Top Bar adjustments */
+  
   .top-bar {
     height: 70px;
     width: 100vw;
-    /* Strict width to prevent horizontal scroll */
+    
   }
 
   .sidebar-align-container {
     padding-left: 16px;
     width: auto;
-    /* Allow items to stack naturally */
-    /* Let it shrink on mobile */
+    
+    
   }
 
   .header-search {
@@ -638,7 +638,7 @@ body {
     top: 50%;
     transform: translateY(-50%);
     width: 44px;
-    /* Collapse to icon-only on mobile or very small */
+    
     padding: 0;
     justify-content: center;
     border: none;
@@ -655,7 +655,7 @@ body {
     padding: 0 16px;
     z-index: 2100;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-    /* Softer, thinner shadow for mobile */
+    
   }
 
   .header-search .search-icon-svg {
@@ -667,10 +667,10 @@ body {
     margin-right: 12px;
   }
 
-  /* MOBILE SUGGESTION BOX OPTIMIZATIONS */
+  
   .search-dropdown {
     top: 0;
-    /* Start exactly at the visual center of the pill to hide the join perfectly */
+    
     width: 220px;
     right: 16px;
     left: auto;
@@ -678,32 +678,32 @@ body {
     max-height: 350px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(148, 163, 184, 0.3);
-    /* Matches the pill border exactly */
+    
     border-top: none !important;
-    /* Force removal of top border */
+    
     outline: none !important;
   }
 
   .search-result:first-child {
     padding-top: 44px;
-    /* More space to clear the overlapping pill */
+    
   }
 
   .search-result {
     padding: 18px 20px;
-    /* Larger tap targets for thumb */
+    
     gap: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.03);
   }
 
   .search-result:first-child {
     padding-top: 36px;
-    /* Restandardized padding for the center-join */
+    
   }
 
   .result-label {
     font-size: 15px;
-    /* Slightly easier to read on mobile */
+    
   }
 
   .header-search .search-input {
@@ -719,38 +719,38 @@ body {
 
   .header-logo {
     height: 40px;
-    /* Smaller logo on mobile */
+    
     max-width: 200px;
     object-fit: contain;
   }
 
-  /* Content Area expands */
+  
   .shell-content {
     margin-left: 0;
     max-width: 100vw;
-    /* Strict width */
+    
     padding-top: 130px;
-    /* Adjusted for taller 70px bar + 54px backdrop + 6px gap */
-    /* Extra Gap Below Top Bar Area */
+    
+    
     overflow-x: hidden;
     position: relative;
-    /* For absolute positioning of button */
+    
   }
 
   .mobile-header-backdrop {
     display: flex;
     position: fixed;
     top: 70px;
-    /* Right below the blue bar */
+    
     left: 0;
     width: 100vw;
     height: 54px;
-    /* Increased to 54px to perfectly center the 44px icon with 5px margins */
+    
     background: var(--bg-header-translucent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 1999;
-    /* Just below the icon button */
+    
     border-bottom: 1px solid var(--border-secondary);
   }
 
@@ -758,7 +758,7 @@ body {
     display: flex;
     position: fixed;
     top: 75px;
-    /* Moved up further from 85px to better clear the page content */
+    
     left: 6px;
     z-index: 2000;
     background: transparent;
@@ -782,7 +782,7 @@ body {
     display: none !important;
   }
 
-  /* Sidebar becomes an off-canvas drawer */
+  
   .sidebar {
     top: 0;
     height: 100dvh;
@@ -790,14 +790,14 @@ body {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
     z-index: 1001;
-    /* Above overlay */
+    
   }
 
   .sidebar.active {
     transform: translateX(0);
   }
 
-  /* Show close button inside sidebar on mobile */
+  
   .close-mobile-btn {
     display: block;
   }
@@ -812,20 +812,20 @@ body {
 
   .nav-item {
     padding: 14px 36px;
-    /* Compensated mobile padding (24+12) */
+    
     justify-content: flex-start;
-    /* Alignment to the left as requested */
+    
     border-left: none;
   }
 
   .sidebar-nav {
     padding: 20px 0 10px;
-    /* Restore top breathing room, zero horizontal for full-width bg */
+    
   }
 
   .nav-item:hover {
     padding-left: 36px;
-    /* Compensated mobile hover padding (24+12) */
+    
   }
 
   .sidebar-footer {

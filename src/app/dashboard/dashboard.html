@@ -68,7 +68,7 @@
         </div>
 
         <!-- Action Buttons -->
-        <button class="verify-btn" [disabled]="isLoading || remainingTime === 0" (click)="verifyOtp()">
+        <button class="verify-btn" [disabled]="isLoading || (!useMockData && remainingTime === 0)" (click)="verifyOtp()">
           <span *ngIf="!isLoading">{{ 'Verify Email OTP' | translate }}</span>
           <span *ngIf="isLoading" class="btn-loader"></span>
         </button>
@@ -101,6 +101,9 @@
           <span *ngIf="!isLoading">{{ 'Send SMS OTP' | translate }}</span>
           <span *ngIf="isLoading" class="btn-loader"></span>
         </button>
+
+        <!-- Captcha placeholder container for silent MSG91 widget -->
+        <div id="msg91-captcha-container" class="captcha-container"></div>
       </div>
 
       <!-- Case 2: OTP Sent & Awaiting Input -->
@@ -109,7 +112,7 @@
           <div class="minimal-icon green">📱</div>
           <h2>{{ 'SMS Verification' | translate }}</h2>
           <p class="subtext">
-            {{ 'Please enter the 6-digit one-time password sent to your registered number:' | translate }} <strong>{{ maskedPhone }}</strong>
+            {{ 'Please enter the 6-digit one-time password sent to your registered number.' | translate }}
           </p>
         </div>
 
@@ -136,7 +139,7 @@
         </div>
 
         <!-- Action Buttons -->
-        <button class="verify-btn" [disabled]="isLoading || remainingTime === 0" (click)="verifySmsOtp()">
+        <button class="verify-btn" [disabled]="isLoading || (!useMockData && remainingTime === 0)" (click)="verifySmsOtp()">
           <span *ngIf="!isLoading">{{ 'Verify SMS OTP' | translate }}</span>
           <span *ngIf="isLoading" class="btn-loader"></span>
         </button>
@@ -144,7 +147,7 @@
         <!-- Resend Flow -->
         <div class="resend-container" *ngIf="remainingTime === 0">
           <p>{{ "Didn't receive the code?" | translate }}</p>
-          <a class="resend" (click)="sendSmsOtp()" [class.disabled]="isResending">
+          <a class="resend" (click)="resendSmsOtp()" [class.disabled]="isResending">
             <span *ngIf="!isResending">{{ 'Resend SMS OTP' | translate }}</span>
             <span *ngIf="isResending">{{ 'Resending...' | translate }}</span>
           </a>

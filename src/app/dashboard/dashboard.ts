@@ -62,6 +62,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService
   ) { }
 
+  get useMockData(): boolean {
+    return this.authService.useMockData;
+  }
+
   emailOtpSent = false;
   smsOtpSent = false;
   maskedPhone = '';
@@ -87,6 +91,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   sendEmailOtp(): void {
+    if (this.isLoading) return; // Rapid-click safety guard lock
     this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
@@ -100,6 +105,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.emailOtpSent = true;
           this.setExpiry();
           this.startLiveTimer();
+
+          // Dev hint for quick testing
+          if (response.dev_hint_email_otp) {
+            console.warn('--- DEV MODE: EMAIL OTP IS ' + response.dev_hint_email_otp + ' ---');
+          }
+          if (response.dev_hint_otp) {
+            console.warn('--- DEV MODE: SMS OTP IS ' + response.dev_hint_otp + ' ---');
+          }
 
           // Automatically focus first input box
           setTimeout(() => {
@@ -120,36 +133,86 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   sendSmsOtp(): void {
-    this.isResending = true;
+    if (this.isLoading) return;
+    this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    const empId = localStorage.getItem('employeeId') || '';
+    if (this.authService.useMockData) {
+      this.isLoading = false;
+      this.smsOtpSent = true;
+      localStorage.setItem('sms_otp_sent', 'true');
+      this.setExpiry();
+      this.startLiveTimer();
+      this.cdr.detectChanges();
+      return;
+    }
 
-    // Request the backend to trigger the SMS OTP
-    this.authService.resendOtp(empId).subscribe({
-      next: (response) => {
-        this.isResending = false;
-        if (response.success) {
-          this.smsOtpSent = true;
-          this.setExpiry();
-          this.startLiveTimer();
+    const mobile = this.authService.getSmsMobile();
+    if (!mobile) {
+      this.isLoading = false;
+      this.errorMessage = 'SMS OTP unavailable because your phone number is not available. Please use Email OTP.';
+      this.cdr.detectChanges();
+      return;
+    }
 
-          setTimeout(() => {
-            const firstInput = document.getElementById('otp-0') as HTMLInputElement;
-            if (firstInput) firstInput.focus();
-          }, 50);
-        } else {
-          this.errorMessage = response.message || 'Failed to send SMS OTP';
+    console.log('[Dashboard] Initializing silent MSG91 Widget...');
+    this.authService.initMsg91Widget(
+      (data: any) => {
+        console.log('[Dashboard] MSG91 Widget Configuration Success callback:', data);
+        let token: string | null = null;
+        if (typeof data === 'string') {
+          token = data;
+        } else if (data) {
+          token = data.access_token || data.response || data.message || data.token;
         }
-        this.cdr.detectChanges();
+        if (token) {
+          this.verifyMsg91Token(token);
+        }
       },
-      error: (err) => {
+      (error: any) => {
+        console.error('[Dashboard] MSG91 Widget Configuration Failure callback:', error);
+      }
+    );
+
+    const triggerSend = (attempts = 0) => {
+      if (typeof (window as any).sendOtp === 'function') {
+        console.log('[Dashboard] Calling window.sendOtp silently for mobile:', mobile);
+        (window as any).sendOtp(
+          mobile,
+          (data: any) => {
+            console.log('[Dashboard] window.sendOtp success:', data);
+            this.isLoading = false;
+            this.smsOtpSent = true;
+            localStorage.setItem('sms_otp_sent', 'true');
+            this.setExpiry();
+            this.startLiveTimer();
+
+            setTimeout(() => {
+              const firstInput = document.getElementById('otp-0') as HTMLInputElement;
+              if (firstInput) firstInput.focus();
+            }, 50);
+            this.cdr.detectChanges();
+          },
+          (err: any) => {
+            console.error('[Dashboard] window.sendOtp error:', err);
+            this.isLoading = false;
+            this.errorMessage = err?.message || err || 'Failed to send SMS OTP. Please try again.';
+            this.cdr.detectChanges();
+          }
+        );
+      } else if (attempts < 5) {
+        console.log(`[Dashboard] window.sendOtp not exposed yet, retrying in 300ms...`);
+        setTimeout(() => triggerSend(attempts + 1), 300);
+      } else {
+        console.error('[Dashboard] window.sendOtp not exposed after multiple attempts.');
         this.isLoading = false;
-        this.errorMessage = err.message || 'Service unavailable';
+        this.errorMessage = 'SMS service not initialized. Please try again or use Email OTP.';
         this.cdr.detectChanges();
       }
-    });
+    };
+
+    triggerSend();
   }
 
   verifyMsg91Token(accessToken: string): void {
@@ -181,7 +244,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+
+
+
   verifySmsOtp(): void {
+    if (this.authService.useMockData) {
+      console.log('[Dashboard] Mock Mode: Navigating to /secure');
+      this.router.navigate(['/secure']);
+      return;
+    }
+
     const enteredOtp = this.otpBoxes.join('');
 
     if (enteredOtp.length !== 6) {
@@ -190,35 +262,82 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const employeeId = localStorage.getItem('employeeId') || '';
-    if (!employeeId) {
-      this.errorMessage = 'Employee ID missing. Please log in again.';
-      return;
-    }
-
     this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    this.authService.verifySmsOtp(employeeId, enteredOtp).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        if (response.success) {
-          localStorage.setItem('auth_token', response.token || '');
-          this.router.navigate(['/secure']);
-        } else {
-          this.errorMessage = response.message || 'Verification failed. Please try again.';
+    if (typeof (window as any).verifyOtp === 'function') {
+      console.log('[Dashboard] Calling window.verifyOtp for code:', enteredOtp);
+      (window as any).verifyOtp(
+        enteredOtp,
+        (data: any) => {
+          console.log('[Dashboard] window.verifyOtp success:', data);
+          let token: string | null = null;
+          if (typeof data === 'string') {
+            token = data;
+          } else if (data) {
+            token = data.access_token || data.response || data.message || data.token;
+          }
+
+          if (token) {
+            console.log('[Dashboard] MSG91 token received. Verifying with backend...', token);
+            this.verifyMsg91Token(token);
+          } else {
+            console.warn('[Dashboard] MSG91 verifyOtp success but no token in payload:', data);
+            this.isLoading = false;
+            this.errorMessage = 'SMS Verification succeeded, but no token was returned.';
+            this.cdr.detectChanges();
+          }
+        },
+        (err: any) => {
+          console.error('[Dashboard] window.verifyOtp error:', err);
+          this.isLoading = false;
+          this.errorMessage = err?.message || err || 'Incorrect OTP code. Please try again.';
           this.triggerShake();
+          this.cdr.detectChanges();
         }
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = 'Verification failed. Please try again.';
-        this.triggerShake();
-        this.cdr.detectChanges();
-      }
-    });
+      );
+    } else {
+      console.error('[Dashboard] window.verifyOtp is not available.');
+      this.isLoading = false;
+      this.errorMessage = 'Verification service not loaded. Please click Resend or try again.';
+      this.cdr.detectChanges();
+    }
+  }
+
+  resendSmsOtp(): void {
+    if (this.isLoading) return;
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+
+    if (typeof (window as any).retryOtp === 'function') {
+      console.log('[Dashboard] Calling window.retryOtp for SMS resend...');
+      (window as any).retryOtp(
+        '11', // '11' specifies SMS channel
+        (data: any) => {
+          console.log('[Dashboard] window.retryOtp success:', data);
+          this.isLoading = false;
+          this.setExpiry();
+          this.startLiveTimer();
+          setTimeout(() => {
+            const firstInput = document.getElementById('otp-0') as HTMLInputElement;
+            if (firstInput) firstInput.focus();
+          }, 50);
+          this.cdr.detectChanges();
+        },
+        (err: any) => {
+          console.error('[Dashboard] window.retryOtp error:', err);
+          this.isLoading = false;
+          this.errorMessage = err?.message || err || 'Failed to resend SMS OTP. Please try again.';
+          this.cdr.detectChanges();
+        }
+      );
+    } else {
+      console.warn('[Dashboard] window.retryOtp not available, falling back to sendSmsOtp...');
+      this.isLoading = false;
+      this.sendSmsOtp();
+    }
   }
 
   ngOnDestroy(): void {
@@ -244,6 +363,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   isDisabled(index: number): boolean {
+    if (this.authService.useMockData) return false;
     if (this.remainingTime === 0) return true;
     if (index === 0) return false;
     return this.otpBoxes[index - 1] === '';
@@ -336,6 +456,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   verifyOtp(): void {
+    if (this.authService.useMockData) {
+      console.log('[Dashboard] Mock Mode: Navigating to /secure');
+      this.router.navigate(['/secure']);
+      return;
+    }
+
     const enteredOtp = this.otpBoxes.join('');
 
     if (enteredOtp.length < 6) {
@@ -379,7 +505,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   resendOtp(): void {
     if (this.remainingTime > 0) return;
-
+    if (this.isResending) return; // Rapid-click safety guard lock
     this.isResending = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
@@ -411,49 +537,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
-  }
-
-  launchSmsWidget(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.cdr.detectChanges();
-
-    const mobile = this.authService.getSmsMobile();
-    if (!mobile) {
-      this.isLoading = false;
-      this.errorMessage = 'SMS OTP unavailable because your phone number is not available. Please use Email OTP.';
-      this.cdr.detectChanges();
-      return;
-    }
-
-    this.authService.initMsg91Widget(
-      (data: any) => {
-        this.isLoading = false;
-        console.log('[Dashboard] MSG91 Success:', data);
-        let token: string | null = null;
-        if (typeof data === 'string') {
-          token = data;
-        } else if (data) {
-          token = data.access_token || data.response || data.message || data.token;
-        }
-
-        if (token) {
-          console.log('[Dashboard] MSG91 Success payload:', data);
-          console.log('[Dashboard] MSG91 token received. Verifying with backend...', token);
-          this.verifyMsg91Token(token);
-        } else {
-          console.warn('[Dashboard] MSG91 success but no token in payload:', data);
-          this.errorMessage = 'SMS Verification succeeded, but no token was returned.';
-          this.cdr.detectChanges();
-        }
-      },
-      (error: any) => {
-        this.isLoading = false;
-        console.error('[Dashboard] MSG91 Error:', error);
-        this.errorMessage = 'SMS Verification crashed or was cancelled.';
-        this.cdr.detectChanges();
-      }
-    );
   }
 
   logout(): void {

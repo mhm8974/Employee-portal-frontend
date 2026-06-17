@@ -8,12 +8,12 @@ import { LeavesComponent } from './secure/leaves/leaves';
 import { HelpComponent } from './secure/help/help';
 import { HomeComponent } from './secure/home/home';
 import { ProfileComponent } from './secure/profile/profile';
-import { authGuard } from './guards/auth.guard';
+import { authGuard, otpGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
-    { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [otpGuard] },
     {
         path: 'secure',
         component: SecureComponent,

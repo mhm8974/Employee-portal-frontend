@@ -269,4 +269,20 @@ body.compact-view .nav-section {
 body.compact-view .info-card {
   padding: 15px;
   gap: 12px;
+}
+
+/* HIDE MSG91/OTPLESS BACKGROUND IFRAME CONTAINERS */
+#otpless-login-page,
+#sendotp-widget-container,
+#sendotp-iframe,
+#otpless-iframe,
+.otpless-iframe,
+iframe[src*="otpless"],
+iframe[src*="verify.msg91"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }

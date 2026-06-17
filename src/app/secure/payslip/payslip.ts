@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { catchError, of } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { MOCK_EMPLOYEE, MOCK_PAYSLIP, MOCK_PAYSLIP_MARCH_2024 } from '../secure.mocks';
-// Removed html2pdf usage as we are moving to backend-driven PDF generation.
 
 export interface EmployeeData extends UserProfile {
     section?: string;
@@ -22,19 +22,16 @@ export interface PaySlipData {
     year: number;
     month: string;
     pay_period?: string;
-    // Earnings
     basic_salary: number;
     da?: number;
     hraws?: number;
     npa?: number;
     sbca?: number;
     ta?: number;
-    // Deductions
     cpf_state?: number;
     gis_state?: number;
     professional_tax: number;
     stamp_duty?: number;
-    // Totals
     gross_salary: number;
     total_deductions: number;
     net_salary: number;
@@ -66,12 +63,12 @@ export class PayslipComponent implements OnInit {
     showActionSheet = false;
     showDropdown = false;
 
-    /* MOCK DATA CONFIG moved to AuthService */
+
     get useMockData(): boolean {
         return this.authService.useMockData;
     }
 
-    private apiUrl = 'http://192.168.0.133:8000/api';
+    private apiUrl = environment.apiUrl;
 
     constructor(
         private http: HttpClient,
@@ -98,7 +95,6 @@ export class PayslipComponent implements OnInit {
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent) {
-        // Automatically close the desktop dropdown when clicking away
         if (!this.showDropdown) return;
 
         const target = event.target as HTMLElement;
@@ -120,7 +116,6 @@ export class PayslipComponent implements OnInit {
             try {
                 iframe.contentWindow?.focus();
                 iframe.contentWindow?.print();
-                // Cleanup
                 setTimeout(() => {
                     if (document.body.contains(iframe)) {
                         document.body.removeChild(iframe);
@@ -134,7 +129,7 @@ export class PayslipComponent implements OnInit {
         };
     }
 
-    /* Redundant clientside PDF methods removed as we are now using the official backend PDF endpoint */
+
 
 
 
@@ -152,7 +147,9 @@ export class PayslipComponent implements OnInit {
             return;
         }
 
-        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
+        const token = this.authService.getToken();
+        const monthNum = this.getMonthNumber(this.selectedMonth);
+        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${monthNum}&year=${this.selectedYear}&format=pdf&token=${token}`;
 
         if (action === 'download') {
             window.open(downloadUrl, '_blank');
@@ -189,7 +186,11 @@ export class PayslipComponent implements OnInit {
             return;
         }
 
-        this.http.get<any>(`${this.apiUrl}/employee/${employeeId}`)
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${this.authService.getToken()}`
+        });
+
+        this.http.get<any>(`${this.apiUrl}/employee/${employeeId}`, { headers })
             .pipe(catchError(error => {
                 this.errorMessage = this.getErrorMessage(error);
                 this.isLoading = false;
@@ -232,7 +233,6 @@ export class PayslipComponent implements OnInit {
 
                 this.isPayslipLoading = false;
 
-                // For mock data, we can generate a dummy verification URL
                 if (this.paySlipData) {
                     this.qrCodeUrl = `https://verification.pranali.com/verify?token=MOCK_${this.selectedMonth}_${this.selectedYear}`;
                 }
@@ -249,9 +249,13 @@ export class PayslipComponent implements OnInit {
             return;
         }
 
-        const params = { employee_id: employeeId, year: this.selectedYear.toString(), month: this.selectedMonth };
+        const monthNum = this.getMonthNumber(this.selectedMonth);
+        const params = { employee_id: employeeId, year: this.selectedYear.toString(), month: monthNum };
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${this.authService.getToken()}`
+        });
 
-        this.http.get<any>(`${this.apiUrl}/payslips`, { params })
+        this.http.get<any>(`${this.apiUrl}/payslips`, { params, headers })
             .pipe(catchError(error => {
                 this.paySlipData = null;
                 this.errorMessage = error.status === 404
@@ -264,24 +268,24 @@ export class PayslipComponent implements OnInit {
                 if (response?.success && response.data) {
                     this.paySlipData = response.data;
 
-                    // Step 1: Generate validation token using POST endpoint
                     const employeeId = localStorage.getItem('employeeId') || '20240101000001';
                     this.http.post(`${this.apiUrl}/payslips/generate-verification-token`, null, {
                         params: {
                             employee_id: employeeId,
-                            month: this.selectedMonth,
+                            month: monthNum,
                             year: this.selectedYear.toString()
-                        }
+                        },
+                        headers
                     }).subscribe((res: any) => {
                         if (res.token || res.verification_url) {
-                            const baseHost = this.apiUrl.split(':8000')[0] + ':8000';
+                            const baseHost = window.location.origin;
                             this.qrCodeUrl = `${baseHost}${res.verification_url}`;
                             console.log('[QR Generator] Verification URL Set:', this.qrCodeUrl);
                         }
                         this.cdr.detectChanges();
                     }, err => {
                         console.error('[QR Generator] Failed to generate token:', err);
-                        this.qrCodeUrl = `${this.apiUrl}/payslips/verify?employee_id=${employeeId}&month=${this.selectedMonth}`;
+                        this.qrCodeUrl = `${this.apiUrl}/payslips/verify?employee_id=${employeeId}&month=${monthNum}`;
                         this.cdr.detectChanges();
                     });
                 } else {
@@ -373,7 +377,9 @@ export class PayslipComponent implements OnInit {
             return;
         }
 
-        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
+        const token = this.authService.getToken();
+        const monthNum = this.getMonthNumber(this.selectedMonth);
+        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${monthNum}&year=${this.selectedYear}&format=pdf&token=${token}`;
         window.open(downloadUrl, '_blank');
     }
 
@@ -399,8 +405,12 @@ export class PayslipComponent implements OnInit {
     getPhone(): string { return this.employeeData?.mobile || 'N/A'; }
     getJoiningDate(): string { return this.formatDate(this.employeeData?.join_date); }
 
-    // Not used anymore as the QR data is fetched from the token endpoint
     getVerifierQrUrl(): string {
         return this.qrCodeUrl;
+    }
+
+    private getMonthNumber(monthName: string): string {
+        const index = this.months.indexOf(monthName);
+        return index !== -1 ? (index + 1).toString() : '1';
     }
 }

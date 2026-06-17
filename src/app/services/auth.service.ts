@@ -96,7 +96,7 @@ export class AuthService {
   getCaptcha(): Observable<{ captcha_id: string, image: string }> {
     console.log('[AuthService] Fetching CAPTCHA from:', `${this.apiUrl}/captcha`);
     return this.http.get<{ captcha_id: string, image: string }>(`${this.apiUrl}/captcha`).pipe(
-      timeout(10000), // Wait for 10s
+      timeout(10000),
       catchError(error => {
         console.error('[AuthService] CAPTCHA fetch failed:', error);
         return throwError(() => error);
@@ -116,19 +116,14 @@ export class AuthService {
       loginData,
       { headers }
     ).pipe(
-      timeout(15000), // Wait for max 15 seconds
+      timeout(15000),
       tap(response => {
         console.log('[AuthService] Login response received:', response);
 
-        // Robust extraction of token and employee_id from potential nested data
+        // Backend no longer returns a token on login — JWT is only issued after OTP verification.
+        // We only save employee_id and employee_data here.
         const respData = (response as any).data || response;
-        const token = response.token || respData.token;
         const employeeId = response.employee_id || respData.employee_id || (respData.user ? respData.user.employee_id : null);
-
-        if (token) {
-          console.log('[AuthService] Saving token...');
-          this.setToken(token);
-        }
 
         if (employeeId) {
           console.log('[AuthService] Saving employeeId:', employeeId);
@@ -191,23 +186,19 @@ export class AuthService {
       tap((response: any) => {
         console.log('[AuthService] OTP Verification Response:', response);
 
-        // Save the session token
         if (response.token) {
           this.setToken(response.token);
         }
 
-        // Save the employee_id from the OTP response (critical for profile calls)
         if (response.employee_id) {
           console.log('[AuthService] Storing employee_id from OTP response:', response.employee_id);
           localStorage.setItem('employeeId', String(response.employee_id));
         }
 
-        // Save employee_type if provided
         if (response.employee_type) {
           localStorage.setItem('employee_type', response.employee_type);
         }
 
-        // Store full employee data if nested object is provided
         if (response.employee_data) {
           this.storeUserData(response.employee_data);
         }
@@ -243,44 +234,40 @@ export class AuthService {
     );
   }
 
-  initMsg91Widget(successCallback: (data: any) => void, failureCallback: (error: any) => void): void {
-    const checkAndInit = (attempts = 0) => {
-      if ((window as any).initSendOTP) {
-        console.log('[AuthService] MSG91 Script found. Initializing...');
+  verifySmsOtp(employeeId: string, otpCode: string): Observable<VerifyOTPResponse> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
 
-        const mobile = this.getSmsMobile();
-        if (!mobile) {
-          console.warn('[AuthService] No mobile number available for SMS OTP.');
-          failureCallback('SMS OTP unavailable because no mobile number is available from the backend.');
-          return;
+    return this.http.post<VerifyOTPResponse>(
+      `${this.apiUrl}/auth/verify-sms-otp`,
+      { employee_id: employeeId, otp_code: otpCode },
+      { headers }
+    ).pipe(
+      tap((response: any) => {
+        console.log('[AuthService] SMS OTP Verification Response:', response);
+
+        if (response.token) {
+          this.setToken(response.token);
         }
 
-        const configuration = {
-          widgetId: environment.msg91WidgetId,
-          tokenAuth: environment.msg91AuthToken,
-          identifier: mobile, // Pre-fill the mobile number
-          hideMethod: 'mobile', // hide the mobile entry field
-          exposeMethods: false, // false = show the SMS popup automatically
-          success: (data: any) => {
-            console.log('[AuthService] MSG91 Success:', data);
-            successCallback(data);
-          },
-          failure: (error: any) => {
-            console.error('[AuthService] MSG91 Failure:', error);
-            failureCallback(error);
-          }
-        };
-        (window as any).initSendOTP(configuration);
-      } else if (attempts < 5) {
-        console.warn(`[AuthService] MSG91 script not ready, retrying attempt ${attempts + 1}...`);
-        setTimeout(() => checkAndInit(attempts + 1), 1000);
-      } else {
-        console.error('[AuthService] MSG91 script not loaded after 5 attempts');
-        failureCallback('MSG91 script not loaded');
-      }
-    };
+        if (response.employee_id) {
+          localStorage.setItem('employeeId', String(response.employee_id));
+        }
 
-    checkAndInit();
+        if (response.employee_type) {
+          localStorage.setItem('employee_type', response.employee_type);
+        }
+
+        if (response.employee_data) {
+          this.storeUserData(response.employee_data);
+        }
+      }),
+      catchError(error => {
+        console.error('[AuthService] SMS OTP Verification Failed:', error);
+        return this.handleError(error);
+      })
+    );
   }
 
   verifyMsg91Token(accessToken: string): Observable<VerifyOTPResponse> {
@@ -306,11 +293,10 @@ export class AuthService {
       payload,
       { headers }
     ).pipe(
-      tap(response => {
+      tap((response: any) => {
         if (response.success && response.token) {
           this.setToken(response.token);
 
-          // Store critical user session data
           if (response.employee_id) {
             localStorage.setItem('employeeId', String(response.employee_id));
           }
@@ -326,11 +312,89 @@ export class AuthService {
     );
   }
 
-  verifySmsOtp(employeeId: string, otpCode: string): Observable<VerifyOTPResponse> {
-    return this.http.post<VerifyOTPResponse>(
-      `${this.apiUrl}/auth/verify-sms-otp`,
-      { employee_id: employeeId, otp_code: otpCode }
-    );
+  initMsg91Widget(successCallback: (data: any) => void, failureCallback: (error: any) => void): void {
+    const checkAndInit = (attempts = 0) => {
+      if ((window as any).initSendOTP) {
+        console.log('[AuthService] MSG91 Script found. Initializing...');
+        console.log('[AuthService] unmasked_phone from localStorage:', localStorage.getItem('unmasked_phone'));
+        console.log('[AuthService] masked_phone from localStorage:', localStorage.getItem('masked_phone'));
+
+        const mobile = this.getSmsMobile();
+        console.log('[AuthService] Final mobile number passed as identifier to MSG91:', mobile);
+
+        if (!mobile) {
+          console.warn('[AuthService] No mobile number available for SMS OTP.');
+          failureCallback('SMS OTP unavailable because no mobile number is available from the backend.');
+          return;
+        }
+
+        const configuration = {
+          widgetId: environment.msg91WidgetId,
+          tokenAuth: environment.msg91AuthToken,
+          identifier: mobile, // Pre-fill the mobile number
+          hideMethod: 'mobile', // hide the mobile entry field
+          exposeMethods: true, // true = hide the SMS popup completely and expose window methods
+          captchaRenderId: 'msg91-captcha-container', // unique container ID for mounting captcha
+          success: (data: any) => {
+            console.log('[AuthService] MSG91 Success:', data);
+            successCallback(data);
+          },
+          failure: (error: any) => {
+            console.error('[AuthService] MSG91 Failure:', error);
+            failureCallback(error);
+          }
+        };
+        (window as any).initSendOTP(configuration);
+      } else if (attempts < 5) {
+        console.warn(`[AuthService] MSG91 script not ready, retrying attempt ${attempts + 1}...`);
+        setTimeout(() => checkAndInit(attempts + 1), 1000);
+      } else {
+        console.error('[AuthService] MSG91 script not loaded after 5 attempts');
+        failureCallback('MSG91 script not loaded');
+      }
+    };
+
+    checkAndInit();
+  }
+
+  getSmsMobile(): string | null {
+    let mobile: string | null = null;
+
+    // 1. Prioritize real, unmasked phone returned by backend login response
+    const unmaskedPhone = localStorage.getItem('unmasked_phone');
+    if (unmaskedPhone) {
+      mobile = unmaskedPhone;
+    } else {
+      // 2. Check cached profile user data
+      const userData = this.getUserData();
+      if (userData?.mobile) {
+        mobile = userData.mobile;
+      } else {
+        // 3. Check active session storage data
+        const sessionData = localStorage.getItem('pranali_session');
+        if (sessionData) {
+          try {
+            const session = JSON.parse(sessionData);
+            mobile = session.mobile || null;
+          } catch { }
+        }
+      }
+    }
+
+    // 4. Fallback to masked phone string if nothing else exists
+    if (!mobile) {
+      mobile = localStorage.getItem('masked_phone');
+    }
+
+    if (mobile) {
+      let cleaned = mobile.replace(/[\s\-\+\(\)]/g, '');
+      while (cleaned.startsWith('0')) {
+        cleaned = cleaned.substring(1);
+      }
+      return cleaned;
+    }
+
+    return null;
   }
 
   getUserProfile(): Observable<UserProfile> {
@@ -389,24 +453,7 @@ export class AuthService {
     return userData ? JSON.parse(userData) : null;
   }
 
-  getSmsMobile(): string | null {
-    const userData = this.getUserData();
-    if (userData?.mobile) {
-      return userData.mobile;
-    }
 
-    const sessionData = localStorage.getItem('pranali_session');
-    if (sessionData) {
-      try {
-        const session = JSON.parse(sessionData);
-        return session.mobile || null;
-      } catch {
-        return null;
-      }
-    }
-
-    return null;
-  }
 
   getCurrentUserName(): string {
     const userData = this.getUserData();
@@ -439,11 +486,29 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+    return !this.isTokenExpired(token);
   }
 
   getToken(): string | null {
     return localStorage.getItem('auth_token');
+  }
+
+  /**
+   * Checks if a JWT token is expired by decoding the payload.
+   * Returns true if expired or if the token cannot be decoded.
+   */
+  isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!payload.exp) return false; // No expiry claim means it doesn't expire
+      const expiryMs = payload.exp * 1000;
+      // Consider expired 30 seconds early to avoid edge-case failures
+      return Date.now() >= (expiryMs - 30000);
+    } catch {
+      return true; // Can't decode = treat as expired
+    }
   }
 
   private setToken(token: string): void {
@@ -454,6 +519,12 @@ export class AuthService {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('employeeId');
     localStorage.removeItem('user_data');
+    localStorage.removeItem('employee_type');
+    localStorage.removeItem('sms_otp_sent');
+    localStorage.removeItem('masked_phone');
+    localStorage.removeItem('masked_email');
+    localStorage.removeItem('unmasked_phone');
+    localStorage.removeItem('pranali_session');
   }
 
   getEmployeeId(): string | null {

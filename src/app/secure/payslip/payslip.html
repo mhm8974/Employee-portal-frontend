@@ -27,7 +27,7 @@
             <button class="download-btn" id="download-payslip" (click)="openPrintDialog()">
                 Download Pay Slip
             </button>
-            
+
             <!-- PC Native Dropdown Menu -->
             <div class="desktop-dropdown" *ngIf="showDropdown && !isMobileScreen()">
                 <button class="dropdown-item" (click)="handleAction('download')">
@@ -50,7 +50,8 @@
                     <div class="skeleton-shimmer" style="height: 20px; width: 40%;">&nbsp;</div>
                 </div>
             </div>
-            <div class="skeleton-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px;">
+            <div class="skeleton-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px;">
                 <div *ngFor="let i of [1,2,3,4,5,6]">
                     <div class="skeleton-shimmer" style="height: 12px; width: 30%; margin-bottom: 8px;">&nbsp;</div>
                     <div class="skeleton-shimmer" style="height: 20px; width: 70%;">&nbsp;</div>
@@ -62,7 +63,8 @@
         <div *ngIf="errorMessage && !isLoading" class="error-card-container">
             <div class="error-card">
                 <div class="error-icon-wrapper">
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5">
                         <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" />
                     </svg>
                 </div>
@@ -70,8 +72,11 @@
                 <p class="error-message">{{ errorMessage }}</p>
                 <div class="error-actions">
                     <button class="retry-btn" (click)="loadEmployeeData()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" />
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         Try Again
                     </button>
@@ -91,10 +96,7 @@
                         <div class="validation-qr">
                             <div class="qr-code">
                                 <!-- Step 2: Put that URL in the QR code -->
-                                <qrcode *ngIf="qrCodeUrl" 
-                                    [qrdata]="qrCodeUrl" 
-                                    [width]="140" 
-                                    [margin]="0"
+                                <qrcode *ngIf="qrCodeUrl" [qrdata]="qrCodeUrl" [width]="140" [margin]="0"
                                     [errorCorrectionLevel]="'M'"></qrcode>
                             </div>
                         </div>
@@ -140,27 +142,10 @@
                                     <td>Basic Pay</td>
                                     <td>{{ formatCurrency(paySlipData.basic_salary) }}</td>
                                 </tr>
-                                <tr *ngIf="paySlipData.da">
-                                    <td>DA</td>
-                                    <td>{{ formatCurrency(paySlipData.da) }}</td>
+                                <tr *ngFor="let item of paySlipData.earnings | keyvalue">
+                                    <td>{{ item.key }}</td>
+                                    <td>{{ formatCurrency($any(item.value)) }}</td>
                                 </tr>
-                                <tr *ngIf="paySlipData.hraws">
-                                    <td>HRAWS</td>
-                                    <td>{{ formatCurrency(paySlipData.hraws) }}</td>
-                                </tr>
-                                <tr *ngIf="paySlipData.npa !== undefined">
-                                    <td>NPA</td>
-                                    <td>{{ formatCurrency(paySlipData.npa) }}</td>
-                                </tr>
-                                <tr *ngIf="paySlipData.sbca">
-                                    <td>SBCA</td>
-                                    <td>{{ formatCurrency(paySlipData.sbca) }}</td>
-                                </tr>
-                                <tr *ngIf="paySlipData.ta">
-                                    <td>TA</td>
-                                    <td>{{ formatCurrency(paySlipData.ta) }}</td>
-                                </tr>
-                                <!-- Empty rows to match height if needed -->
                             </tbody>
                         </table>
 
@@ -172,21 +157,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngIf="paySlipData.cpf_state">
-                                    <td>CPF State</td>
-                                    <td>{{ formatCurrency(paySlipData.cpf_state) }}</td>
-                                </tr>
-                                <tr *ngIf="paySlipData.gis_state">
-                                    <td>GIS State</td>
-                                    <td>{{ formatCurrency(paySlipData.gis_state) }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Professional Tax</td>
-                                    <td>{{ formatCurrency(paySlipData.professional_tax) }}</td>
-                                </tr>
-                                <tr *ngIf="paySlipData.stamp_duty">
-                                    <td>Stamp Duty</td>
-                                    <td>{{ formatCurrency(paySlipData.stamp_duty) }}</td>
+                                <tr *ngFor="let item of paySlipData.deductions | keyvalue">
+                                    <td>{{ item.key }}</td>
+                                    <td>{{ formatCurrency($any(item.value)) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -231,7 +204,8 @@
     </div>
 
     <!-- iOS Style Action Sheet (MOBILE ONLY) -->
-    <div class="ios-action-sheet-overlay" *ngIf="showActionSheet && isMobileScreen()" (click)="closeActionSheet($event)">
+    <div class="ios-action-sheet-overlay" *ngIf="showActionSheet && isMobileScreen()"
+        (click)="closeActionSheet($event)">
         <div class="ios-action-sheet" (click)="$event.stopPropagation()">
             <!-- Header Group (Blurred) -->
             <div class="ios-action-group blurred">

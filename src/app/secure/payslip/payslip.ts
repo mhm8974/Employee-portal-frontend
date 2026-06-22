@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { catchError, of } from 'rxjs';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { MOCK_EMPLOYEE, MOCK_PAYSLIP, MOCK_PAYSLIP_MARCH_2024 } from '../secure.mocks';
+import { environment } from '../../../environments/environment';
 // Removed html2pdf usage as we are moving to backend-driven PDF generation.
 
 export interface EmployeeData extends UserProfile {
@@ -75,7 +76,7 @@ export class PayslipComponent implements OnInit {
         return this.authService.useMockData;
     }
 
-    private apiUrl = 'http://192.168.0.133:8000/api';
+    private apiUrl = environment.apiUrl;;
 
     constructor(
         private http: HttpClient,
@@ -270,9 +271,14 @@ export class PayslipComponent implements OnInit {
             return;
         }
 
-        const params = { employee_id: employeeId, year: this.selectedYear.toString(), month: this.selectedMonth };
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthNum = monthNames.indexOf(this.selectedMonth) + 1;
+        const params = { employee_id: employeeId, year: this.selectedYear.toString(), month: monthNum.toString() };
 
-        this.http.get<any>(`${this.apiUrl}/payslips`, { params })
+        const token = localStorage.getItem('auth_token');
+        const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+        this.http.get<any>(`${this.apiUrl}/payslips`, { params, headers })
             .pipe(catchError(error => {
                 this.paySlipData = null;
                 this.errorMessage = error.status === 404

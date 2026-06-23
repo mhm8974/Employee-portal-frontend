@@ -1,4 +1,4 @@
-/* profile.css - Minimalist Design */
+
 
 * {
   box-sizing: border-box;
@@ -13,14 +13,14 @@ body {
   background: #ffffff;
 }
 
-/* MAIN CONTAINER */
+
 .auth-container {
   display: flex;
   height: 100vh;
   width: 100vw;
 }
 
-/* LEFT SIDE - Blue Branding */
+
 .auth-left {
   flex: 1.2;
   background: linear-gradient(135deg, #1f3a8a, #2d4da8);
@@ -28,11 +28,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Changed from flex-start to center */
+  
   justify-content: center;
   padding: var(--space-fluid-md) var(--space-fluid-lg);
   text-align: center;
-  /* Center text as well for better balance */
+  
 }
 
 .welcome-text {
@@ -54,7 +54,7 @@ body {
   line-height: 1.6;
 }
 
-/* RIGHT SIDE - Clean Login */
+
 .auth-right {
   flex: 1;
   background: white;
@@ -64,7 +64,7 @@ body {
   padding: var(--space-fluid-md);
 }
 
-/* LOGIN FORM - No Card Look */
+
 .login-form {
   width: 100%;
   max-width: 360px;
@@ -73,14 +73,14 @@ body {
 .brand-logo-container {
   display: flex;
   justify-content: center;
-  /* Ensure container centers the image */
+  
   margin-bottom: 40px;
   width: 100%;
 }
 
 .left-logo .brand-logo {
   max-width: 400px;
-  /* Increased from 160px */
+  
   mix-blend-mode: normal;
 }
 
@@ -100,7 +100,7 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* FLOATING LABEL INPUTS */
+
 .input-group {
   position: relative;
   margin-bottom: 24px;
@@ -132,7 +132,7 @@ body {
   margin-bottom: 0;
 }
 
-/* Transform label on focus or if input has content */
+
 .input-group input:focus ~ label,
 .input-group input:not(:placeholder-shown) ~ label {
   top: -10px;
@@ -161,7 +161,7 @@ body {
   margin-bottom: 8px;
 }
 
-/* CAPTCHA ROW - Minimal Clean Design */
+
 .captcha-row {
   display: flex;
   align-items: center;
@@ -210,7 +210,7 @@ body {
   }
 }
 
-/* Refresh Button - Minimal */
+
 .refresh-btn {
   background: none;
   border: none;
@@ -235,7 +235,7 @@ body {
   background: #e2e8f0;
 }
 
-/* ERROR STATES */
+
 .error-text {
   color: #ef4444;
   font-size: 11px;
@@ -255,7 +255,7 @@ body {
   text-align: center;
 }
 
-/* SUBMIT BUTTON - Same as Secure buttons */
+
 .submit-btn {
   width: 100%;
   padding: 14px;
@@ -282,7 +282,7 @@ body {
   opacity: 1;
 }
 
-/* Shake Animation for error state */
+
 .submit-btn.error-shake {
   animation: shake 0.5s ease-in-out;
   background: #ef4444;
@@ -309,9 +309,9 @@ body {
   }
 }
 
-/* ========================================= */
-/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
-/* ========================================= */
+
+
+
 @media (max-width: 900px) {
   .auth-container {
     flex-direction: column;
@@ -352,6 +352,6 @@ body {
 
   .left-logo .brand-logo {
     max-width: 250px;
-    /* Prevent massive logo forcing width */
+    
   }
 }

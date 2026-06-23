@@ -1,10 +1,10 @@
 <div class="profile-view-container">
-    <!-- CONTROLS BELOW BAR -->
+    
     <div class="controls-row">
-        <!-- LEFT - Spacer -->
+        
         <div class="left"></div>
 
-        <!-- CENTER - Grouped Selectors -->
+        
         <div class="center">
             <div class="dropdown-group">
                 <label for="yearSelect">Year</label>
@@ -22,13 +22,13 @@
             </div>
         </div>
 
-        <!-- RIGHT - Download (PC Native Dropdown) -->
+        
         <div class="right download-container">
             <button class="download-btn" id="download-payslip" (click)="openPrintDialog()">
                 Download Pay Slip
             </button>
 
-            <!-- PC Native Dropdown Menu -->
+            
             <div class="desktop-dropdown" *ngIf="showDropdown && !isMobileScreen()">
                 <button class="dropdown-item" (click)="handleAction('download')">
                     <i class="fas fa-file-pdf"></i> Download as PDF
@@ -41,7 +41,7 @@
     </div>
 
     <div class="profile-container">
-        <!-- Premium Skeleton Loading State -->
+        
         <div *ngIf="isLoading" class="skeleton-profile">
             <div class="skeleton-header">
                 <div class="skeleton-shimmer" style="width: 140px; height: 140px; border-radius: 8px;">&nbsp;</div>
@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <!-- Premium Error/Empty State -->
+        
         <div *ngIf="errorMessage && !isLoading" class="error-card-container">
             <div class="error-card">
                 <div class="error-icon-wrapper">
@@ -84,18 +84,18 @@
             </div>
         </div>
 
-        <!-- Main Content -->
+        
         <div *ngIf="employeeData && !isLoading && !errorMessage">
             <div class="card payslip-card">
 
-                <!-- PAYSLIP SECTION (SIKKIM GOVT STYLE) -->
+                
                 <div *ngIf="paySlipData && !isPayslipLoading" class="payslip-document" id="payslip">
 
-                    <!-- DOCUMENT HEADER -->
+                    
                     <div class="doc-header">
                         <div class="validation-qr">
                             <div class="qr-code">
-                                <!-- Step 2: Put that URL in the QR code -->
+                                
                                 <qrcode *ngIf="qrCodeUrl" [qrdata]="qrCodeUrl" [width]="140" [margin]="0"
                                     [errorCorrectionLevel]="'M'"></qrcode>
                             </div>
@@ -107,30 +107,28 @@
                         </div>
                     </div>
 
-                    <!-- EMPLOYEE INFO GRID -->
+                    
                     <div class="info-grid">
                         <div class="info-col">
                             <div class="info-line"><strong>Name:</strong> {{ employeeFullName }}</div>
-                            <div class="info-line"><strong>Section:</strong> {{ employeeData.section || 'N/A' }}</div>
+                            <div class="info-line"><strong>Section:</strong> {{ section }}</div>
                             <div class="info-line"><strong>Date Of Birth:</strong> {{
                                 formatDate(employeeData.date_of_birth)
                                 }}</div>
                         </div>
                         <div class="info-col">
-                            <div class="info-line"><strong>Designation:</strong> {{ employeeData.designation || position
-                                }}
-                            </div>
+                            <div class="info-line"><strong>Designation:</strong> {{ designation }}</div>
                             <div class="info-line"><strong>Appointment Order Date:</strong> {{
                                 formatDate(employeeData.appointment_date) }}</div>
                             <div class="info-line"><strong>Date Of Retirement:</strong> {{
                                 formatDate(employeeData.retirement_date) }}</div>
-                            <div class="info-line"><strong>CPF No:</strong> {{ employeeData.cpf_no || 'N/A' }}</div>
+                            <div class="info-line"><strong>{{ fundType }} No:</strong> {{ cpfNo }}</div>
                         </div>
                     </div>
 
-                    <!-- TABLES CONTAINER -->
+                    
                     <div class="tables-container">
-                        <!-- EARNINGS TABLE -->
+                        
                         <table class="payslip-table">
                             <thead>
                                 <tr>
@@ -142,14 +140,16 @@
                                     <td>Basic Pay</td>
                                     <td>{{ formatCurrency(paySlipData.basic_salary) }}</td>
                                 </tr>
-                                <tr *ngFor="let item of paySlipData.earnings | keyvalue">
-                                    <td>{{ item.key }}</td>
-                                    <td>{{ formatCurrency($any(item.value)) }}</td>
-                                </tr>
+                                <ng-container *ngFor="let item of paySlipData.earnings | keyvalue">
+                                    <tr *ngIf="item.key !== 'Basic Pay'">
+                                        <td>{{ item.key }}</td>
+                                        <td>{{ formatCurrency($any(item.value)) }}</td>
+                                    </tr>
+                                </ng-container>
                             </tbody>
                         </table>
 
-                        <!-- DEDUCTIONS TABLE -->
+                        
                         <table class="payslip-table">
                             <thead>
                                 <tr>
@@ -165,7 +165,7 @@
                         </table>
                     </div>
 
-                    <!-- TOTALS SECTION -->
+                    
                     <div class="totals-section">
                         <div class="total-row">
                             <span class="total-label">Gross Pay</span>
@@ -181,7 +181,7 @@
                         </div>
                     </div>
 
-                    <!-- SIGNATURE FOOTER -->
+                    
                     <div class="doc-footer">
                         <div class="signature-area">
                             <p>Seal and Signature of D&DO</p>
@@ -190,31 +190,31 @@
 
                 </div>
 
-                <!-- No Payslip Message -->
+                
                 <div *ngIf="!paySlipData && !isPayslipLoading" class="message">
                     <p>No payslip data available for {{ selectedMonth }} {{ selectedYear }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- No Employee Data Message -->
+        
         <div *ngIf="!isLoading && !errorMessage && !employeeData" class="message">
             <p>No employee data available</p>
         </div>
     </div>
 
-    <!-- iOS Style Action Sheet (MOBILE ONLY) -->
+    
     <div class="ios-action-sheet-overlay" *ngIf="showActionSheet && isMobileScreen()"
         (click)="closeActionSheet($event)">
         <div class="ios-action-sheet" (click)="$event.stopPropagation()">
-            <!-- Header Group (Blurred) -->
+            
             <div class="ios-action-group blurred">
                 <div class="ios-action-header">
                     <p class="ios-title">Download Pay Slip</p>
                     <p class="ios-subtitle">How would you like to handle this payslip?</p>
                 </div>
             </div>
-            <!-- Actions Group (Merged - White) -->
+            
             <div class="ios-action-group actions">
                 <button class="ios-action-btn primary" (click)="handleAction('download')">
                     Download as PDF

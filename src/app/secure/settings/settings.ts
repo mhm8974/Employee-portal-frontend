@@ -2,39 +2,36 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
-import { TranslationService } from '../../services/translation.service';
 import { PreferencesService, UserPreferences } from '../../services/preferences.service';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+
 
 @Component({
     selector: 'app-settings',
     standalone: true,
-    imports: [TranslatePipe, CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './settings.html',
     styleUrls: ['./settings.css']
 })
 export class SettingsComponent implements OnInit {
-    // Notification Preferences
+    
     payslipAlerts = true;
     leaveStatusAlerts = true;
     systemAnnouncements = false;
 
-    // Display Settings
+    
     darkMode = false;
     compactView = false;
 
-    // Privacy
+    
     showPhoneInDirectory = true;
     showEmailInDirectory = true;
 
 
 
-    // Global Preferences
-    selectedLanguage = 'en';
+
 
     constructor(
         private themeService: ThemeService,
-        private translationService: TranslationService,
         private preferencesService: PreferencesService
     ) { }
 
@@ -52,7 +49,6 @@ export class SettingsComponent implements OnInit {
         this.showEmailInDirectory = prefs.privacyShowEmail;
 
         this.darkMode = this.themeService.isDarkMode;
-        this.selectedLanguage = this.translationService.currentLanguage;
     }
 
 
@@ -65,7 +61,6 @@ export class SettingsComponent implements OnInit {
 
     saveDisplayPreferences(): void {
         this.themeService.setDarkMode(this.darkMode);
-        this.translationService.setLanguage(this.selectedLanguage);
         this.preferencesService.updatePreference('isCompactView', this.compactView);
     }
 

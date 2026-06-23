@@ -45,7 +45,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* BALANCE GRID */
+
 .balance-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -119,7 +119,7 @@
     border-radius: 100px;
 }
 
-/* HISTORY SECTION */
+
 .history-section {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px) saturate(180%);
@@ -220,7 +220,7 @@
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
-/* MODAL STYLES */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -329,22 +329,22 @@ textarea:focus {
     border-bottom-color: #1f3a8a;
 }
 
-/* Specific left alignment for date inputs (overrides mobile defaults) */
+
 input[type="date"] {
     appearance: none;
     -webkit-appearance: none;
     text-align: left !important;
     min-height: 45px;
-    /* Perfect match for select box height */
+    
 }
 
-/* Force left alignment for the text value in Safari/iOS */
+
 input[type="date"]::-webkit-date-and-time-value {
     text-align: left !important;
     margin: 0;
 }
 
-/* Ensure the calendar icon doesn't shift the text */
+
 input[type="date"]::-webkit-calendar-picker-indicator {
     margin-left: 0;
 }
@@ -383,9 +383,9 @@ textarea:focus {
     cursor: pointer;
 }
 
-/* ========================================= */
-/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
-/* ========================================= */
+
+
+
 @media (max-width: 900px) {
     .leaves-container {
         padding: 24px 20px;
@@ -411,7 +411,7 @@ textarea:focus {
         padding: 20px;
     }
 
-    /* Wrap table in scrollable container */
+    
     .table-container {
         overflow-x: auto;
     }
@@ -425,7 +425,7 @@ textarea:focus {
         gap: 0;
     }
 
-    /* Ensure form groups in rows take full width on mobile */
+    
     .form-row .form-group {
         width: 100%;
         margin-bottom: 20px;
@@ -440,10 +440,10 @@ textarea:focus {
         overflow-y: auto;
         border-radius: 12px 12px 0 0;
         align-self: flex-end;
-        /* Bottom sheet effect on mobile */
+        
     }
 
-    /* Relocate Apply button to bottom-right (FAB style) */
+    
     .apply-btn {
         position: fixed;
         bottom: 32px;
@@ -452,6 +452,6 @@ textarea:focus {
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         padding: 16px 24px;
         border-radius: 100px;
-        /* Modern pill shape for mobile */
+        
     }
 }

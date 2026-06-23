@@ -6,23 +6,10 @@ export const authGuard: CanActivateFn = () => {
     const router = inject(Router);
     const authService = inject(AuthService);
 
-    if (authService.useMockData) {
-        if (!localStorage.getItem('employeeId')) {
-            localStorage.setItem('employeeId', 'MOCK12345');
-        }
-        if (!localStorage.getItem('auth_token')) {
-            localStorage.setItem('auth_token', 'mock_token_12345');
-        }
-        return true;
-    }
 
     const token = localStorage.getItem('auth_token');
-
     if (token) {
-        if (token.startsWith('mock')) {
-            return true;
-        }
-        // Check JWT expiry
+        // Check if the login token has expired
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
             if (payload.exp) {
@@ -37,7 +24,7 @@ export const authGuard: CanActivateFn = () => {
                 }
             }
         } catch {
-            // Token is malformed — clear and redirect
+            // If the token is broken, clean up and send back to login
             console.warn('[AuthGuard] Malformed token. Clearing session.');
             localStorage.removeItem('auth_token');
             router.navigate(['/login']);
@@ -46,7 +33,7 @@ export const authGuard: CanActivateFn = () => {
         return true;
     }
 
-    // No token — redirect to login
+    // If there is no token, send to login page
     router.navigate(['/login']);
     return false;
 };
@@ -55,20 +42,11 @@ export const otpGuard: CanActivateFn = () => {
     const router = inject(Router);
     const authService = inject(AuthService);
 
-    if (authService.useMockData) {
-        if (!localStorage.getItem('employeeId')) {
-            localStorage.setItem('employeeId', 'MOCK12345');
-        }
-        if (!localStorage.getItem('auth_token')) {
-            localStorage.setItem('auth_token', 'mock_token_12345');
-        }
-        return true;
-    }
 
     const token = localStorage.getItem('auth_token');
     const employeeId = localStorage.getItem('employeeId');
 
-    // If already fully logged in with a valid token, redirect to secure area
+    // If already logged in, go straight to secure dashboard
     if (token) {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
@@ -80,16 +58,16 @@ export const otpGuard: CanActivateFn = () => {
                 }
             }
         } catch {
-            // Malformed or expired - proceed to check employeeId
+            
         }
     }
 
-    // Must have employeeId from step 1 login to access OTP screen
+    // Need employee ID from step 1 to do OTP check
     if (employeeId) {
         return true;
     }
 
-    // No employeeId — redirect to login
+    // No employee ID found, go back to login
     router.navigate(['/login']);
     return false;
 };

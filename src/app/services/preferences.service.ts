@@ -52,7 +52,7 @@ export class PreferencesService {
       this.applyCompactView(value as boolean);
     }
 
-    // Backend Sync Hook
+    // Hook to sync with backend
     this.syncWithBackend(updated);
   }
 
@@ -66,7 +66,7 @@ export class PreferencesService {
 
   private syncWithBackend(prefs: UserPreferences): void {
     console.log('[PreferencesService] Syncing with backend:', prefs);
-    // TODO: Implement HTTP PUT /api/user/preferences
+    // TODO: Send settings to backend
   }
 
   get currentPreferences(): UserPreferences {

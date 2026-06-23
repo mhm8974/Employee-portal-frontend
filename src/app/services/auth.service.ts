@@ -87,7 +87,6 @@ export interface UserProfile {
 })
 export class AuthService {
   private apiUrl = environment.apiUrl;
-  public useMockData = false; // false for backend ,true for mock
 
 
 
@@ -118,10 +117,7 @@ export class AuthService {
     ).pipe(
       timeout(15000),
       tap(response => {
-        console.log('[AuthService] Login response received:', response);
-
-        // Backend no longer returns a token on login — JWT is only issued after OTP verification.
-        // We only save employee_id and employee_data here.
+        // The backend only gives the token after OTP is verified. Here we just save the ID and profile data.
         const respData = (response as any).data || response;
         const employeeId = response.employee_id || respData.employee_id || (respData.user ? respData.user.employee_id : null);
 
@@ -142,31 +138,6 @@ export class AuthService {
   }
 
   verifyOtp(otpData: VerifyOTPRequest): Observable<VerifyOTPResponse> {
-    if (this.useMockData) {
-      console.log('[AuthService] Mock Mode: Verifying OTP...', otpData);
-      return new Observable(observer => {
-        setTimeout(() => {
-          observer.next({
-            success: true,
-            message: 'OTP Verified successfully',
-            token: 'mock-token-12345',
-            employee_data: {
-              id: 1,
-              employee_id: otpData.employee_id,
-              first_name: 'Mock',
-              last_name: 'User',
-              department: 'IT',
-              position: 'Developer',
-              email: 'mock@example.com',
-              mobile: '9876543210',
-              date_of_birth: '1990-01-01'
-            }
-          });
-          observer.complete();
-        }, 800);
-      });
-    }
-
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${this.getToken()}`
@@ -211,16 +182,6 @@ export class AuthService {
   }
 
   resendOtp(employeeId: string): Observable<any> {
-    if (this.useMockData) {
-      console.log('[AuthService] Mock Mode: Resending OTP for:', employeeId);
-      return new Observable(observer => {
-        setTimeout(() => {
-          observer.next({ success: true, message: 'OTP resent successfully' });
-          observer.complete();
-        }, 800);
-      });
-    }
-
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
@@ -331,10 +292,10 @@ export class AuthService {
         const configuration = {
           widgetId: environment.msg91WidgetId,
           tokenAuth: environment.msg91AuthToken,
-          identifier: mobile, // Pre-fill the mobile number
-          hideMethod: 'mobile', // hide the mobile entry field
-          exposeMethods: true, // true = hide the SMS popup completely and expose window methods
-          captchaRenderId: 'msg91-captcha-container', // unique container ID for mounting captcha
+          identifier: mobile, // Put the user's phone number here
+          hideMethod: 'mobile', // Hide the phone input box
+          exposeMethods: true, // Hide SMS popup and use custom buttons
+          captchaRenderId: 'msg91-captcha-container', // Div ID to show the captcha
           success: (data: any) => {
             console.log('[AuthService] MSG91 Success:', data);
             successCallback(data);
@@ -360,17 +321,17 @@ export class AuthService {
   getSmsMobile(): string | null {
     let mobile: string | null = null;
 
-    // 1. Prioritize real, unmasked phone returned by backend login response
+    // 1. Try real unmasked phone from login first
     const unmaskedPhone = localStorage.getItem('unmasked_phone');
     if (unmaskedPhone) {
       mobile = unmaskedPhone;
     } else {
-      // 2. Check cached profile user data
+      // 2. Try phone from saved user profile
       const userData = this.getUserData();
       if (userData?.mobile) {
         mobile = userData.mobile;
       } else {
-        // 3. Check active session storage data
+        // 3. Try phone from active session storage
         const sessionData = localStorage.getItem('pranali_session');
         if (sessionData) {
           try {
@@ -381,7 +342,7 @@ export class AuthService {
       }
     }
 
-    // 4. Fallback to masked phone string if nothing else exists
+    // 4. If nothing else works, use the masked phone
     if (!mobile) {
       mobile = localStorage.getItem('masked_phone');
     }
@@ -495,19 +456,16 @@ export class AuthService {
     return localStorage.getItem('auth_token');
   }
 
-  /**
-   * Checks if a JWT token is expired by decoding the payload.
-   * Returns true if expired or if the token cannot be decoded.
-   */
+  // Checks if the login token is expired or broken
   isTokenExpired(token: string): boolean {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       if (!payload.exp) return false; // No expiry claim means it doesn't expire
       const expiryMs = payload.exp * 1000;
-      // Consider expired 30 seconds early to avoid edge-case failures
+      // Expire 30 seconds early to be safe
       return Date.now() >= (expiryMs - 30000);
     } catch {
-      return true; // Can't decode = treat as expired
+      return true; // If broken, treat as expired
     }
   }
 

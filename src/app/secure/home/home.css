@@ -17,7 +17,7 @@
   }
 }
 
-/* HERO SECTION */
+
 .hero-section {
   display: flex;
   align-items: center;
@@ -51,7 +51,7 @@
 
 .highlight {
   color: #3b82f6;
-  /* Lighter blue for dark mode compatibility */
+  
 }
 
 .hero-subtitle {
@@ -63,7 +63,7 @@
 
 .floating-logo {
   max-width: 280px;
-  /* Reduced drop shadow for minimalism */
+  
   filter: drop-shadow(0 10px 20px rgba(31, 58, 138, 0.08));
   animation: float 6s ease-in-out infinite;
   transition: filter 0.3s ease;
@@ -85,7 +85,7 @@
   }
 }
 
-/* OVERVIEW TILES */
+
 .overview-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -137,7 +137,7 @@
   line-height: 1.6;
 }
 
-/* VISION BANNER */
+
 .vision-banner {
   padding: 60px 40px;
   background: var(--bg-secondary);
@@ -163,7 +163,7 @@
   line-height: 1.7;
 }
 
-/* RESPONSIVE */
+
 @media (max-width: 1024px) {
   .hero-section {
     flex-direction: column;

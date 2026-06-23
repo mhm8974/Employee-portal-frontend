@@ -5,9 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { catchError, of } from 'rxjs';
 import { QRCodeComponent } from 'angularx-qrcode';
-import { MOCK_EMPLOYEE, MOCK_PAYSLIP, MOCK_PAYSLIP_MARCH_2024 } from '../secure.mocks';
 import { environment } from '../../../environments/environment';
-// Removed html2pdf usage as we are moving to backend-driven PDF generation.
+
 
 export interface EmployeeData extends UserProfile {
     section?: string;
@@ -23,26 +22,26 @@ export interface PaySlipData {
     year: number;
     month: string;
     pay_period?: string;
-    // Earnings
+    
     basic_salary: number;
     da?: number;
     hraws?: number;
     npa?: number;
     sbca?: number;
     ta?: number;
-    // Deductions
+    
     cpf_state?: number;
     gis_state?: number;
     professional_tax?: number;
     stamp_duty?: number;
-    // Totals
+    
     gross_salary: number;
     total_deductions: number;
     net_salary: number;
     payment_date?: string;
     status?: string;
 
-    // Dynamic fields
+    
     earnings?: { [key: string]: number };
     deductions?: { [key: string]: number };
 }
@@ -71,10 +70,7 @@ export class PayslipComponent implements OnInit {
     showActionSheet = false;
     showDropdown = false;
 
-    /* MOCK DATA CONFIG moved to AuthService */
-    get useMockData(): boolean {
-        return this.authService.useMockData;
-    }
+    
 
     private apiUrl = environment.apiUrl;;
 
@@ -103,7 +99,7 @@ export class PayslipComponent implements OnInit {
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent) {
-        // Automatically close the desktop dropdown when clicking away
+        
         if (!this.showDropdown) return;
 
         const target = event.target as HTMLElement;
@@ -115,7 +111,7 @@ export class PayslipComponent implements OnInit {
     }
 
     private triggerPrint(url: string) {
-        // Professional hidden iframe print logic
+        // Print using a hidden iframe
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         iframe.src = url;
@@ -125,21 +121,24 @@ export class PayslipComponent implements OnInit {
             try {
                 iframe.contentWindow?.focus();
                 iframe.contentWindow?.print();
-                // Cleanup
+                // Clean up memory
                 setTimeout(() => {
                     if (document.body.contains(iframe)) {
                         document.body.removeChild(iframe);
                     }
+                    if (url.startsWith('blob:')) {
+                        window.URL.revokeObjectURL(url);
+                    }
                 }, 5000);
             } catch (err) {
                 console.error('[Print Handler] Error triggering print:', err);
-                // Fallback: Just open in new tab if iframe printing is blocked
+                // If iframe print fails, open PDF in a new tab
                 window.open(url, '_blank');
             }
         };
     }
 
-    /* Redundant clientside PDF methods removed as we are now using the official backend PDF endpoint */
+    
 
 
 
@@ -148,21 +147,10 @@ export class PayslipComponent implements OnInit {
         this.showActionSheet = false;
         this.showDropdown = false;
 
-        const employeeId = this.employeeId === 'N/A' || !this.employeeId
-            ? (localStorage.getItem('employeeId') || 'CPF12345')
-            : this.employeeId;
-
-        if (!employeeId) {
-            alert('Please login');
-            return;
-        }
-
-        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
-
         if (action === 'download') {
-            window.open(downloadUrl, '_blank');
+            this.downloadPayslip('download');
         } else if (action === 'print') {
-            this.triggerPrint(downloadUrl);
+            this.downloadPayslip('print');
         }
     }
 
@@ -177,14 +165,6 @@ export class PayslipComponent implements OnInit {
         this.isLoading = true;
         this.errorMessage = '';
 
-        if (this.useMockData) {
-            setTimeout(() => {
-                this.employeeData = MOCK_EMPLOYEE;
-                this.isLoading = false;
-                this.cdr.markForCheck();
-            }, 500);
-            return;
-        }
 
         const employeeId = localStorage.getItem('employeeId') || '20240101000001';
 
@@ -218,51 +198,6 @@ export class PayslipComponent implements OnInit {
     loadPaySlipData(): void {
         this.isPayslipLoading = true;
 
-        if (this.useMockData) {
-            setTimeout(() => {
-                // User requirement: Support January 2026 and March 2024
-                const isJan2026 = this.selectedMonth === 'January' && Number(this.selectedYear) === 2026;
-                const isMar2024 = this.selectedMonth === 'March' && Number(this.selectedYear) === 2024;
-
-                if (isJan2026) {
-                    this.paySlipData = { ...MOCK_PAYSLIP };
-                    console.log(`[Mock] Loaded data for January 2026`);
-                } else if (isMar2024) {
-                    this.paySlipData = { ...MOCK_PAYSLIP_MARCH_2024 };
-                    console.log(`[Mock] Loaded data for March 2024`);
-                } else {
-                    this.paySlipData = null;
-                    console.log(`[Mock] No data for ${this.selectedMonth} ${this.selectedYear}`);
-                }
-
-                this.isPayslipLoading = false;
-
-                // Populate mock earnings and deductions for compatibility
-                if (this.paySlipData) {
-                    this.paySlipData.earnings = {
-                        'DA': this.paySlipData.da || 0,
-                        'HRAWS': this.paySlipData.hraws || 0,
-                        'NPA': this.paySlipData.npa || 0,
-                        'SBCA': this.paySlipData.sbca || 0,
-                        'TA': this.paySlipData.ta || 0
-                    };
-                    this.paySlipData.deductions = {
-                        'CPF State': this.paySlipData.cpf_state || 0,
-                        'GIS State': this.paySlipData.gis_state || 0,
-                        'Professional Tax': this.paySlipData.professional_tax || 0,
-                        'Stamp Duty': this.paySlipData.stamp_duty || 0
-                    };
-                }
-
-                // For mock data, we can generate a dummy verification URL
-                if (this.paySlipData) {
-                    this.qrCodeUrl = `https://verification.pranali.com/verify?token=MOCK_${this.selectedMonth}_${this.selectedYear}`;
-                }
-
-                this.cdr.markForCheck();
-            }, 500);
-            return;
-        }
 
         const employeeId = localStorage.getItem('employeeId') || '20240101000001';
 
@@ -291,18 +226,19 @@ export class PayslipComponent implements OnInit {
                 if (response?.success && response.data) {
                     this.paySlipData = response.data;
 
-                    // Step 1: Generate validation token using POST endpoint
+                    
                     const employeeId = localStorage.getItem('employeeId') || '20240101000001';
                     this.http.post(`${this.apiUrl}/payslips/generate-verification-token`, null, {
                         params: {
                             employee_id: employeeId,
-                            month: this.selectedMonth,
+                            month: monthNum.toString(),
                             year: this.selectedYear.toString()
-                        }
+                        },
+                        headers
                     }).subscribe((res: any) => {
                         if (res.token || res.verification_url) {
-                            const baseHost = this.apiUrl.split(':8000')[0] + ':8000';
-                            this.qrCodeUrl = `${baseHost}${res.verification_url}`;
+                            const hostUrl = window.location.protocol + '//' + window.location.hostname;
+                            this.qrCodeUrl = `${hostUrl}:8000${res.verification_url}`;
                             console.log('[QR Generator] Verification URL Set:', this.qrCodeUrl);
                         }
                         this.cdr.detectChanges();
@@ -329,7 +265,6 @@ export class PayslipComponent implements OnInit {
     }
 
     private loadFromLocalStorage(): void {
-        if (this.useMockData) return;
         const userData = this.authService.getUserData();
         if (userData) {
             this.employeeData = userData as EmployeeData;
@@ -368,7 +303,44 @@ export class PayslipComponent implements OnInit {
     get employeeId(): string { return this.employeeData?.employee_id || 'N/A'; }
     get department(): string { return this.employeeData?.department || 'N/A'; }
     get position(): string { return this.employeeData?.position || 'N/A'; }
+    get section(): string { return this.employeeData?.department || this.employeeData?.section || 'N/A'; }
+    get designation(): string { return this.employeeData?.position || this.employeeData?.designation || 'N/A'; }
+    get cpfNo(): string { return this.employeeData?.cpf_no || this.employeeData?.employee_id || 'N/A'; }
     get payPeriod(): string { return `${this.selectedMonth} ${this.selectedYear}`; }
+
+    get fundType(): string {
+        let type = '';
+        if (this.paySlipData && this.paySlipData.deductions) {
+            const keys = Object.keys(this.paySlipData.deductions);
+            const subKey = keys.find(k => k.toLowerCase().includes('subscription') || 
+                                          k.toUpperCase().includes('GPF') || 
+                                          k.toUpperCase().includes('CPF') || 
+                                          k.toLowerCase().includes('godsped'));
+            if (subKey) {
+                const extracted = subKey.replace(/subscription/i, '').trim();
+                if (extracted) {
+                    const upper = extracted.toUpperCase();
+                    if (upper === 'GPF') type = 'GPF';
+                    else if (upper === 'CPF') type = 'CPF';
+                    else if (extracted.toLowerCase() === 'godsped') type = 'Godsped';
+                    else type = extracted;
+                }
+            }
+        }
+        if (type && (type === 'GPF' || type === 'CPF' || type === 'Godsped')) {
+            localStorage.setItem('detected_fund_type', type);
+            return type;
+        }
+        const stored = localStorage.getItem('detected_fund_type') || localStorage.getItem('employee_type');
+        if (stored) {
+            const upper = stored.toUpperCase();
+            if (upper === 'GPF') return 'GPF';
+            if (upper === 'CPF') return 'CPF';
+            if (stored.toLowerCase() === 'godsped') return 'Godsped';
+            return stored;
+        }
+        return 'Employee';
+    }
 
     get statusText(): string {
         if (!this.employeeData?.status) return 'Active';
@@ -400,16 +372,42 @@ export class PayslipComponent implements OnInit {
             (this.paySlipData.professional_tax || 0) + (this.paySlipData.stamp_duty || 0);
     }
 
-    downloadPayslip(): void {
+    downloadPayslip(action: 'download' | 'print' = 'download'): void {
         const employeeId = localStorage.getItem('employeeId') || 'CPF12345';
 
         if (!employeeId) {
-            alert('Please login to download payslip');
+            alert('Please login to process payslip');
             return;
         }
 
-        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${this.selectedMonth}&year=${this.selectedYear}&format=pdf`;
-        window.open(downloadUrl, '_blank');
+        const token = localStorage.getItem('auth_token');
+        const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+        
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthNum = monthNames.indexOf(this.selectedMonth) + 1;
+
+        const downloadUrl = `${this.apiUrl}/payslips/download?employee_id=${employeeId}&month=${monthNum}&year=${this.selectedYear}&format=pdf`;
+        
+        this.http.get(downloadUrl, { headers, responseType: 'blob' }).subscribe(
+            (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                if (action === 'download') {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Payslip_${this.selectedMonth}_${this.selectedYear}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } else if (action === 'print') {
+                    this.triggerPrint(url);
+                }
+            },
+            (error) => {
+                console.error('Payslip processing failed', error);
+                alert('Failed to process payslip. Please try again.');
+            }
+        );
     }
 
     downloadPaySlip(): void {
@@ -434,7 +432,7 @@ export class PayslipComponent implements OnInit {
     getPhone(): string { return this.employeeData?.mobile || 'N/A'; }
     getJoiningDate(): string { return this.formatDate(this.employeeData?.join_date); }
 
-    // Not used anymore as the QR data is fetched from the token endpoint
+    // QR data is now fetched directly from the backend
     getVerifierQrUrl(): string {
         return this.qrCodeUrl;
     }

@@ -1,4 +1,4 @@
-/* SEARCH HERO */
+
 .help-hero {
     padding: 60px 24px;
     background: var(--bg-card);
@@ -30,7 +30,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* CONTENT AREA */
+
 .help-content {
     max-width: 1100px;
     margin: 0 auto;
@@ -46,7 +46,7 @@
     text-align: left;
 }
 
-/* CATEGORIES GRID */
+
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -122,7 +122,7 @@
     text-decoration: none;
 }
 
-/* FAQ SECTION */
+
 .faq-list {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px) saturate(180%);
@@ -190,7 +190,7 @@
     animation: fadeIn 0.3s ease;
 }
 
-/* CONTACT SECTION */
+
 .contact-card {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px) saturate(180%);
@@ -276,9 +276,9 @@
     }
 }
 
-/* ========================================= */
-/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
-/* ========================================= */
+
+
+
 @media (max-width: 900px) {
     .help-hero {
         padding: 40px 20px;
@@ -297,26 +297,26 @@
     .categories-grid {
         grid-template-columns: 1fr;
         gap: 16px;
-        /* Reduced gap between cards */
+        
     }
 
     .category-card {
         padding: 20px;
-        /* Reduced padding inside cards */
+        
     }
 
     .cat-icon {
         width: 48px;
-        /* Smaller icon wrapper */
+        
         height: 48px;
         font-size: 24px;
-        /* Smaller icon */
+        
         margin-bottom: 12px;
     }
 
     .cat-title {
         font-size: 16px;
-        /* Slightly smaller text */
+        
         margin-bottom: 8px;
     }
 

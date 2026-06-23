@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../../pipes/translate.pipe';
+
 
 interface HelpCategory {
     id: string;
@@ -20,7 +20,7 @@ interface FAQ {
 @Component({
     selector: 'app-help',
     standalone: true,
-    imports: [CommonModule, TranslatePipe, FormsModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './help.html',
     styleUrls: ['./help.css']
 })
@@ -86,14 +86,14 @@ export class HelpComponent {
     viewCategory(categoryId: string): void {
         this.activeCategory = categoryId;
         
-        // Collapse all, then expand the first relevant one
+        
         this.faqs.forEach(f => f.isOpen = false);
         const filtered = this.filteredFaqs;
         if (filtered.length > 0) {
             filtered[0].isOpen = true;
         }
 
-        // Smooth scroll to the FAQ section
+        
         setTimeout(() => {
             const faqSection = document.querySelector('.faq-section');
             if (faqSection) {

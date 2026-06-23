@@ -32,7 +32,7 @@ try {
     const msg91WidgetId = envVars['MSG91_WIDGET_ID'] || '';
     const msg91AuthToken = envVars['MSG91_AUTH_TOKEN'] || '';
 
-    // Generate a cleaner, Angular-style environment file
+    
     const fileContent = `export const environment = {
   production: false,
   apiUrl: '${apiUrl}',

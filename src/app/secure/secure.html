@@ -1,7 +1,7 @@
-<!-- Mobile navigation overlay -->
+
 <div class="mobile-overlay" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
 
-<!-- Main sidebar navigation -->
+
 <div class="sidebar" [class.active]="isMobileMenuOpen">
   <div class="sidebar-header">
     <button class="close-mobile-btn" (click)="closeMobileMenu()">
@@ -11,33 +11,33 @@
 
   <nav class="sidebar-nav">
     <div class="nav-section">
-      <div class="nav-section-label">{{ 'Main Menu' | translate }}</div>
+      <div class="nav-section-label">{{ 'Main Menu' }}</div>
       <a routerLink="home" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">{{ 'Home' | translate }}</span>
+        <span class="nav-label">{{ 'Home' }}</span>
       </a>
       <a routerLink="profile" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">{{ 'Employee Profile' | translate }}</span>
+        <span class="nav-label">{{ 'Employee Profile' }}</span>
       </a>
       <a routerLink="payslip" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">{{ 'Payslip' | translate }}</span>
+        <span class="nav-label">{{ 'Payslip' }}</span>
       </a>
       <a routerLink="leaves" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">{{ 'Leaves & Time Off' | translate }}</span>
+        <span class="nav-label">{{ 'Leaves & Time Off' }}</span>
       </a>
     </div>
 
     <div class="nav-section">
-      <div class="nav-section-label">{{ 'SYSTEM' | translate }}</div>
+      <div class="nav-section-label">{{ 'SYSTEM' }}</div>
       <a routerLink="settings" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">{{ 'Settings' | translate }}</span>
+        <span class="nav-label">{{ 'Settings' }}</span>
       </a>
       <a routerLink="help" routerLinkActive="active" class="nav-item" (click)="closeMobileMenu()">
-        <span class="nav-label">{{ 'Help Center' | translate }}</span>
+        <span class="nav-label">{{ 'Help Center' }}</span>
       </a>
     </div>
   </nav>
 
-  <!-- User profile and logout options -->
+  
   <div class="sidebar-footer">
     <div class="minimal-profile">
       <div class="profile-meta">
@@ -47,20 +47,20 @@
           <div class="user-id">{{ employeeId }}</div>
         </div>
       </div>
-      <button class="logout-btn" (click)="logout()">{{ 'Logout' | translate }}</button>
+      <button class="logout-btn" (click)="logout()">{{ 'Logout' }}</button>
     </div>
   </div>
 </div>
 
-<!-- Top application header -->
+
 <div class="top-bar">
   <div class="sidebar-align-container">
     <img src="assets/images/pranali_logo_2.png" alt="Pranali Logo" class="header-logo">
   </div>
 
-  <!-- Search component container -->
+  
   <div class="search-wrapper">
-    <!-- Search input element -->
+    
     <div class="header-search" [class.is-open]="isSearchOpen">
       <svg class="search-icon-svg" (click)="toggleSearch()" viewBox="0 0 24 24" width="20" height="20" fill="none"
         stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -68,15 +68,15 @@
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
       <input type="text" [(ngModel)]="searchQuery" (input)="onSearchInput()" (keyup.enter)="onSearch()"
-        (blur)="closeSearchDropdown()" [placeholder]="'Search services, employees, or documents...' | translate"
+        (blur)="closeSearchDropdown()" [placeholder]="'Search services, employees, or documents...'"
         class="search-input">
     </div>
 
-    <!-- Search results dropdown container -->
+    
     <div class="search-dropdown" *ngIf="isSearchOpen && searchResults.length > 0">
       <div class="search-result" *ngFor="let item of searchResults" (mousedown)="selectResult(item)">
         <div class="result-info">
-          <span class="result-label">{{ item.label | translate }}</span>
+          <span class="result-label">{{ item.label }}</span>
         </div>
         <svg class="result-arrow-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="white"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -88,7 +88,7 @@
   </div>
 </div>
 
-<!-- Main application content area -->
+
 <div class="shell-content">
   <div class="mobile-header-backdrop" [class.hidden]="isMobileMenuOpen" *ngIf="!isMobileMenuOpen"></div>
   <button class="mobile-menu-btn" [class.hidden]="isMobileMenuOpen" *ngIf="!isMobileMenuOpen"
@@ -100,15 +100,15 @@
   <router-outlet></router-outlet>
 </div>
 
-<!-- Logout confirmation modal dialog -->
+
 <div class="modal-overlay modal-logout" *ngIf="showLogoutConfirm" (click)="cancelLogout()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-content">
-      <h3 class="modal-title">{{ 'Logout' | translate }}</h3>
+      <h3 class="modal-title">{{ 'Logout' }}</h3>
       <p class="modal-text">Do you want to logout from pranali?</p>
       <div class="modal-actions">
-        <button class="modal-btn cancel" (click)="cancelLogout()">{{ 'Cancel' | translate }}</button>
-        <button class="modal-btn confirm" (click)="confirmLogout()">{{ 'Logout' | translate }}</button>
+        <button class="modal-btn cancel" (click)="cancelLogout()">{{ 'Cancel' }}</button>
+        <button class="modal-btn confirm" (click)="confirmLogout()">{{ 'Logout' }}</button>
       </div>
     </div>
   </div>

@@ -17,7 +17,7 @@
   }
 }
 
-/* Header Section */
+
 .profile-header-card {
   margin-bottom: 30px;
   padding-bottom: 30px;
@@ -25,7 +25,7 @@
 }
 
 .profile-cover {
-  /* Minimal cover: just an empty space/divider */
+  
   display: none;
 }
 
@@ -81,7 +81,7 @@
   text-transform: uppercase;
 }
 
-/* Details Grid */
+
 .details-grid-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -164,7 +164,7 @@
   color: var(--text-secondary);
 }
 
-/* RESPONSIVE */
+
 @media (max-width: 768px) {
   .profile-dashboard {
     padding: 20px;

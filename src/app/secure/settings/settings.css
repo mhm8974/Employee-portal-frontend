@@ -1,4 +1,4 @@
-/* settings.css — Unified with design system + Dark Mode */
+
 
 .settings-container {
     padding: 40px 48px;
@@ -16,7 +16,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* HEADER */
+
 .header-section {
     display: flex;
     justify-content: space-between;
@@ -40,7 +40,7 @@
     margin: 0;
 }
 
-/* SECTIONS */
+
 .settings-section {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px) saturate(180%);
@@ -74,7 +74,7 @@
     border-bottom: 1px solid var(--border-secondary);
 }
 
-/* SETTING ITEMS */
+
 .setting-item {
     display: flex;
     justify-content: space-between;
@@ -103,7 +103,7 @@
     color: var(--text-muted);
 }
 
-/* TOGGLE SWITCH */
+
 .toggle {
     position: relative;
     display: inline-block;
@@ -151,7 +151,7 @@
     transform: translateX(20px);
 }
 
-/* ACTION BUTTON */
+
 .setting-action-btn {
     background: var(--btn-secondary-bg);
     border: 1px solid var(--btn-secondary-border);
@@ -171,9 +171,9 @@
 
 
 
-/* ========================================= */
-/* RESPONSIVE LAYOUT (MOBILE & TABLET)       */
-/* ========================================= */
+
+
+
 @media (max-width: 900px) {
     .settings-container {
         padding: 24px 20px;
@@ -191,7 +191,7 @@
         padding: 20px;
     }
 
-    /* Keep items side-by-side to match the red box request */
+    
     .setting-item:has(.setting-action-btn) {
         flex-direction: row;
         justify-content: space-between;
@@ -199,7 +199,7 @@
         gap: 12px;
     }
 
-    /* Shared layout for toggle items */
+    
     .setting-item:has(.toggle) {
         flex-direction: row;
         justify-content: space-between;

@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Small delay to ensure view is ready and any initial network jitters pass
+    
     setTimeout(() => {
       this.loadCaptcha();
     }, 500);
@@ -68,13 +68,6 @@ export class LoginComponent implements OnInit {
 
   loadCaptcha(): void {
     console.log('[Profile] Initializing CAPTCHA load...');
-    if (this.authService.useMockData) {
-      console.log('[Profile] Using Mock CAPTCHA');
-      // Show a dummy placeholder or generate a local one for mock mode
-      this.captchaImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAwCAYAAAD9pREUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAByklEQVR4nO2YQU7DMBBFf6I7uOfuHIErUK7AFTgC7pAiOIBwhW6RYpEiOECKRXpFiuiAIrhC90iRHL9jZySOf7JlW7YsW7YsW7YsW7YsW7ZsrccY46vX67X3ff+h67oP/X7/of/6er1eX3M6nc7TbrebptNpms/nk8fX19fTdrudttvt9P7+foofHx8fT9vtNn19fU0fHx+nx+Nxen9/nx6Px+n5+TmxXq8/X19fp/v7+8RGo/FstVpNR6PRbLfbTUej0Wy9Xn/O5/PpYDCY9nq9aa/Xm/Z6vWmz2Xw+Ho/T/f09stFoPJvNZlO73X42Ho9nu91Our+/n6P/AnIcY4z7/X7O/hNICHK9Xk/v7++nmHlCkOPxON3f3yObeUKQ4/E43d/fI5t5QpDj8Tjd398jm3lCkOPxON3f3yObeUKQ4/E4PT4+Ijs7OzvZ7XZzWp9KCAJJL0mSpK8k/STpJ0mS9JWknyT9JOmXS79c+uXSL5d+ufTLpV8u/XLpl0u/XPrl0i+Xfrn0y6VfLv1y6ZdLv1z65dIvl3659MulXy79cumXS79c+uXSL5d+ufT/9l9A/gFEP0n6SdL/u//X797f39/f39/f39/f39/fX9//A3+pPwL8AyYfAAAAAElFTkSuQmCC';
-      this.captchaId = 'MOCK_ID';
-      return;
-    }
 
     this.authService.getCaptcha().subscribe({
       next: (response: any) => {
@@ -83,12 +76,12 @@ export class LoginComponent implements OnInit {
         this.captchaImage = response.image;
         this.captchaId = response.captcha_id;
 
-        this.cdr.detectChanges(); // Force update
+        this.cdr.detectChanges(); 
       },
       error: (err) => {
         console.error('[Profile] Failed to load CAPTCHA:', err);
         this.errorMessage = 'Failed to load CAPTCHA. Please refresh.';
-        this.cdr.detectChanges(); // Force update
+        this.cdr.detectChanges(); 
       }
     });
   }
@@ -103,7 +96,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    if (this.isLoading) return; // Prevention lock
+    if (this.isLoading) return; 
 
     this.errorMessage = '';
     this.showIdError = false;
@@ -117,14 +110,12 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    // Skip CAPTCHA check if using mock data
-    if (!this.authService.useMockData) {
-      if (!this.captchaInput) {
-        this.errorMessage = 'CAPTCHA is required';
-        this.triggerShake();
-        this.isLoading = false;
-        return;
-      }
+    
+    if (!this.captchaInput) {
+      this.errorMessage = 'CAPTCHA is required';
+      this.triggerShake();
+      this.isLoading = false;
+      return;
     }
 
     const cleanId = (this.captchaId || '').trim();
@@ -139,21 +130,6 @@ export class LoginComponent implements OnInit {
 
     console.warn('[Profile] SENDING LOGIN:', loginData);
 
-    if (this.authService.useMockData) {
-      console.warn('[Profile] Mock mode detected in login.ts! Attempting navigation in 1s...');
-      setTimeout(() => {
-        this.isLoading = false;
-        localStorage.setItem('employeeId', this.employeeId);
-        localStorage.setItem('auth_token', 'mock_token_12345'); // Allow authGuard to let us pass
-        console.warn('[Profile] Navigating to /dashboard now...');
-        this.router.navigate(['/dashboard']).then(success => {
-          console.warn('[Profile] Mock Navigation result:', success);
-        }).catch(err => {
-          console.error('[Profile] Mock Navigation crashed:', err);
-        });
-      }, 1000);
-      return;
-    }
 
     this.authService.login(loginData).pipe(
       finalize(() => {
@@ -164,7 +140,7 @@ export class LoginComponent implements OnInit {
       next: (response: any) => {
         console.log('[Profile] Login response payload:', response);
 
-        // Debug Hint for Dev Mode
+        
         if ((response as any).dev_hint_otp) {
           console.warn('--- DEV MODE: OTP IS ' + (response as any).dev_hint_otp + ' ---');
           alert('DEV MODE DETECTED! OTP is: ' + (response as any).dev_hint_otp);
@@ -187,7 +163,7 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('unmasked_phone', respData.unmasked_phone || response.unmasked_phone || '');
 
           const requiresOtp = response.requires_otp !== false && respData.requires_otp !== false;
-          const target = requiresOtp ? '/dashboard' : '/secure'; // Defaults to OTP if not explicitly false
+          const target = requiresOtp ? '/dashboard' : '/secure'; 
           console.log(`[Profile] Success detected. Navigating to ${target}...`);
 
           this.router.navigate([target]).then(navSuccess => {
@@ -204,11 +180,11 @@ export class LoginComponent implements OnInit {
           this.errorMessage = msg;
           console.warn('[Profile] Login rejected by backend:', msg);
 
-          // ALWAYS refresh captcha and CLEAR input if invalid
+          
           const isCaptchaError = msg.toLowerCase().includes('captcha');
           if (isCaptchaError) {
             this.captchaError = true;
-            this.captchaInput = ''; // CLEAR THE TRAP
+            this.captchaInput = ''; 
             this.loadCaptcha();
           } 
 

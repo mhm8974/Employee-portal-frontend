@@ -11,12 +11,11 @@ import {
   style
 } from '@angular/animations';
 import { AuthService } from '../services/auth.service';
-import { TranslatePipe } from '../pipes/translate.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   animations: [
@@ -62,9 +61,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService
   ) { }
 
-  get useMockData(): boolean {
-    return this.authService.useMockData;
-  }
 
   emailOtpSent = false;
   smsOtpSent = false;
@@ -91,7 +87,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   sendEmailOtp(): void {
-    if (this.isLoading) return; // Rapid-click safety guard lock
+    if (this.isLoading) return; // Prevent multiple clicks
     this.isLoading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
@@ -106,7 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.setExpiry();
           this.startLiveTimer();
 
-          // Dev hint for quick testing
+          // Developer helper for local testing
           if (response.dev_hint_email_otp) {
             console.warn('--- DEV MODE: EMAIL OTP IS ' + response.dev_hint_email_otp + ' ---');
           }
@@ -114,7 +110,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             console.warn('--- DEV MODE: SMS OTP IS ' + response.dev_hint_otp + ' ---');
           }
 
-          // Automatically focus first input box
+          // Move cursor to the first box
           setTimeout(() => {
             const firstInput = document.getElementById('otp-0') as HTMLInputElement;
             if (firstInput) firstInput.focus();
@@ -138,15 +134,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    if (this.authService.useMockData) {
-      this.isLoading = false;
-      this.smsOtpSent = true;
-      localStorage.setItem('sms_otp_sent', 'true');
-      this.setExpiry();
-      this.startLiveTimer();
-      this.cdr.detectChanges();
-      return;
-    }
 
     const mobile = this.authService.getSmsMobile();
     if (!mobile) {
@@ -248,11 +235,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   verifySmsOtp(): void {
-    if (this.authService.useMockData) {
-      console.log('[Dashboard] Mock Mode: Navigating to /secure');
-      this.router.navigate(['/secure']);
-      return;
-    }
 
     const enteredOtp = this.otpBoxes.join('');
 
@@ -314,7 +296,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (typeof (window as any).retryOtp === 'function') {
       console.log('[Dashboard] Calling window.retryOtp for SMS resend...');
       (window as any).retryOtp(
-        '11', // '11' specifies SMS channel
+        '11', // '11' is for SMS channel
         (data: any) => {
           console.log('[Dashboard] window.retryOtp success:', data);
           this.isLoading = false;
@@ -347,7 +329,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   setExpiry(): void {
-    this.expiryTime = Date.now() + 60 * 1000; // 60 seconds from now
+    this.expiryTime = Date.now() + 60 * 1000; // Expires in 60 seconds
   }
 
   startLiveTimer(): void {
@@ -363,7 +345,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   isDisabled(index: number): boolean {
-    if (this.authService.useMockData) return false;
     if (this.remainingTime === 0) return true;
     if (index === 0) return false;
     return this.otpBoxes[index - 1] === '';
@@ -456,11 +437,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   verifyOtp(): void {
-    if (this.authService.useMockData) {
-      console.log('[Dashboard] Mock Mode: Navigating to /secure');
-      this.router.navigate(['/secure']);
-      return;
-    }
 
     const enteredOtp = this.otpBoxes.join('');
 
@@ -505,7 +481,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   resendOtp(): void {
     if (this.remainingTime > 0) return;
-    if (this.isResending) return; // Rapid-click safety guard lock
+    if (this.isResending) return; // Prevent multiple clicks
     this.isResending = true;
     this.errorMessage = '';
     this.cdr.detectChanges();

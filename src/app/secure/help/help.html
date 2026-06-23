@@ -1,39 +1,39 @@
 <div class="help-container">
-    <!-- SEARCH HERO -->
+    
     <section class="help-hero">
         <div class="hero-content">
-            <h1>{{ 'How can we help you today?' | translate }}</h1>
+            <h1>{{ 'How can we help you today?' }}</h1>
         </div>
     </section>
 
     <div class="help-content">
-        <!-- CATEGORIES GRID -->
+        
         <section class="categories-section">
-            <h2 class="section-title">{{ 'Knowledge Base' | translate }}</h2>
+            <h2 class="section-title">{{ 'Knowledge Base' }}</h2>
             <div class="categories-grid">
                 <div class="category-card" *ngFor="let cat of categories">
                     <div class="cat-icon" *ngIf="cat.icon">{{ cat.icon }}</div>
-                    <h3 class="cat-title">{{ cat.title | translate }}</h3>
-                    <p class="cat-desc">{{ cat.description | translate }}</p>
-                    <a href="javascript:void(0)" class="cat-link" (click)="viewCategory(cat.id)">{{ 'View Articles →' | translate }}</a>
+                    <h3 class="cat-title">{{ cat.title }}</h3>
+                    <p class="cat-desc">{{ cat.description }}</p>
+                    <a href="javascript:void(0)" class="cat-link" (click)="viewCategory(cat.id)">{{ 'View Articles →' }}</a>
                 </div>
             </div>
         </section>
 
-        <!-- FAQ SECTION -->
+        
         <section class="faq-section">
             <h2 class="section-title">
-                {{ 'Common Questions' | translate }}
-                <a href="javascript:void(0)" *ngIf="activeCategory" (click)="clearFilter()" style="font-size: 14px; margin-left: 12px; color: var(--text-secondary); text-decoration: underline; font-weight: normal;">({{ 'View All' | translate }})</a>
+                {{ 'Common Questions' }}
+                <a href="javascript:void(0)" *ngIf="activeCategory" (click)="clearFilter()" style="font-size: 14px; margin-left: 12px; color: var(--text-secondary); text-decoration: underline; font-weight: normal;">({{ 'View All' }})</a>
             </h2>
             <div class="faq-list">
                 <div class="faq-item" *ngFor="let faq of filteredFaqs" [class.active]="faq.isOpen">
                     <div class="faq-header" (click)="toggleFaq(faq)">
-                        <span class="faq-question">{{ faq.question | translate }}</span>
+                        <span class="faq-question">{{ faq.question }}</span>
                         <span class="faq-toggle">{{ faq.isOpen ? '−' : '+' }}</span>
                     </div>
                     <div class="faq-answer" *ngIf="faq.isOpen">
-                        <p>{{ faq.answer | translate }}</p>
+                        <p>{{ faq.answer }}</p>
                     </div>
                 </div>
             </div>

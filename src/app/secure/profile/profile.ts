@@ -5,13 +5,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService, UserProfile } from '../../services/auth.service';
-import { TranslatePipe } from '../../pipes/translate.pipe';
-import { MOCK_EMPLOYEE } from '../secure.mocks';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [TranslatePipe, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
@@ -32,9 +30,6 @@ export class ProfileComponent implements OnInit {
 
   errorMessage = '';
 
-  get useMockData(): boolean {
-    return this.authService.useMockData;
-  }
 
   constructor(
     private authService: AuthService,
@@ -43,9 +38,9 @@ export class ProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // 1. Instantly load from local storage to avoid a blank screen
+    
     this.loadFromLocalStorage();
-    // 2. Fetch fresh data from backend
+    
     this.loadEmployeeData();
   }
 
@@ -60,11 +55,6 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    if (this.useMockData) {
-      this.mapBackendToUi(MOCK_EMPLOYEE);
-      this.cdr.detectChanges();
-      return;
-    }
 
     console.log('[Profile] INITIATING LIVE FETCH: Requesting real data from backend...');
     const apiUrl = `${environment.apiUrl}/employee/${employeeId}`;
@@ -75,10 +65,9 @@ export class ProfileComponent implements OnInit {
     this.http.get<any>(apiUrl, { headers }).pipe(
       catchError(error => {
         console.error('[Profile] CONNECTION SEVERED: Backend offline or unreachable.', error);
-        // If we don't have any cached data loaded, use mock data as a last resort
+        
         if (!this.employeeData.name) {
-          this.errorMessage = 'Backend offline. Using cached mock data.';
-          this.mapBackendToUi(MOCK_EMPLOYEE);
+          this.errorMessage = 'Backend offline. Unable to load profile.';
         } else {
           this.errorMessage = 'Backend offline. Showing cached profile.';
         }
@@ -128,5 +117,17 @@ export class ProfileComponent implements OnInit {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
     return parts[0][0].toUpperCase();
+  }
+
+  get fundType(): string {
+    const stored = localStorage.getItem('detected_fund_type') || localStorage.getItem('employee_type');
+    if (stored) {
+        const upper = stored.toUpperCase();
+        if (upper === 'GPF') return 'GPF';
+        if (upper === 'CPF') return 'CPF';
+        if (stored.toLowerCase() === 'godsped') return 'Godsped';
+        return stored;
+    }
+    return 'Employee';
   }
 }

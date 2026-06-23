@@ -7,7 +7,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardComponent] // standalone component
+      imports: [DashboardComponent] 
     }).compileComponents();
 
     fixture = TestBed.createComponent(DashboardComponent);
